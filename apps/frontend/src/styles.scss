@@ -1,1 +1,59 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+:root {
+  --h-bg-deep-navy: #0D1117;    // Background (60%)
+  --h-surface-gray: #30363D;    // Surface (30%)
+  --h-primary-blue: #4169A5;    // Primary (7%)
+  --h-safety-orange: #F08800;   // Safety Orange (3%)
+}
+
+$h-typography: mat.m2-define-typography-config(
+        $font-family: 'Inter, sans-serif',
+        $headline-1: mat.m2-define-typography-level(32px, 40px, 700),
+        $headline-2: mat.m2-define-typography-level(24px, 32px, 600),
+        $headline-3: mat.m2-define-typography-level(18px, 24px, 500),
+        $body-1: mat.m2-define-typography-level(16px, 24px, 400),
+        $caption: mat.m2-define-typography-level(12px, 16px, 400)
+);
+
+$primary-palette: mat.m2-define-palette(mat.$m2-blue-palette, 700);
+$accent-palette: mat.m2-define-palette(mat.$m2-orange-palette, 800);
+
+$h-linker-dark-theme: mat.m2-define-dark-theme((
+        color: (
+                primary: $primary-palette,
+                accent: $accent-palette,
+        ),
+        typography: $h-typography,
+));
+
+@include mat.all-component-themes($h-linker-dark-theme);
+@include mat.all-component-typographies($h-typography);
+
+html, body {
+  height: 100%;
+  margin: 0;
+  background-color: var(--h-bg-deep-navy);
+  font-family: 'Inter', sans-serif;
+}
+
+.tech-data, .timer, .code-tag {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 14px;
+}
+
+.error-snackbar {
+  --mdc-snackbar-container-color: #30363D;
+  --mdc-snackbar-supporting-text-color: #FFFFFF;
+  border-left: 4px solid var(--h-safety-orange);
+
+  .mat-mdc-snack-bar-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+  }
+
+  .mat-mdc-button {
+    color: var(--h-safety-orange) !important;
+    font-weight: bold;
+  }
+}

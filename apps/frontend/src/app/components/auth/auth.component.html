@@ -1,0 +1,92 @@
+<div class="auth-container">
+  <mat-card class="auth-card">
+    <div class="auth-header">
+      <div class="logo-box">
+        <mat-icon>terminal</mat-icon>
+      </div>
+      <h1>h.linker</h1>
+      <p>Hackathon Management System</p>
+    </div>
+
+    <div class="auth-toggle-group">
+      <a mat-button
+         routerLink="/login"
+         routerLinkActive="active"
+         class="toggle-link">Sign In</a>
+      <a mat-button
+         routerLink="/register"
+         routerLinkActive="active"
+         class="toggle-link">Sign Up</a>
+    </div>
+
+    <mat-card-content>
+      <div class="social-auth">
+        <button mat-flat-button class="github-btn" (click)="loginWithGoogle()">
+          <mat-icon>code</mat-icon> Continue with GitHub
+        </button>
+        <button mat-stroked-button class="google-btn" (click)="loginWithGoogle()">
+          <mat-icon>account_circle</mat-icon> Continue with Google
+        </button>
+      </div>
+
+      <div class="divider">
+        <span>or</span>
+      </div>
+
+      @if (isLogin) {
+        <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email Address</mat-label>
+            <input matInput formControlName="email" placeholder="your@email.com">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <input matInput [type]="hide() ? 'password' : 'text'" formControlName="password">
+            <button type="button" mat-icon-button matSuffix (click)="clickEvent($event)">
+              <mat-icon>{{ hide() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </mat-form-field>
+
+          <button mat-flat-button class="main-action-btn full-width" type="submit" [disabled]="!loginForm.valid">
+            Enter Dashboard
+          </button>
+        </form>
+      } @else {
+        <form [formGroup]="registerForm" (ngSubmit)="onRegisterSubmit()">
+          <div class="row">
+            <mat-form-field appearance="outline">
+              <mat-label>First Name</mat-label>
+              <input matInput formControlName="firstName">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Last Name</mat-label>
+              <input matInput formControlName="lastName">
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <input matInput [type]="hide() ? 'password' : 'text'" formControlName="password">
+          </mat-form-field>
+
+          <button mat-flat-button class="main-action-btn full-width" type="submit" [disabled]="!registerForm.valid">
+            Create Account
+          </button>
+        </form>
+      }
+    </mat-card-content>
+
+    <div class="auth-footer">
+      <span>Don't have an account? </span>
+      <a [routerLink]="isLogin ? '/register' : '/login'" class="footer-link">
+        {{ isLogin ? 'Create an account' : 'Login instead' }} →
+      </a>
+    </div>
+  </mat-card>
+</div>
