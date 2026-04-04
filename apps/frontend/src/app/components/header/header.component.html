@@ -1,0 +1,40 @@
+<mat-toolbar class="h-header">
+  <div class="logo-section" routerLink="/">
+    <mat-icon>terminal</mat-icon>
+    <span class="logo-text">h.linker</span>
+  </div>
+
+  <nav class="nav-links">
+    <a mat-button routerLink="/events" routerLinkActive="active-link">Events</a>
+    <a mat-button routerLink="/teams" routerLinkActive="active-link">Teams</a>
+  </nav>
+
+  <div class="search-section">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="h-search-field">
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput placeholder="Search hackathons, hackers...">
+    </mat-form-field>
+  </div>
+
+  <div class="auth-section">
+    @if (user()) {
+      <div class="user-profile" routerLink="/profile">
+        <div class="user-details">
+          <span class="full-name">{{ user().firstName }} {{ user().lastName }}</span>
+          <span class="role-tag">{{ user().role || 'Hacker' }}</span>
+        </div>
+        <div class="avatar-circle">
+          <mat-icon>account_circle</mat-icon>
+        </div>
+      </div>
+
+      <button mat-stroked-button class="logout-btn" (click)="logout()">
+        <mat-icon>logout</mat-icon> Вийти
+      </button>
+    } @else {
+      <button mat-flat-button color="primary" routerLink="/login" class="login-btn">
+        Sign In
+      </button>
+    }
+  </div>
+</mat-toolbar>

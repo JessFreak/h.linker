@@ -1,0 +1,55 @@
+.h-header {
+  background-color: var(--h-surface-gray) !important;
+  border-bottom: 1px solid #484F58;
+  height: 64px;
+  display: flex;
+  width: 100%;
+  padding: 0 24px;
+  gap: 32px;
+  box-sizing: border-box;
+}
+
+.search-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+
+  .h-search-field {
+    width: 100%;
+    max-width: 600px;
+
+    ::ng-deep .mat-mdc-text-field-wrapper {
+      background-color: #0D1117 !important;
+      border-radius: 8px;
+    }
+  }
+}
+
+.auth-section {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+
+  .user-details {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    .full-name { font-size: 14px; font-weight: 600; color: white; line-height: 1; }
+    .role-tag { font-size: 11px; color: #8B949E; text-transform: uppercase; margin-top: 4px; }
+  }
+
+  .avatar-circle mat-icon { font-size: 36px; width: 36px; height: 36px; color: var(--h-primary-blue); }
+}
+
+.logout-btn {
+  border-color: #484F58 !important;
+  color: #8B949E !important;
+  &:hover { color: #f44336 !important; border-color: #f44336 !important; }
+}
