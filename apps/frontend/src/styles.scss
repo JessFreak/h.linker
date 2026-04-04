@@ -57,3 +57,20 @@ html, body {
     font-weight: bold;
   }
 }
+
+.success-snackbar {
+  --mdc-snackbar-container-color: #30363D;
+  --mdc-snackbar-supporting-text-color: #FFFFFF;
+  border-left: 4px solid #416945;
+
+  .mat-mdc-snack-bar-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .success-icon {
+    color: #416945;
+  }
+}

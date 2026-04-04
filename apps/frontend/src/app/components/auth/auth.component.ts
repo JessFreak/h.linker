@@ -14,6 +14,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../utils/notification.service';
 
 @Component({
   selector: 'app-auth',
@@ -37,6 +38,7 @@ export class AuthComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
+  private readonly notify = inject(NotificationService);
 
   public isLogin = true;
   public loginForm!: FormGroup;
@@ -90,6 +92,7 @@ export class AuthComponent implements OnInit {
       this.authService.login(this.loginForm.value).subscribe({
         next: () => {
           localStorage.setItem('isAuthorised', 'true');
+          this.notify.success('Logged in successfully');
           this.router.navigate(['/']);
         },
       });
@@ -102,6 +105,7 @@ export class AuthComponent implements OnInit {
 
       this.authService.register(this.registerForm.value).subscribe({
         next: () => {
+          this.notify.success('Account created successfully');
           this.router.navigate(['/login'], {
             state: { email },
           });
