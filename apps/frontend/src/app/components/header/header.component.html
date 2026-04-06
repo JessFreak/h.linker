@@ -7,6 +7,7 @@
   <nav class="nav-links">
     <a mat-button routerLink="/events" routerLinkActive="active-link">Events</a>
     <a mat-button routerLink="/teams" routerLinkActive="active-link">Teams</a>
+    <a mat-button routerLink="/leaderboard" routerLinkActive="active-link">Leaderboard</a>
   </nav>
 
   <div class="search-section">
@@ -17,24 +18,34 @@
   </div>
 
   <div class="auth-section">
-    @if (user()) {
+    @if (user(); as currentUser) {
       <div class="user-profile" routerLink="/profile">
         <div class="user-details">
-          <span class="full-name">{{ user().firstName }} {{ user().lastName }}</span>
-          <span class="role-tag">{{ user().role || 'Hacker' }}</span>
+          <span class="full-name">{{ currentUser.firstName }} {{ currentUser.lastName }}</span>
+          <span class="role-tag">Hacker</span>
         </div>
         <div class="avatar-circle">
-          <mat-icon>account_circle</mat-icon>
+          @if (currentUser.avatarUrl) {
+            <img [ngSrc]="currentUser.avatarUrl"
+                 [alt]="currentUser.firstName"
+                 width="40"
+                 height="40"
+                 class="user-avatar-img"
+                 priority>
+          } @else {
+            <mat-icon>account_circle</mat-icon>
+          }
         </div>
       </div>
 
       <button mat-stroked-button class="logout-btn" (click)="logout()">
-        <mat-icon>logout</mat-icon> Вийти
+        <mat-icon>logout</mat-icon> Logout
       </button>
     } @else {
-      <button mat-flat-button color="primary" routerLink="/login" class="login-btn">
-        Sign In
-      </button>
+      <div class="guest-actions">
+        <a mat-button routerLink="/login" class="login-link">Sign In</a>
+        <button mat-flat-button color="primary" routerLink="/register">Sign Up</button>
+      </div>
     }
   </div>
 </mat-toolbar>

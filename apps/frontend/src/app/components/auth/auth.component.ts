@@ -91,7 +91,6 @@ export class AuthComponent implements OnInit {
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
         next: () => {
-          localStorage.setItem('isAuthorised', 'true');
           this.notify.success('Logged in successfully');
           this.router.navigate(['/']);
         },
