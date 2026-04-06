@@ -7,6 +7,8 @@ import { GoogleOauthGuard } from '../../config/security/guards/google-oauth.guar
 import { JwtAuthGuard } from '../../config/security/guards/jwt-auth.guard';
 import { GoogleStrategy } from '../../config/security/strategies/google.strategy';
 import { ConfigType } from '@nestjs/config';
+import { GithubStrategy } from '../../config/security/strategies/github.strategy';
+import { GithubOauthGuard } from '../../config/security/guards/github-oauth.guard';
 
 @Global()
 @Module({
@@ -22,7 +24,21 @@ import { ConfigType } from '@nestjs/config';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, GoogleOauthGuard, JwtAuthGuard, GoogleStrategy],
-  exports: [AuthService, GoogleOauthGuard, JwtAuthGuard, GoogleStrategy],
+  providers: [
+    AuthService,
+    GoogleOauthGuard,
+    GithubOauthGuard,
+    JwtAuthGuard,
+    GoogleStrategy,
+    GithubStrategy,
+  ],
+  exports: [
+    AuthService,
+    GoogleOauthGuard,
+    GithubOauthGuard,
+    JwtAuthGuard,
+    GoogleStrategy,
+    GithubStrategy,
+  ],
 })
 export class AuthModule {}

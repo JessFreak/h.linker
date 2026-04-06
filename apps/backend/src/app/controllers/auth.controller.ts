@@ -18,6 +18,7 @@ import { User } from '@prisma/client';
 import { Access } from '../../config/security/decorators/acces';
 import { ConfigType } from '@nestjs/config';
 import config from '../../config/config';
+import { GithubOauthGuard } from '../../config/security/guards/github-oauth.guard';
 
 @Controller('/auth')
 export class AuthController {
@@ -35,6 +36,24 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(GoogleOauthGuard)
   googleAuthCallback(
+    @UserRequest() user: User,
+    @Res({ passthrough: true }) res: Response,
+  ): void {
+    const token = this.authService.getToken(user.id);
+
+    res.cookie('access_token', token, { httpOnly: true });
+    res.redirect(`${this.configService.clientUrl}?auth=success`);
+  }
+
+  @Get('github')
+  @UseGuards(GithubOauthGuard)
+  githubAuth(): void {
+    /* empty */
+  }
+
+  @Get('github/callback')
+  @UseGuards(GithubOauthGuard)
+  githubAuthCallback(
     @UserRequest() user: User,
     @Res({ passthrough: true }) res: Response,
   ): void {
