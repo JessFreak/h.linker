@@ -5,12 +5,14 @@ import { Strategy } from 'passport-github2';
 import config from '../../config';
 import { AuthService } from '../../../app/services/auth.service';
 import { VerifyCallback } from 'passport-google-oauth2';
+import { GithubService } from '../../../app/services/github.service';
 
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
   constructor(
     @Inject(config.KEY) private configService: ConfigType<typeof config>,
     private readonly authService: AuthService,
+    private readonly githubService: GithubService,
   ) {
     super({
       clientID: configService.github.clientID,
@@ -21,7 +23,7 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
   }
 
   async validate(
-    _accessToken: string,
+    accessToken: string,
     _refreshToken: string,
     profile: any,
     done: VerifyCallback,
@@ -31,6 +33,9 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
     const nameToSplit = displayName || username || _json.login;
     const nameParts = nameToSplit.split(' ');
 
+    const skillsMap = await this.githubService.fetchUserSkills(accessToken);
+    const skillNames = Object.keys(skillsMap);
+
     const user = await this.authService.validateExternalUser({
       email: emails[0].value,
       username: username,
@@ -39,6 +44,7 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
       avatarUrl: photos[0]?.value || _json.avatar_url,
       bio: _json.bio || '',
       password: '',
+      skills: skillNames,
     });
 
     done(null, user);

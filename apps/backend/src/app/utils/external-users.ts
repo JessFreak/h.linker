@@ -9,4 +9,5 @@ export type ExternalUser = {
 
 export type GithubUser = ExternalUser & {
   bio: string;
+  skills?: string[];
 };

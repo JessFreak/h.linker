@@ -9,6 +9,7 @@ import { GoogleStrategy } from '../../config/security/strategies/google.strategy
 import { ConfigType } from '@nestjs/config';
 import { GithubStrategy } from '../../config/security/strategies/github.strategy';
 import { GithubOauthGuard } from '../../config/security/guards/github-oauth.guard';
+import { CategoryModule } from './category.module';
 
 @Global()
 @Module({
@@ -22,6 +23,7 @@ import { GithubOauthGuard } from '../../config/security/guards/github-oauth.guar
         },
       }),
     }),
+    CategoryModule,
   ],
   controllers: [AuthController],
   providers: [

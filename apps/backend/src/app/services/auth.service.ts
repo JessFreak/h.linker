@@ -12,6 +12,7 @@ import { User } from '@prisma/client';
 import config from '../../config/config';
 import { ConfigType } from '@nestjs/config';
 import { GithubUser, ExternalUser } from '../utils/external-users';
+import { CategoryService } from './category.service';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +20,7 @@ export class AuthService {
     @Inject(config.KEY) private configService: ConfigType<typeof config>,
     private jwtService: JwtService,
     private readonly userRepository: UserRepository,
+    private readonly categoryService: CategoryService,
   ) {}
 
   async register(user: RegisterDTO): Promise<User> {
@@ -56,10 +58,20 @@ export class AuthService {
   async validateExternalUser(
     externalUser: ExternalUser | GithubUser,
   ): Promise<User> {
-    const user = await this.userRepository.findByEmail(externalUser.email);
-    if (user) return user;
+    let user = await this.userRepository.findByEmail(externalUser.email);
 
-    return this.userRepository.create(externalUser);
+    const { skills, ...userData } = externalUser as GithubUser;
+
+    if (!user) {
+      user = await this.userRepository.create(userData);
+    }
+    if (skills?.length) {
+      this.categoryService
+        .syncUserSkills(user.id, skills)
+        .catch((err) => console.error('Skills sync failed:', err));
+    }
+
+    return user;
   }
 
   setToken(userId: string, res: Response): void {
