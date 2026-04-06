@@ -44,13 +44,12 @@ export class AuthService {
     return this.jwtService.sign({ sub: userId });
   }
 
-  async login({ email, password }: LoginDTO): Promise<{ id: string }> {
+  async login({ email, password }: LoginDTO): Promise<string> {
     const user = await this.userRepository.findByEmail(email);
     if (!user) throw new NotRegisteredException();
 
     await this.validatePassword(password, user.password);
-
-    return { id: user.id };
+    return this.getToken(user.id);
   }
 
   async validateGoogleUser(googleUser: GoogleUser): Promise<User> {
@@ -60,7 +59,7 @@ export class AuthService {
     return this.userRepository.create(googleUser);
   }
 
-  setToken(userId: string, res: Response) {
+  setToken(userId: string, res: Response): void {
     const token = this.jwtService.sign({
       sub: userId,
     });
@@ -69,14 +68,8 @@ export class AuthService {
     res.redirect(this.configService.clientUrl);
   }
 
-  logout(res: Response): Response {
-    res.clearCookie('access_token');
-    return res.status(200).json();
-  }
-
-  async deleteMe(userId: string, res: Response): Promise<Response> {
+  async deleteMe(userId: string): Promise<void> {
     await this.userRepository.deleteById(userId);
-    return this.logout(res);
   }
 
   async updatePassword(
