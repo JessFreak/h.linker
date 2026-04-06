@@ -26,15 +26,18 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
     profile: any,
     done: VerifyCallback,
   ): Promise<void> {
-    const { displayName, username, emails, photos } = profile;
+    const { username, displayName, emails, photos, _json } = profile;
 
-    const nameParts = displayName ? displayName.split(' ') : [username, ''];
+    const nameToSplit = displayName || username || _json.login;
+    const nameParts = nameToSplit.split(' ');
 
-    const user = await this.authService.validateGoogleUser({
+    const user = await this.authService.validateExternalUser({
       email: emails[0].value,
+      username: username,
       firstName: nameParts[0],
-      lastName: nameParts.slice(1).join(' '),
-      avatarUrl: photos[0].value,
+      lastName: nameParts.slice(1).join(' ') || '',
+      avatarUrl: photos[0]?.value || _json.avatar_url,
+      bio: _json.bio || '',
       password: '',
     });
 

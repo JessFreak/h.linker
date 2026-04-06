@@ -23,6 +23,10 @@ export class RegisterDTO extends LoginDTO {
   @IsString()
     firstName: string;
 
+  @IsNotEmpty()
+  @IsString()
+    username: string;
+
   @IsOptional()
   @IsString()
     lastName?: string;

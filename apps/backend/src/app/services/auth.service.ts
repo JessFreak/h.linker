@@ -11,7 +11,7 @@ import { InvalidPasswordException } from '../utils/exceptions/invalid-password-e
 import { User } from '@prisma/client';
 import config from '../../config/config';
 import { ConfigType } from '@nestjs/config';
-import { GoogleUser } from '../utils/google-user';
+import { GithubUser, ExternalUser } from '../utils/external-users';
 
 @Injectable()
 export class AuthService {
@@ -23,6 +23,7 @@ export class AuthService {
 
   async register(user: RegisterDTO): Promise<User> {
     await this.checkIfEmailExist(user);
+    await this.checkIfUsernameExist(user.username);
 
     const hashedPassword = await bcrypt.hash(user.password, 10);
 
@@ -52,11 +53,13 @@ export class AuthService {
     return this.getToken(user.id);
   }
 
-  async validateGoogleUser(googleUser: GoogleUser): Promise<User> {
-    const user = await this.userRepository.findByEmail(googleUser.email);
+  async validateExternalUser(
+    externalUser: ExternalUser | GithubUser,
+  ): Promise<User> {
+    const user = await this.userRepository.findByEmail(externalUser.email);
     if (user) return user;
 
-    return this.userRepository.create(googleUser);
+    return this.userRepository.create(externalUser);
   }
 
   setToken(userId: string, res: Response): void {
@@ -93,6 +96,13 @@ export class AuthService {
     const emailExist = await this.userRepository.findByEmail(email);
     if (emailExist && emailExist.id !== userId) {
       throw new AlreadyRegisteredException('User', 'email');
+    }
+  }
+
+  async checkIfUsernameExist(username: string): Promise<void> {
+    const exist = await this.userRepository.findByUsername(username);
+    if (exist) {
+      throw new AlreadyRegisteredException('User', 'username');
     }
   }
 }

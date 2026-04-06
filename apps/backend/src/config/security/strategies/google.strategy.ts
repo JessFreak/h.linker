@@ -26,9 +26,14 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     done: VerifyCallback,
   ): Promise<void> {
     const { name, email, picture } = profile;
+    const username = email
+      .split('@')[0]
+      .toLowerCase()
+      .replace(/[^a-z0-9_]/g, '');
 
-    const user = this.authService.validateGoogleUser({
+    const user = this.authService.validateExternalUser({
       email,
+      username,
       firstName: name.givenName,
       lastName: name.familyName,
       avatarUrl: picture,
