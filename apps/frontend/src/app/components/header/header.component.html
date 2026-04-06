@@ -22,7 +22,7 @@
       <div class="user-profile" routerLink="/profile">
         <div class="user-details">
           <span class="full-name">{{ currentUser.firstName }} {{ currentUser.lastName }}</span>
-          <span class="role-tag">Hacker</span>
+          <span class="username">{{ currentUser.username }}</span>
         </div>
         <div class="avatar-circle">
           @if (currentUser.avatarUrl) {

@@ -36,8 +36,8 @@
       @if (isLogin) {
         <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
           <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Email Address</mat-label>
-            <input matInput formControlName="email" placeholder="your@email.com">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" placeholder="your@email.com" name="email" autocomplete="email">
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="full-width">
@@ -66,13 +66,21 @@
           </div>
 
           <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Username</mat-label>
+            <input matInput formControlName="username" name="username" autocomplete="username">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
             <mat-label>Email</mat-label>
-            <input matInput formControlName="email">
+            <input matInput formControlName="email" placeholder="your@email.com" name="email" autocomplete="email">
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Password</mat-label>
-            <input matInput [type]="hide() ? 'password' : 'text'" formControlName="password">
+            <input matInput [type]="hide() ? 'password' : 'text'" formControlName="password" autocomplete="new-password">
+            <button type="button" mat-icon-button matSuffix (click)="clickEvent($event)">
+              <mat-icon>{{ hide() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
           </mat-form-field>
 
           <button mat-flat-button class="main-action-btn full-width" type="submit" [disabled]="!registerForm.valid">
