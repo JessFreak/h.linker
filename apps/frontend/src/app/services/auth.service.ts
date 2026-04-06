@@ -17,14 +17,12 @@ export class AuthService {
   }
 
   login(loginForm: LoginDTO): Observable<object> {
-    return this.http
-      .post(`${this.baseUrl}/login`, loginForm)
-      .pipe(
-        tap(() => {
-          localStorage.setItem('isAuthorised', 'true');
-          this.setUser();
-        }),
-      );
+    return this.http.post(`${this.baseUrl}/login`, loginForm).pipe(
+      tap(() => {
+        localStorage.setItem('isAuthorised', 'true');
+        this.setUser();
+      }),
+    );
   }
 
   setUser(): void {
@@ -32,17 +30,15 @@ export class AuthService {
       return;
     }
 
-    this.http
-      .get<User>(`${this.baseUrl}/me`)
-      .subscribe({
-        next: (user) => {
-          this.userSubject.next(user);
-        },
-        error: () => {
-          this.userSubject.next(null);
-          localStorage.removeItem('isAuthorised');
-        },
-      });
+    this.http.get<User>(`${this.baseUrl}/me`).subscribe({
+      next: (user) => {
+        this.userSubject.next(user);
+      },
+      error: () => {
+        this.userSubject.next(null);
+        localStorage.removeItem('isAuthorised');
+      },
+    });
   }
 
   logout(): void {
@@ -58,5 +54,13 @@ export class AuthService {
           localStorage.removeItem('isAuthorised');
         },
       });
+  }
+
+  loginWithGoogle(): void {
+    window.location.href = `${this.baseUrl}/google`;
+  }
+
+  loginWithGitHub(): void {
+    window.location.href = `${this.baseUrl}/github`;
   }
 }

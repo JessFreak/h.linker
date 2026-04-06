@@ -21,10 +21,10 @@
 
     <mat-card-content>
       <div class="social-auth">
-        <button mat-flat-button class="github-btn" (click)="loginWithGoogle()">
+        <button mat-flat-button class="github-btn" (click)="authService.loginWithGitHub()">
           <mat-icon>code</mat-icon> Continue with GitHub
         </button>
-        <button mat-stroked-button class="google-btn" (click)="loginWithGoogle()">
+        <button mat-stroked-button class="google-btn" (click)="authService.loginWithGoogle()">
           <mat-icon>account_circle</mat-icon> Continue with Google
         </button>
       </div>

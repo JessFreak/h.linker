@@ -37,7 +37,7 @@ export class AuthComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
-  private readonly authService = inject(AuthService);
+  protected readonly authService = inject(AuthService);
   private readonly notify = inject(NotificationService);
 
   public isLogin = true;
@@ -111,9 +111,5 @@ export class AuthComponent implements OnInit {
         },
       });
     }
-  }
-
-  loginWithGoogle(): void {
-    window.location.href = 'http://localhost:3000/api/auth/google';
   }
 }
