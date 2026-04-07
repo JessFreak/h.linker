@@ -1,15 +1,14 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { LoginDTO, RegisterDTO } from '@h.linker/libs';
-import { User } from '@prisma/client';
+import { LoginDTO, RegisterDTO, UserResponse } from '@h.linker/libs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
   private readonly baseUrl = '/api/auth';
 
-  private readonly userSubject = new BehaviorSubject<User | null>(null);
+  private readonly userSubject = new BehaviorSubject<UserResponse | null>(null);
   user$ = this.userSubject.asObservable();
 
   register(registerForm: RegisterDTO): Observable<object> {
@@ -30,7 +29,7 @@ export class AuthService {
       return;
     }
 
-    this.http.get<User>(`${this.baseUrl}/me`).subscribe({
+    this.http.get<UserResponse>(`${this.baseUrl}/me`).subscribe({
       next: (user) => {
         this.userSubject.next(user);
       },

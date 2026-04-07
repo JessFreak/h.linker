@@ -28,17 +28,16 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
     profile: any,
     done: VerifyCallback,
   ): Promise<void> {
-    const { username, displayName, emails, photos, _json } = profile;
-
-    const nameToSplit = displayName || username || _json.login;
-    const nameParts = nameToSplit.split(' ');
+    const { id, username, displayName, emails, photos, _json } = profile;
+    const nameParts = (displayName || username || _json.login).split(' ');
 
     const skillsMap = await this.githubService.fetchUserSkills(accessToken);
     const skillNames = Object.keys(skillsMap);
 
-    const user = await this.authService.validateExternalUser({
+    const user = await this.authService.validateGithubUser({
+      githubId: id,
       email: emails[0].value,
-      username: username,
+      username: username || _json.login,
       firstName: nameParts[0],
       lastName: nameParts.slice(1).join(' ') || '',
       avatarUrl: photos[0]?.value || _json.avatar_url,

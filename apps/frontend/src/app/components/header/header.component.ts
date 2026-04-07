@@ -6,11 +6,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatFormFieldModule } from '@angular/material/form-field'; // Виправлено
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { AuthService } from '../../services/auth.service';
-import { User } from '@prisma/client';
 import { NotificationService } from '../../utils/notification.service';
+import { UserResponse } from '@h.linker/libs';
 
 @Component({
   selector: 'app-header',
@@ -35,7 +35,7 @@ export class HeaderComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly notify = inject(NotificationService);
 
-  public user = signal<User | null>(null);
+  public user = signal<UserResponse | null>(null);
 
   ngOnInit(): void {
     const urlParams = new URLSearchParams(window.location.search);

@@ -1,10 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
-import { UserRepository } from '../database/repositories/user.repository';
 import { LoginDTO, RegisterDTO, UpdatePasswordDTO } from '@h.linker/libs';
 import { Response } from 'express';
-import { AlreadyRegisteredException } from '../utils/exceptions/already-registered.exception';
 import { NotRegisteredException } from '../utils/exceptions/not-registered.exception';
 import { PasswordRepeatException } from '../utils/exceptions/password-repeat.exception';
 import { InvalidPasswordException } from '../utils/exceptions/invalid-password-exception';
@@ -13,26 +11,22 @@ import config from '../../config/config';
 import { ConfigType } from '@nestjs/config';
 import { GithubUser, ExternalUser } from '../utils/external-users';
 import { CategoryService } from './category.service';
+import { UserService } from './user.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject(config.KEY) private configService: ConfigType<typeof config>,
     private jwtService: JwtService,
-    private readonly userRepository: UserRepository,
+    private readonly userService: UserService,
     private readonly categoryService: CategoryService,
   ) {}
 
-  async register(user: RegisterDTO): Promise<User> {
-    await this.checkIfEmailExist(user);
-    await this.checkIfUsernameExist(user.username);
+  async register(dto: RegisterDTO): Promise<User> {
+    await this.userService.checkEmailUniqueness(dto.email);
+    await this.userService.checkUsernameUniqueness(dto.username);
 
-    const hashedPassword = await bcrypt.hash(user.password, 10);
-
-    return this.userRepository.create({
-      ...user,
-      password: hashedPassword,
-    });
+    return this.userService.create(dto);
   }
 
   private async validatePassword(
@@ -48,27 +42,44 @@ export class AuthService {
   }
 
   async login({ email, password }: LoginDTO): Promise<string> {
-    const user = await this.userRepository.findByEmail(email);
+    const user = await this.userService.findByEmail(email);
     if (!user) throw new NotRegisteredException();
 
     await this.validatePassword(password, user.password);
     return this.getToken(user.id);
   }
 
-  async validateExternalUser(
-    externalUser: ExternalUser | GithubUser,
-  ): Promise<User> {
-    let user = await this.userRepository.findByEmail(externalUser.email);
-
-    const { skills, ...userData } = externalUser as GithubUser;
+  async validateGoogleUser(externalUser: ExternalUser): Promise<User> {
+    let user = await this.userService.findByEmail(externalUser.email);
 
     if (!user) {
-      user = await this.userRepository.create(userData);
+      user = await this.userService.create(externalUser);
     }
+
+    return user;
+  }
+
+  async validateGithubUser(githubUser: GithubUser): Promise<User> {
+    const { githubId, skills, ...userData } = githubUser;
+
+    let user = await this.userService.findByGithubId(githubId);
+
+    if (!user) {
+      user = await this.userService.findByEmail(userData.email);
+
+      if (user) {
+        user = await this.userService.updateGithubId(user.id, githubId);
+      }
+    }
+
+    if (!user) {
+      user = await this.userService.create({ ...userData, githubId });
+    }
+
     if (skills?.length) {
       this.categoryService
         .syncUserSkills(user.id, skills)
-        .catch((err) => console.error('Skills sync failed:', err));
+        .catch((err) => console.error('GitHub Skills sync failed:', err));
     }
 
     return user;
@@ -84,14 +95,14 @@ export class AuthService {
   }
 
   async deleteMe(userId: string): Promise<void> {
-    await this.userRepository.deleteById(userId);
+    await this.userService.delete(userId);
   }
 
   async updatePassword(
     userId: string,
     { oldPassword, newPassword }: UpdatePasswordDTO,
   ): Promise<void> {
-    const user = await this.userRepository.findById(userId);
+    const user = await this.userService.findById(userId);
     if (user.password) {
       await this.validatePassword(oldPassword, user.password);
     }
@@ -101,20 +112,6 @@ export class AuthService {
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await this.userRepository.updateById(userId, { password: hashedPassword });
-  }
-
-  async checkIfEmailExist({ email }: LoginDTO, userId?: string): Promise<void> {
-    const emailExist = await this.userRepository.findByEmail(email);
-    if (emailExist && emailExist.id !== userId) {
-      throw new AlreadyRegisteredException('User', 'email');
-    }
-  }
-
-  async checkIfUsernameExist(username: string): Promise<void> {
-    const exist = await this.userRepository.findByUsername(username);
-    if (exist) {
-      throw new AlreadyRegisteredException('User', 'username');
-    }
+    await this.userService.updatePassword(userId, hashedPassword);
   }
 }

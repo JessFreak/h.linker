@@ -26,6 +26,10 @@ export class UserRepository {
     return this.prisma.user.findFirst({ where: { username } });
   }
 
+  async findByGithubId (githubId: string): Promise<User> {
+    return this.prisma.user.findFirst({ where: { githubId } });
+  }
+
   async findMany (where: Prisma.UserWhereInput): Promise<User[]> {
     return this.prisma.user.findMany({ where });
   }

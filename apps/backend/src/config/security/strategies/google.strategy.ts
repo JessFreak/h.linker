@@ -31,7 +31,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       .toLowerCase()
       .replace(/[^a-z0-9_]/g, '');
 
-    const user = this.authService.validateExternalUser({
+    const user = this.authService.validateGoogleUser({
       email,
       username,
       firstName: name.givenName,

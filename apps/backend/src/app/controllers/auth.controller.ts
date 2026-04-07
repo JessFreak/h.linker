@@ -12,13 +12,19 @@ import {
 import { Response } from 'express';
 import { AuthService } from '../services/auth.service';
 import { GoogleOauthGuard } from '../../config/security/guards/google-oauth.guard';
-import { LoginDTO, RegisterDTO, UpdatePasswordDTO } from '@h.linker/libs';
+import {
+  LoginDTO,
+  RegisterDTO,
+  UpdatePasswordDTO,
+  UserResponse,
+} from '@h.linker/libs';
 import { UserRequest } from '../../config/security/decorators/user-request';
 import { User } from '@prisma/client';
 import { Access } from '../../config/security/decorators/acces';
 import { ConfigType } from '@nestjs/config';
 import config from '../../config/config';
 import { GithubOauthGuard } from '../../config/security/guards/github-oauth.guard';
+import { UserMapper } from '../utils/mappers/user.mapper';
 
 @Controller('/auth')
 export class AuthController {
@@ -90,8 +96,8 @@ export class AuthController {
 
   @Access()
   @Get('me')
-  getMe(@UserRequest() user: User): User {
-    return user;
+  getMe(@UserRequest() user: User): UserResponse {
+    return UserMapper.getUserResponse(user);
   }
 
   @Access()
