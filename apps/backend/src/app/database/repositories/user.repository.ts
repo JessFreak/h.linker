@@ -15,7 +15,7 @@ export class UserRepository {
   }
 
   async findById (id: string): Promise<User> {
-    return this.prisma.user.findFirst({ where: { id }, include: { categories: true } });
+    return this.prisma.user.findFirst({ where: { id }, include: { skills: true } });
   }
 
   async findByEmail (email: string): Promise<User> {
@@ -23,7 +23,7 @@ export class UserRepository {
   }
 
   async findByUsername (username: string): Promise<User> {
-    return this.prisma.user.findFirst({ where: { username } });
+    return this.prisma.user.findFirst({ where: { username }, include: { skills: true, memberships: true} });
   }
 
   async findByGithubId (githubId: string): Promise<User> {
@@ -38,7 +38,7 @@ export class UserRepository {
     return this.prisma.user.update({
       where: { id },
       data,
-      include: { categories: true },
+      include: { skills: true },
     });
   }
 

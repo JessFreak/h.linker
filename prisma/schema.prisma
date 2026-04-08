@@ -49,7 +49,7 @@ model User {
   ownedTeams       Team[]         @relation("TeamLeader")
   createdHackatons Hackaton[]     @relation("HackatonCreator")
   memberships      UserTeam[]
-  categories       UserCategory[]
+  skills           UserCategory[]
   juryRoles        Jury[]
 
   @@map("users")

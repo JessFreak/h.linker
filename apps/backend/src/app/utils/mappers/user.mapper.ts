@@ -6,11 +6,16 @@ export class UserMapper {
   static getUserResponse(user: UserWithCategories): UserResponse {
     if (!user) return null;
 
-    const { password, categories, ...userData } = user;
-
     return {
-      ...userData,
-      skills: categories?.map((uc) => uc.category) || [],
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      avatarUrl: user.avatarUrl,
+      bio: user.bio,
+      githubId: user.githubId,
+      skills: user.skills?.map((uc) => uc.category) || [],
     };
   }
 

@@ -62,6 +62,7 @@ export class LoginDTO extends PickType(UserBase, [
 export class RegisterDTO extends OmitType(UserBase, [
   'bio',
   'avatarUrl',
+  'skills',
 ] as const) {}
 
 export class UpdateUserDTO extends PartialType(

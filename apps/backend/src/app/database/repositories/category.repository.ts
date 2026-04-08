@@ -13,23 +13,23 @@ export class CategoryRepository {
     });
   }
 
-  async linkUserToCategory(userId: string, categoryName: string) {
+  async linkUserToCategory(userId: string, skill: string) {
     return this.prisma.userCategory.upsert({
       where: {
         userId_category: {
           userId,
-          category: categoryName,
+          category: skill,
         },
       },
       update: {},
       create: {
         userId,
-        category: categoryName,
+        category: skill,
       },
     });
   }
 
-  async deleteUserCategories(userId: string) {
+  async deleteUserSkills(userId: string) {
     return this.prisma.userCategory.deleteMany({ where: { userId: userId } });
   }
 }

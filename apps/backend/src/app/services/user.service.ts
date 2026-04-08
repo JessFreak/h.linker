@@ -1,7 +1,7 @@
 import { NotRegisteredException } from '../utils/exceptions/not-registered.exception';
 import { AlreadyRegisteredException } from '../utils/exceptions/already-registered.exception';
 import { RegisterDTO, UpdateUserDTO } from '@h.linker/libs';
-import { GithubUser } from '../utils/external-users';
+import { ExternalUser } from '../utils/external-users';
 import * as bcrypt from 'bcryptjs';
 import { UserRepository } from '../database/repositories/user.repository';
 import { Injectable } from '@nestjs/common';
@@ -15,8 +15,8 @@ export class UserService {
     private readonly categoryService: CategoryService,
   ) {}
 
-  async create(data: RegisterDTO | GithubUser): Promise<User> {
-    if ('password' in data && data.password) {
+  async create(data: RegisterDTO | ExternalUser): Promise<User> {
+    if (data.password) {
       data.password = await bcrypt.hash(data.password, 10);
     }
     return this.userRepository.create(data);

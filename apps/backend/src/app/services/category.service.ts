@@ -16,6 +16,6 @@ export class CategoryService {
   }
 
   async deleteUserSkills(userId: string) {
-    await this.categoryRepository.deleteUserCategories(userId);
+    await this.categoryRepository.deleteUserSkills(userId);
   }
 }
