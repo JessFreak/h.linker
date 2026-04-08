@@ -60,16 +60,16 @@ export class AuthService {
   }
 
   async validateGithubUser(
-    githubUser: GithubUser,
+    { skills, ...gitHub }: GithubUser,
     currentUser?: User,
   ): Promise<User> {
     const user = currentUser
-      ? await this.handleAccountLinking(currentUser, githubUser.githubId)
-      : await this.handleGithubAuth(githubUser);
+      ? await this.handleAccountLinking(currentUser, gitHub.githubId)
+      : await this.handleGithubAuth(gitHub);
 
-    if (githubUser.skills?.length) {
+    if (skills?.length) {
       this.categoryService
-        .syncUserSkills(user.id, githubUser.skills)
+        .syncUserSkills(user.id, skills)
         .catch((err) => console.error('GitHub Skills sync failed:', err));
     }
 
