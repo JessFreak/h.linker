@@ -24,12 +24,25 @@ export class AuthService {
     );
   }
 
+  getMe(): Observable<UserResponse> {
+    return this.http.get<UserResponse>(`${this.baseUrl}/me`).pipe(
+      tap((user) => {
+        this.userSubject.next(user);
+        localStorage.setItem('isAuthorised', 'true');
+      }),
+    );
+  }
+
+  updateUserState(user: UserResponse): void {
+    this.userSubject.next(user);
+  }
+
   setUser(): void {
     if (localStorage.getItem('isAuthorised') !== 'true') {
       return;
     }
 
-    this.http.get<UserResponse>(`${this.baseUrl}/me`).subscribe({
+    this.getMe().subscribe({
       next: (user) => {
         this.userSubject.next(user);
       },
@@ -61,5 +74,9 @@ export class AuthService {
 
   loginWithGitHub(): void {
     window.location.href = `${this.baseUrl}/github`;
+  }
+
+  connectGitHub(): void {
+    window.location.href = `${this.baseUrl}/github/connect`;
   }
 }

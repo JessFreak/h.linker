@@ -11,6 +11,7 @@ import { GithubStrategy } from '../../config/security/strategies/github.strategy
 import { GithubOauthGuard } from '../../config/security/guards/github-oauth.guard';
 import { CategoryModule } from './category.module';
 import { UserModule } from './user.module';
+import { GithubConnectGuard } from '../../config/security/guards/github-connect.guard';
 
 @Global()
 @Module({
@@ -35,6 +36,7 @@ import { UserModule } from './user.module';
     JwtAuthGuard,
     GoogleStrategy,
     GithubStrategy,
+    GithubConnectGuard,
   ],
   exports: [
     AuthService,
@@ -43,6 +45,8 @@ import { UserModule } from './user.module';
     JwtAuthGuard,
     GoogleStrategy,
     GithubStrategy,
+    JwtModule,
+    GithubConnectGuard,
   ],
 })
 export class AuthModule {}

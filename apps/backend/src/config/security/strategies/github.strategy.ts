@@ -2,9 +2,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-github2';
+import { Request } from 'express';
 import config from '../../config';
 import { AuthService } from '../../../app/services/auth.service';
-import { VerifyCallback } from 'passport-google-oauth2';
 import { GithubService } from '../../../app/services/github.service';
 
 @Injectable()
@@ -19,33 +19,44 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
       clientSecret: configService.github.clientSecret,
       callbackURL: configService.github.callbackURL,
       scope: ['user:email'],
+      passReqToCallback: true,
     });
   }
 
   async validate(
+    req: Request,
     accessToken: string,
     _refreshToken: string,
     profile: any,
-    done: VerifyCallback,
+    done: (err: any, user?: any, info?: any) => void,
   ): Promise<void> {
-    const { id, username, displayName, emails, photos, _json } = profile;
-    const nameParts = (displayName || username || _json.login).split(' ');
+    try {
+      const { id, username, displayName, emails, photos, _json } = profile;
+      const nameParts = (displayName || username || _json.login).split(' ');
 
-    const skillsMap = await this.githubService.fetchUserSkills(accessToken);
-    const skillNames = Object.keys(skillsMap);
+      const skillsMap = await this.githubService.fetchUserSkills(accessToken);
+      const skillNames = Object.keys(skillsMap);
 
-    const user = await this.authService.validateGithubUser({
-      githubId: id,
-      email: emails[0].value,
-      username: username || _json.login,
-      firstName: nameParts[0],
-      lastName: nameParts.slice(1).join(' ') || '',
-      avatarUrl: photos[0]?.value || _json.avatar_url,
-      bio: _json.bio || '',
-      password: '',
-      skills: skillNames,
-    });
+      const authenticatedUser = (req as any).user;
 
-    done(null, user);
+      const user = await this.authService.validateGithubUser(
+        {
+          githubId: id,
+          email: emails[0].value,
+          username: username || _json.login,
+          firstName: nameParts[0],
+          lastName: nameParts.slice(1).join(' ') || '',
+          avatarUrl: photos[0]?.value || _json.avatar_url,
+          bio: _json.bio || '',
+          password: '',
+          skills: skillNames,
+        },
+        authenticatedUser,
+      );
+
+      done(null, user);
+    } catch (error) {
+      done(error, null);
+    }
   }
 }

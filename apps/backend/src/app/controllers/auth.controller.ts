@@ -25,6 +25,8 @@ import { ConfigType } from '@nestjs/config';
 import config from '../../config/config';
 import { GithubOauthGuard } from '../../config/security/guards/github-oauth.guard';
 import { UserMapper } from '../utils/mappers/user.mapper';
+import { JwtAuthGuard } from '../../config/security/guards/jwt-auth.guard';
+import { GithubConnectGuard } from '../../config/security/guards/github-connect.guard';
 
 @Controller('/auth')
 export class AuthController {
@@ -67,6 +69,22 @@ export class AuthController {
 
     res.cookie('access_token', token, { httpOnly: true });
     res.redirect(`${this.configService.clientUrl}?auth=success`);
+  }
+
+  @Get('github/connect')
+  @UseGuards(JwtAuthGuard, GithubConnectGuard)
+  async githubConnect() {
+    /* empty */
+  }
+
+  @Get('github/connect/callback')
+  @UseGuards(JwtAuthGuard, GithubConnectGuard)
+  async githubConnectCallback(@Res() res) {
+   if (res.headersSent) return;
+
+    res.redirect(
+      `${this.configService.clientUrl}/profile/settings?connect=success`,
+    );
   }
 
   @Post('register')

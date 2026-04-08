@@ -14,36 +14,38 @@ class UserBase {
   @IsEmail()
   @IsNotEmpty()
   @IsString()
-    email: string;
+  email: string;
 
   @IsNotEmpty()
   @MinLength(6)
   @IsString()
-    password: string;
+  password: string;
 
   @IsNotEmpty()
   @IsString()
-    firstName: string;
+  firstName: string;
 
   @IsNotEmpty()
   @IsString()
   @MinLength(3)
   @MaxLength(20)
-  @Matches(/^[a-z0-9_]+$/, { message: 'Username rules...' })
-    username: string;
+  @Matches(/^[a-zA-Z0-9_]+$/, {
+    message: 'Username can only contain letters, numbers, and underscores',
+  })
+  username: string;
 
   @IsOptional()
   @IsString()
-    lastName?: string;
+  lastName?: string;
 
   @IsOptional()
   @IsString()
   @MaxLength(300)
-    bio?: string;
+  bio?: string;
 
   @IsOptional()
   @IsUrl()
-    avatarUrl?: string;
+  avatarUrl?: string;
 }
 
 export class LoginDTO extends PickType(UserBase, [

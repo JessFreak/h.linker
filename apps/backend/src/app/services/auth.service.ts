@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDTO, RegisterDTO, UpdatePasswordDTO } from '@h.linker/libs';
@@ -59,30 +59,48 @@ export class AuthService {
     return user;
   }
 
-  async validateGithubUser(githubUser: GithubUser): Promise<User> {
-    const { githubId, skills, ...userData } = githubUser;
+  async validateGithubUser(
+    githubUser: GithubUser,
+    currentUser?: User,
+  ): Promise<User> {
+    const user = currentUser
+      ? await this.handleAccountLinking(currentUser, githubUser.githubId)
+      : await this.handleGithubAuth(githubUser);
 
-    let user = await this.userService.findByGithubId(githubId);
-
-    if (!user) {
-      user = await this.userService.findByEmail(userData.email);
-
-      if (user) {
-        user = await this.userService.updateGithubId(user.id, githubId);
-      }
-    }
-
-    if (!user) {
-      user = await this.userService.create({ ...userData, githubId });
-    }
-
-    if (skills?.length) {
+    if (githubUser.skills?.length) {
       this.categoryService
-        .syncUserSkills(user.id, skills)
+        .syncUserSkills(user.id, githubUser.skills)
         .catch((err) => console.error('GitHub Skills sync failed:', err));
     }
 
     return user;
+  }
+
+  private async handleAccountLinking(
+    user: User,
+    githubId: string,
+  ): Promise<User> {
+    const linkedUser = await this.userService.findByGithubId(githubId);
+
+    if (linkedUser && linkedUser.id !== user.id) {
+      throw new ConflictException(
+        'This GitHub account is already linked to another user',
+      );
+    }
+
+    return this.userService.updateGithubId(user.id, githubId);
+  }
+
+  private async handleGithubAuth(data: GithubUser): Promise<User> {
+    let user = await this.userService.findByGithubId(data.githubId);
+    if (user) return user;
+
+    user = await this.userService.findByEmail(data.email);
+    if (user) {
+      return this.userService.updateGithubId(user.id, data.githubId);
+    }
+
+    return this.userService.create(data);
   }
 
   setToken(userId: string, res: Response): void {
