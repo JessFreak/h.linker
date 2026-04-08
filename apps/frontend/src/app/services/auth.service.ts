@@ -59,18 +59,10 @@ export class AuthService {
   }
 
   logout(): void {
-    this.http
-      .post(`${this.baseUrl}/logout`, {}, { withCredentials: true })
-      .subscribe({
-        next: () => {
-          this.userSubject.next(null);
-          localStorage.removeItem('isAuthorised');
-        },
-        error: () => {
-          this.userSubject.next(null);
-          localStorage.removeItem('isAuthorised');
-        },
-      });
+    localStorage.removeItem('isAuthorised');
+    this.userSubject.next(null);
+
+    this.http.post(`${this.baseUrl}/logout`, {}, { withCredentials: true });
   }
 
   loginWithGoogle(): void {

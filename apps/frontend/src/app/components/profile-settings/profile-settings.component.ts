@@ -75,6 +75,14 @@ export class ProfileSettingsComponent implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly router = inject(Router);
 
+  bioPreview = computed(() => {
+    const bio = this.user()?.bio;
+    if (!bio) return 'Full-stack developer';
+
+    const maxLength = 60;
+    return bio.length > maxLength ? bio.substring(0, maxLength) + '...' : bio;
+  });
+
   constructor() {
     this.profileForm = this.fb.group({
       firstName: ['', Validators.required],
