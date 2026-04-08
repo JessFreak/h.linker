@@ -18,11 +18,11 @@
   </div>
 
   <div class="auth-section">
-    @if (user(); as currentUser) {
+    @if (authService.user$ | async; as currentUser) {
       <div class="user-profile" routerLink="/profile">
         <div class="user-details">
           <span class="full-name">{{ currentUser.firstName }} {{ currentUser.lastName }}</span>
-          <span class="username">{{ currentUser.username }}</span>
+          <span class="username">&#64;{{ currentUser.username }}</span>
         </div>
         <div class="avatar-circle">
           @if (currentUser.avatarUrl) {

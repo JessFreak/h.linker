@@ -31,7 +31,7 @@ import { UserResponse } from '@h.linker/libs';
   styleUrl: './header.component.scss',
 })
 export class HeaderComponent implements OnInit {
-  private readonly authService = inject(AuthService);
+  protected readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly notify = inject(NotificationService);
 

@@ -1,0 +1,203 @@
+<div class="settings-container">
+  <aside class="settings-sidebar">
+    <mat-card class="user-mini-card">
+      <div class="avatar-container">
+        <img [src]="user()?.avatarUrl || 'assets/default-avatar.png'" alt="Avatar">
+      </div>
+      <h3>{{ user()?.firstName }} {{ user()?.lastName?.charAt(0) }}.</h3>
+      <p class="subtitle">Full-stack • KPI University</p>
+    </mat-card>
+
+    <nav class="settings-nav">
+      <a mat-button
+         class="active"
+         tabindex="0"
+         (click)="scrollToSection('profile')"
+         (keydown.enter)="scrollToSection('profile')">
+        <mat-icon>person</mat-icon> Account & Bio
+      </a>
+
+      <a mat-button
+         tabindex="0"
+         (click)="scrollToSection('integrations')"
+         (keydown.enter)="scrollToSection('integrations')">
+        <mat-icon>extension</mat-icon> Integrations
+        <span class="badge">{{ connectedCount() }} connected</span>
+      </a>
+
+      <a mat-button
+         tabindex="0"
+         (click)="scrollToSection('skills')"
+         (keydown.enter)="scrollToSection('skills')">
+        <mat-icon>terminal</mat-icon> Skills & Tech Stack
+      </a>
+      <a mat-button>
+        <mat-icon>notifications</mat-icon> Notifications
+      </a>
+      <a mat-button>
+        <mat-icon>security</mat-icon> Security
+      </a>
+      <button mat-button color="warn" class="delete-btn">Delete Account</button>
+    </nav>
+  </aside>
+
+  <main class="settings-content">
+    <h1>Profile Settings <small>&#64;{{ user()?.username }}</small></h1>
+
+    <form [formGroup]="profileForm">
+      <mat-card id="profile" class="settings-section">
+        <mat-card-header>
+          <mat-card-title>Public Profile</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="profile-row">
+            <input type="file"
+                   #avatarInput
+                   (change)="onFileSelected($event)"
+                   accept="image/*"
+                   style="display: none">
+
+            <div class="avatar-upload">
+              <div class="big-avatar">
+                <img [src]="user()?.avatarUrl || 'assets/default-avatar.png'"
+                     alt="Avatar Preview"
+                     style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+
+                <button mat-icon-button
+                        class="edit-photo"
+                        type="button"
+                        (click)="triggerFileInput(avatarInput)">
+                  <mat-icon>photo_camera</mat-icon>
+                </button>
+              </div>
+
+              <button mat-stroked-button
+                      type="button"
+                      (click)="triggerFileInput(avatarInput)"
+                      [disabled]="isSaving()">
+                {{ isSaving() ? 'Uploading...' : 'Upload new photo' }}
+              </button>
+            </div>
+
+            <div class="fields-column">
+              <div class="row">
+                <mat-form-field appearance="outline">
+                  <mat-label>First Name</mat-label>
+                  <input matInput formControlName="firstName">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Last Name</mat-label>
+                  <input matInput formControlName="lastName">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Username</mat-label>
+                  <input matInput formControlName="username">
+                  <mat-icon matSuffix>edit</mat-icon>
+                </mat-form-field>
+              </div>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Bio</mat-label>
+                <textarea matInput formControlName="bio" rows="3"></textarea>
+                <mat-hint align="end">
+                  {{ profileForm.get('bio')?.value?.length || 0 }} / 300
+                </mat-hint>
+              </mat-form-field>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card id="integrations" class="settings-section">
+        <mat-card-header>
+          <mat-card-title>Integrations</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="integration-grid">
+
+          <div class="integration-item" [class.connected]="!!user()?.githubId">
+            <div class="info">
+              <div class="service-title">
+                <mat-icon class="service-icon">code</mat-icon>
+                <strong>GitHub</strong>
+              </div>
+              <span>
+          {{ user()?.githubId ? 'Connected as ' + user()?.username : 'Sync your repositories and skills' }}
+        </span>
+            </div>
+
+            @if (user()?.githubId) {
+              <div class="status-badge">
+                <mat-icon class="connected-check">verified</mat-icon>
+                <span class="status-text">Linked</span>
+              </div>
+            } @else {
+              <button mat-stroked-button class="connect-btn" (click)="authService.connectGitHub()">
+                <mat-icon>link</mat-icon> Connect
+              </button>
+            }
+          </div>
+
+          <div class="integration-item connected">
+            <div class="info">
+              <div class="service-title">
+                <mat-icon class="service-icon">account_circle</mat-icon>
+                <strong>Google</strong>
+              </div>
+              <span>{{ user()?.email }}</span>
+            </div>
+
+            <div class="status-badge">
+              <mat-icon class="connected-check">verified</mat-icon>
+              <span class="status-text">Linked</span>
+            </div>
+          </div>
+
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card id="skills" class="settings-section">
+        <mat-card-header>
+          <mat-card-title>Your Skills</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-chip-grid #chipGrid>
+            @for (skill of skills(); track skill) {
+              <mat-chip-row (removed)="removeSkill(skill)">
+                {{ skill }}
+                <button matChipRemove><mat-icon>cancel</mat-icon></button>
+              </mat-chip-row>
+            }
+          </mat-chip-grid>
+
+          <div class="add-skill-box">
+            <input placeholder="Add new skill..."
+                   #skillInput
+                   (keyup.enter)="addSkill(skillInput)">
+            <button mat-flat-button
+                    type="button"
+                    (click)="addSkill(skillInput)">+ Add</button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </form>
+  </main>
+
+  <footer class="settings-footer">
+    <div class="status">
+      <span class="dot" [class.dirty]="profileForm.dirty"></span>
+      {{ profileForm.dirty ? 'Unsaved changes' : 'All changes saved' }}
+    </div>
+    <div class="actions">
+      <button mat-button type="button" (click)="loadUserData()">Discard</button>
+      <button mat-flat-button
+              color="primary"
+              (click)="onSave()"
+              [disabled]="!profileForm.dirty || isSaving()">
+        {{ isSaving() ? 'Saving...' : 'Save Changes' }}
+      </button>
+    </div>
+  </footer>
+</div>

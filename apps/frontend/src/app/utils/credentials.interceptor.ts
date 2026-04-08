@@ -1,7 +1,10 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const credentialsInterceptor: HttpInterceptorFn = (req, next) => {
-  if (req.url.includes('/api')) {
+  const isInternalApi =
+    req.url.includes('/api') && !req.url.includes('imgbb.com');
+
+  if (isInternalApi) {
     req = req.clone({
       withCredentials: true,
     });
