@@ -79,7 +79,7 @@ export class AuthController {
 
   @Get('github/connect/callback')
   @UseGuards(JwtAuthGuard, GithubConnectGuard)
-  async githubConnectCallback(@Res() res) {
+  async githubConnectCallback(@Res() res: Response): Promise<Response> {
    if (res.headersSent) return;
 
     res.redirect(
@@ -96,11 +96,11 @@ export class AuthController {
   async login(
     @Body() body: LoginDTO,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<{ message: string }> {
+  ): Promise<void> {
     const token = await this.authService.login(body);
 
     res.cookie('access_token', token, { httpOnly: true });
-    return { message: 'Success' };
+    res.status(200).send();
   }
 
   @Access()
@@ -123,10 +123,10 @@ export class AuthController {
   async deleteMe(
     @UserRequest() user: User,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<{ message: string }> {
+  ): Promise<void> {
     await this.authService.deleteMe(user.id);
     res.clearCookie('access_token');
-    return { message: 'Account deleted' };
+    res.status(200).send();
   }
 
   @Access()

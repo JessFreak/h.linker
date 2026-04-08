@@ -15,7 +15,7 @@ export class UserRepository {
   }
 
   async findById (id: string): Promise<User> {
-    return this.prisma.user.findFirst({ where: { id } });
+    return this.prisma.user.findFirst({ where: { id }, include: { categories: true } });
   }
 
   async findByEmail (email: string): Promise<User> {

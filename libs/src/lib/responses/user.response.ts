@@ -7,6 +7,7 @@ export class UserResponse {
   githubId: string | null;
   bio: string | null;
   avatarUrl: string | null;
+  skills: string[];
 }
 
 export class UsersResponse {
