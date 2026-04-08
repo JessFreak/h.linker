@@ -4,18 +4,23 @@ import {
   FormGroup,
   Validators,
   ReactiveFormsModule,
+  ValidatorFn,
+  AbstractControl,
+  ValidationErrors,
 } from '@angular/forms';
 import { UserService } from '../../services/user.service';
 import { UpdateUserDTO, UserResponse } from '@h.linker/libs';
 import { MatChipGrid, MatChipRow } from '@angular/material/chips';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
-import { MatFormField, MatHint, MatInput, MatLabel } from '@angular/material/input';
+import { MatError, MatFormField, MatHint, MatInput, MatLabel } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { AuthService } from '../../services/auth.service';
 import { NotificationService } from '../../utils/notification.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ImageUploadService } from '../../services/image-upload.service';
+import { ConfirmDeleteDialogComponent } from './confirm-delete-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-profile-settings',
@@ -36,10 +41,14 @@ import { ImageUploadService } from '../../services/image-upload.service';
     MatChipRow,
     MatIconButton,
     MatInput,
+    MatError,
   ],
 })
 export class ProfileSettingsComponent implements OnInit {
   profileForm: FormGroup;
+  passwordForm: FormGroup;
+  isChangingPassword = signal(false);
+
   user = signal<UserResponse | null>(null);
   skills = signal<string[]>([
     'React',
@@ -65,6 +74,8 @@ export class ProfileSettingsComponent implements OnInit {
   private readonly notify = inject(NotificationService);
   private readonly route = inject(ActivatedRoute);
   private readonly imageUploadService = inject(ImageUploadService);
+  private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
 
   constructor() {
     this.profileForm = this.fb.group({
@@ -73,7 +84,26 @@ export class ProfileSettingsComponent implements OnInit {
       username: ['', Validators.required],
       bio: ['', Validators.maxLength(300)],
     });
+
+    this.passwordForm = this.fb.group(
+      {
+        oldPassword: ['', [Validators.required]],
+        newPassword: ['', [Validators.required, Validators.minLength(8)]],
+        confirmPassword: ['', [Validators.required]],
+      },
+      { validators: this.passwordMatchValidator },
+    );
   }
+
+  passwordMatchValidator: ValidatorFn = (
+    control: AbstractControl,
+  ): ValidationErrors | null => {
+    const newPass = control.get('newPassword');
+    const confirmPass = control.get('confirmPassword');
+    return newPass && confirmPass && newPass.value !== confirmPass.value
+      ? { passwordMismatch: true }
+      : null;
+  };
 
   ngOnInit() {
     this.loadUserData();
@@ -145,6 +175,21 @@ export class ProfileSettingsComponent implements OnInit {
     });
   }
 
+  onDeleteAccount() {
+    const dialogRef = this.dialog.open(ConfirmDeleteDialogComponent, {
+      width: '400px',
+      panelClass: 'custom-dialog-container',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.authService.deleteMe();
+        this.notify.success('Account deleted successfully');
+        this.router.navigate(['/login']);
+      }
+    });
+  }
+
   addSkill(input: HTMLInputElement) {
     const value = input.value.trim();
     if (value && this.skills().length < 15) {
@@ -175,6 +220,27 @@ export class ProfileSettingsComponent implements OnInit {
           this.profileForm.markAsPristine();
         },
         error: () => this.isSaving.set(false),
+      });
+    }
+  }
+
+  onUpdatePassword() {
+    if (this.passwordForm.valid) {
+      this.isChangingPassword.set(true);
+
+      this.authService.updatePassword(this.passwordForm.value).subscribe({
+        next: () => {
+          this.notify.success('Password updated successfully');
+          this.passwordForm.reset();
+          this.isChangingPassword.set(false);
+          Object.keys(this.passwordForm.controls).forEach((key) => {
+            this.passwordForm.get(key)?.setErrors(null);
+          });
+        },
+        error: (err) => {
+          this.notify.error(err.error?.message || 'Failed to update password');
+          this.isChangingPassword.set(false);
+        },
       });
     }
   }

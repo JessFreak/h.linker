@@ -213,7 +213,6 @@
       }
     }
 
-    // Стиль для помаранчевої галочки
     .status-badge {
       display: flex;
       flex-direction: column;
@@ -269,6 +268,25 @@
     border-radius: 6px;
     outline: none;
     &:focus { border-color: var(--h-primary-blue); }
+  }
+}
+
+.password-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 600px;
+
+  .new-passwords-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .form-actions {
+    margin-top: 8px;
+    display: flex;
+    justify-content: flex-start;
   }
 }
 

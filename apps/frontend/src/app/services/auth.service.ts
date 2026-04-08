@@ -1,7 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { LoginDTO, RegisterDTO, UserResponse } from '@h.linker/libs';
+import {
+  LoginDTO,
+  RegisterDTO,
+  UpdatePasswordDTO,
+  UserResponse,
+} from '@h.linker/libs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -78,5 +83,24 @@ export class AuthService {
 
   connectGitHub(): void {
     window.location.href = `${this.baseUrl}/github/connect`;
+  }
+
+  deleteMe(): void {
+    this.http.delete(`${this.baseUrl}/me`, {}).subscribe({
+      next: () => {
+        localStorage.removeItem('isAuthorised');
+        this.userSubject.next(null);
+      },
+      error: (err) => {
+        console.error('Failed to delete account', err);
+      },
+    });
+  }
+
+  updatePassword(passwordForm: UpdatePasswordDTO): Observable<UserResponse> {
+    return this.http.patch<UserResponse>(
+      `${this.baseUrl}/password`,
+      passwordForm,
+    );
   }
 }
