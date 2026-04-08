@@ -60,6 +60,7 @@ export class UserService {
     const { skills, ...user } = dto;
 
     if (skills) {
+      await this.categoryService.deleteUserSkills(userId);
       await this.categoryService.syncUserSkills(userId, dto.skills);
     }
 

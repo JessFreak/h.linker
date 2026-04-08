@@ -10,7 +10,11 @@ import {
 } from '@angular/forms';
 import { UserService } from '../../services/user.service';
 import { UpdateUserDTO, UserResponse } from '@h.linker/libs';
-import { MatChipGrid, MatChipRow } from '@angular/material/chips';
+import {
+  MatChipGrid,
+  MatChipRemove,
+  MatChipRow,
+} from '@angular/material/chips';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatError, MatFormField, MatHint, MatInput, MatLabel } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
@@ -29,6 +33,7 @@ import { MatDialog } from '@angular/material/dialog';
   imports: [
     MatChipGrid,
     MatCardContent,
+    MatChipRemove,
     MatCardHeader,
     MatCard,
     MatLabel,
@@ -50,14 +55,7 @@ export class ProfileSettingsComponent implements OnInit {
   isChangingPassword = signal(false);
 
   user = signal<UserResponse | null>(null);
-  skills = signal<string[]>([
-    'React',
-    'Node.js',
-    'Python',
-    'PostgreSQL',
-    'Docker',
-    'FastAPI',
-  ]);
+  skills = signal<string[]>([]);
 
   connectedCount = computed(() => {
     let count = 1;
@@ -124,6 +122,7 @@ export class ProfileSettingsComponent implements OnInit {
     this.authService.user$.subscribe((userData) => {
       if (userData) {
         this.user.set(userData);
+        this.skills.set(userData.skills || []);
 
         this.profileForm.patchValue({
           firstName: userData.firstName,
@@ -192,14 +191,16 @@ export class ProfileSettingsComponent implements OnInit {
 
   addSkill(input: HTMLInputElement) {
     const value = input.value.trim();
-    if (value && this.skills().length < 15) {
+    if (value) {
       this.skills.update((s) => [...s, value]);
       input.value = '';
+      this.profileForm.markAsDirty();
     }
   }
 
   removeSkill(skill: string) {
     this.skills.update((s) => s.filter((item) => item !== skill));
+    this.profileForm.markAsDirty();
   }
 
   onSave() {
@@ -209,12 +210,16 @@ export class ProfileSettingsComponent implements OnInit {
       const updateData: UpdateUserDTO = {
         ...this.profileForm.value,
         avatarUrl: this.user()?.avatarUrl,
+        skills: this.skills(), // Відправляємо актуальний масив скілів
       };
 
       this.userService.updateProfile(updateData).subscribe({
         next: (updated) => {
           this.user.set(updated);
           this.authService.updateUserState(updated);
+
+          this.skills.set(updated.skills || []);
+
           this.notify.success('Profile saved successfully');
           this.isSaving.set(false);
           this.profileForm.markAsPristine();
