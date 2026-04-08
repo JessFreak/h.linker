@@ -61,7 +61,7 @@ export class UserService {
 
     if (skills) {
       await this.categoryService.deleteUserSkills(userId);
-      await this.categoryService.syncUserSkills(userId, dto.skills);
+      await this.categoryService.syncUserSkills(userId, skills);
     }
 
     return this.userRepository.updateById(userId, user);
