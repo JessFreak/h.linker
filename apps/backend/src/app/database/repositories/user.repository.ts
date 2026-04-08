@@ -35,7 +35,11 @@ export class UserRepository {
   }
 
   async updateById (id: string, data: Prisma.UserUncheckedUpdateInput): Promise<User> {
-    return this.prisma.user.update({ where: { id }, data });
+    return this.prisma.user.update({
+      where: { id },
+      data,
+      include: { categories: true },
+    });
   }
 
   async deleteById (id: string): Promise<User> {

@@ -6,10 +6,14 @@ import * as bcrypt from 'bcryptjs';
 import { UserRepository } from '../database/repositories/user.repository';
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
+import { CategoryService } from './category.service';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly categoryService: CategoryService,
+  ) {}
 
   async create(data: RegisterDTO | GithubUser): Promise<User> {
     if ('password' in data && data.password) {
@@ -53,7 +57,13 @@ export class UserService {
       await this.checkUsernameUniqueness(dto.username, userId);
     }
 
-    return this.userRepository.updateById(userId, dto);
+    const { skills, ...user } = dto;
+
+    if (skills) {
+      await this.categoryService.syncUserSkills(userId, dto.skills);
+    }
+
+    return this.userRepository.updateById(userId, user);
   }
 
   async delete(id: string): Promise<void> {

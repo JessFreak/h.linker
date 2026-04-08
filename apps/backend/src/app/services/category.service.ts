@@ -14,4 +14,8 @@ export class CategoryService {
 
     await Promise.all(syncTasks);
   }
+
+  async deleteUserSkills(userId: string) {
+    await this.categoryRepository.deleteUserCategories(userId);
+  }
 }

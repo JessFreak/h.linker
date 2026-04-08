@@ -28,4 +28,8 @@ export class CategoryRepository {
       },
     });
   }
+
+  async deleteUserCategories(userId: string) {
+    return this.prisma.userCategory.deleteMany({ where: { userId: userId } });
+  }
 }

@@ -8,6 +8,7 @@ import {
   Matches,
   MaxLength,
   IsUrl,
+  IsArray,
 } from 'class-validator';
 
 class UserBase {
@@ -46,6 +47,11 @@ class UserBase {
   @IsOptional()
   @IsUrl()
     avatarUrl?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+    skills?: string[];
 }
 
 export class LoginDTO extends PickType(UserBase, [

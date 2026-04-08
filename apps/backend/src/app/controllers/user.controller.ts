@@ -29,7 +29,6 @@ export class UserController {
     @UserRequest() user: UserResponse,
     @Body() body: UpdateUserDTO,
   ): Promise<UserResponse> {
-
     const updatedUser = await this.userService.updateProfile(user.id, body);
     return UserMapper.getUserResponse(updatedUser);
   }
