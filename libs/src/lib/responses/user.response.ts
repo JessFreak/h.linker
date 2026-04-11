@@ -30,8 +30,24 @@ export class UserProjectResponse {
   finalScore: number;
 }
 
+export interface GitHubLanguage {
+  name: string;
+  percent: number;
+}
+
+export interface GitHubInsights {
+  totalContributions: number;
+  contributionTrend: string;
+  totalStars: number;
+  starredReposCount: number;
+  publicReposCount: number;
+  activeReposThisMonth: number;
+  topLanguages: GitHubLanguage[];
+}
+
 export class FullUserResponse extends UserResponse {
   createdHackathons: Hackathon[];
   teams: UserTeamResponse[];
   projects: UserProjectResponse[];
+  githubInsights?: GitHubInsights | null;
 }

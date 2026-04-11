@@ -7,6 +7,7 @@ import { AuthModule } from './modules/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import config from '../config/config';
 import { join } from 'path';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { join } from 'path';
       load: [config],
       envFilePath: join(process.cwd(), '.env'),
     }),
+    CacheModule.register({ isGlobal: true }),
     PrismaModule,
     UserModule,
     AuthModule,

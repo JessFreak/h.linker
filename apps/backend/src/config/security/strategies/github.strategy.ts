@@ -1,11 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy } from 'passport-github2';
+import { Strategy, Profile } from 'passport-github2';
 import { Request } from 'express';
 import config from '../../config';
 import { AuthService } from '../../../app/services/auth.service';
 import { GithubService } from '../../../app/services/github.service';
+import { User } from '@prisma/client';
+
+interface ExtendedGitHubProfile extends Profile {
+  _json: {
+    bio?: string;
+  };
+}
 
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
@@ -27,37 +34,39 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
     req: Request,
     accessToken: string,
     _refreshToken: string,
-    profile: any,
-    done: (err: any, user?: any, info?: any) => void,
+    profile: ExtendedGitHubProfile,
+    done: (err: Error | null, user?: User | null) => void,
   ): Promise<void> {
     try {
       const { id, username, displayName, emails, photos, _json } = profile;
-      const nameParts = (displayName || username || _json.login).split(' ');
 
-      const skillsMap = await this.githubService.fetchUserSkills(accessToken);
-      const skillNames = Object.keys(skillsMap);
+      const bio = _json.bio;
 
-      const authenticatedUser = (req as any).user;
+      const rawName = displayName || username;
+      const nameParts = rawName.split(' ');
+
+      const { skills } = await this.githubService.getProfileData(accessToken, username);
+      const authenticatedUser = req.user as User | undefined;
 
       const user = await this.authService.validateGithubUser(
         {
           githubId: id,
-          email: emails[0].value,
-          username: username || _json.login,
-          githubUsername: username || _json.login,
+          email: emails?.[0]?.value,
+          username,
+          githubUsername: username,
           firstName: nameParts[0],
           lastName: nameParts.slice(1).join(' ') || '',
-          avatarUrl: photos[0]?.value || _json.avatar_url,
-          bio: _json.bio || '',
+          avatarUrl: photos?.[0]?.value,
+          bio: bio || '',
           password: '',
-          skills: skillNames,
+          skills: skills,
         },
         authenticatedUser,
       );
 
       done(null, user);
     } catch (error) {
-      done(error, null);
+      done(error instanceof Error ? error : new Error(String(error)), null);
     }
   }
 }

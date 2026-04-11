@@ -5,6 +5,17 @@ import { Strategy, VerifyCallback } from 'passport-google-oauth2';
 import config from '../../config';
 import { AuthService } from '../../../app/services/auth.service';
 
+interface GoogleProfile {
+  id: string;
+  email: string;
+  name: {
+    givenName: string;
+    familyName: string;
+  };
+  picture: string;
+  displayName: string;
+}
+
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(
@@ -22,24 +33,29 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   async validate(
     _accessToken: string,
     _refreshToken: string,
-    profile: any,
+    profile: GoogleProfile,
     done: VerifyCallback,
   ): Promise<void> {
-    const { name, email, picture } = profile;
-    const username = email
-      .split('@')[0]
-      .toLowerCase()
-      .replace(/[^a-z0-9_]/g, '');
+    try {
+      const { name, email, picture } = profile;
 
-    const user = this.authService.validateGoogleUser({
-      email,
-      username,
-      firstName: name.givenName,
-      lastName: name.familyName,
-      avatarUrl: picture,
-      password: '',
-    });
+      const username = email
+        .split('@')[0]
+        .toLowerCase()
+        .replace(/[^a-z0-9_]/g, '');
 
-    done(null, user);
+      const user = await this.authService.validateGoogleUser({
+        email,
+        username,
+        firstName: name.givenName,
+        lastName: name.familyName,
+        avatarUrl: picture,
+        password: '',
+      });
+
+      done(null, user);
+    } catch (error) {
+      done(error instanceof Error ? error : new Error(String(error)), null);
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Patch } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { Access } from '../../config/security/decorators/acces';
 import { UserRequest } from '../../config/security/decorators/user-request';
@@ -10,10 +10,17 @@ import {
 } from '@h.linker/libs';
 import { UserMapper } from '../utils/mappers/user.mapper';
 import { FullUser } from '../database/entities/user.entity';
+import { ConfigType } from '@nestjs/config';
+import { GithubService } from '../services/github.service';
+import config from '../../config/config';
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    @Inject(config.KEY) private configService: ConfigType<typeof config>,
+    private readonly githubService: GithubService,
+  ) {}
 
   @Get()
   async getAllUsers(): Promise<UsersResponse> {
@@ -25,8 +32,20 @@ export class UserController {
   async getByUsername(
     @Param('username') username: string,
   ): Promise<FullUserResponse> {
-    const user = await this.userService.findByUsername(username, true) as FullUser;
-    return UserMapper.getFullUserResponse(user);
+    const user = (await this.userService.findByUsername(
+      username,
+      true,
+    )) as FullUser;
+
+    const response = UserMapper.getFullUserResponse(user);
+
+    if (user.githubUsername) {
+      const systemToken = this.configService.github.systemToken;
+      const { insights } = await this.githubService.getProfileData(systemToken, user.githubUsername);
+      response.githubInsights = insights;
+    }
+
+    return response;
   }
 
   @Patch()
