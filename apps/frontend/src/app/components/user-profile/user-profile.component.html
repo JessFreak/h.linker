@@ -17,11 +17,28 @@
           <p class="bio">{{ userData.bio || 'No bio provided' }}</p>
         </div>
 
-        <div class="social-links">
-          <a mat-stroked-button class="github-btn" [href]="'https://github.com/' + userData.githubId" target="_blank">
-            <mat-icon>code</mat-icon> GitHub Profile
-          </a>
-        </div>
+        @if (userData.githubUsername) {
+          <div class="social-links">
+            <a mat-stroked-button
+               class="github-btn"
+               [href]="'https://github.com/' + userData.githubUsername"
+               target="_blank">
+              <mat-icon>code</mat-icon> GitHub Profile
+            </a>
+          </div>
+        } @else {
+          <div class="social-links">
+            <span class="h-text-secondary" style="font-size: 12px;">GitHub not connected</span>
+          </div>
+        }
+
+        @if (currentUser()?.id === userData.id) {
+          <div class="profile-actions">
+            <button mat-flat-button color="primary" routerLink="/profile/settings" class="edit-btn">
+              <mat-icon>settings</mat-icon> Edit Profile
+            </button>
+          </div>
+        }
 
         <div class="skills">
           <h3>SKILLS</h3>

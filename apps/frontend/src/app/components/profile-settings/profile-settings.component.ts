@@ -16,7 +16,7 @@ import {
   MatChipRow,
 } from '@angular/material/chips';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
-import { MatError, MatFormField, MatHint, MatInput, MatLabel } from '@angular/material/input';
+import { MatFormField, MatHint, MatInput, MatLabel } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import AuthService from '../../services/auth.service';
@@ -46,7 +46,6 @@ import { MatDialog } from '@angular/material/dialog';
     MatChipRow,
     MatIconButton,
     MatInput,
-    MatError,
   ],
 })
 export class ProfileSettingsComponent implements OnInit {

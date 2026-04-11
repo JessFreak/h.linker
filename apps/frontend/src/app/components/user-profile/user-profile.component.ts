@@ -1,4 +1,6 @@
 import { Component, inject, Input, signal } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { UserService } from '../../services/user.service';
 import { FullUserResponse } from '@h.linker/libs';
 import { MatCard } from '@angular/material/card';
@@ -8,12 +10,14 @@ import { MatChip, MatChipSet } from '@angular/material/chips';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatTab, MatTabGroup } from '@angular/material/tabs';
 import { NgOptimizedImage } from '@angular/common';
+import AuthService from '../../services/auth.service';
 
 @Component({
   selector: 'app-user-profile',
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.scss'],
   imports: [
+    RouterModule,
     MatCard,
     MatIcon,
     MatButton,
@@ -31,13 +35,15 @@ export class UserProfileComponent {
   }
 
   private userService = inject(UserService);
+  private authService = inject(AuthService); // Ін’єктуємо сервіс авторизації
 
-  user = signal<FullUserResponse | null>(null);
-  isLoading = signal(true);
+  public user = signal<FullUserResponse | null>(null);
+  public isLoading = signal(true);
+
+  public currentUser = toSignal(this.authService.user$);
 
   fetchProfile(username: string) {
     this.isLoading.set(true);
-
     this.userService.getByUsername(username).subscribe({
       next: (data) => {
         this.user.set(data);

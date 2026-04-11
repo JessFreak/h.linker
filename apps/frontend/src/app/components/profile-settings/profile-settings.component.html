@@ -11,20 +11,37 @@
     </mat-card>
 
     <nav class="settings-nav">
-      <a mat-button class="active" (click)="scrollToSection('profile')">
+      <a mat-button
+         class="active"
+         tabindex="0"
+         (click)="scrollToSection('profile')"
+         (keydown.enter)="scrollToSection('profile')">
         <mat-icon>person</mat-icon> Account & Bio
       </a>
 
-      <a mat-button (click)="scrollToSection('integrations')">
+      <a mat-button
+         tabindex="0"
+         (click)="scrollToSection('integrations')"
+         (keydown.enter)="scrollToSection('integrations')">
         <mat-icon>extension</mat-icon> Integrations
         <span class="badge">{{ connectedCount() }} connected</span>
       </a>
 
-      <a mat-button (click)="scrollToSection('skills')">
+      <a mat-button
+         tabindex="0"
+         (click)="scrollToSection('skills')"
+         (keydown.enter)="scrollToSection('skills')">
         <mat-icon>terminal</mat-icon> Skills & Tech Stack
       </a>
 
-      <a mat-button (click)="scrollToSection('security')">
+      <a mat-button tabindex="0">
+        <mat-icon>notifications</mat-icon> Notifications
+      </a>
+
+      <a mat-button
+         tabindex="0"
+         (click)="scrollToSection('security')"
+         (keydown.enter)="scrollToSection('security')">
         <mat-icon>security</mat-icon> Security
       </a>
 

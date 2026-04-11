@@ -5,6 +5,7 @@ export class UserResponse {
   id: string;
   email: string;
   username: string;
+  githubUsername: string | null;
   firstName: string;
   lastName: string | null;
   githubId: string | null;

@@ -113,3 +113,18 @@
     }
   }
 }
+
+.profile-actions {
+  margin-top: 8px;
+  width: 100%;
+
+  .edit-btn {
+    width: 100%;
+    border-radius: 8px;
+    font-weight: 600;
+
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
