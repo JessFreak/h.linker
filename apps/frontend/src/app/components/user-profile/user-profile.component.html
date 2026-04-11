@@ -63,34 +63,55 @@
     </aside>
 
     <main class="main-content">
-      <mat-card class="h-card insights-card">
-        <div class="card-header">
-          <div class="header-title">
-            <mat-icon>analytics</mat-icon> <span>GitHub Insights</span>
-          </div>
-        </div>
-
-        <div class="insights-grid">
-          <div class="insight-item">
-            <span class="insight-label h-text-secondary">TOTAL CONTRIBUTIONS</span>
-            <span class="insight-value">1,847</span>
-            <span class="insight-trend">↑ 12% from last month</span>
-          </div>
-          <div class="insight-item">
-            <span class="insight-label h-text-secondary">STARS RECEIVED</span>
-            <span class="insight-value">342</span>
-            <span class="insight-sub h-text-secondary">across 14 repos</span>
-          </div>
-          <div class="insight-item languages">
-            <span class="insight-label h-text-secondary">TOP LANGUAGES</span>
-            <div class="lang-row">
-              <span class="lang-name">TypeScript</span>
-              <mat-progress-bar mode="determinate" value="68"></mat-progress-bar>
-              <span class="lang-percent">68%</span>
+      @if (userData.githubInsights; as insights) {
+        <mat-card class="h-card insights-card">
+          <div class="card-header">
+            <div class="header-title">
+              <mat-icon>analytics</mat-icon> <span>GitHub Insights</span>
             </div>
           </div>
-        </div>
-      </mat-card>
+
+          <div class="insights-grid">
+            <div class="insight-item">
+              <span class="insight-label h-text-secondary">TOTAL CONTRIBUTIONS</span>
+              <span class="insight-value">{{ insights.totalContributions }}</span>
+              <span class="insight-trend">{{ insights.contributionTrend }}</span>
+            </div>
+
+            <div class="insight-item">
+              <span class="insight-label h-text-secondary">STARS RECEIVED</span>
+              <span class="insight-value">{{ insights.totalStars }}</span>
+              <span class="insight-sub h-text-secondary">across {{ insights.starredReposCount }} repos</span>
+            </div>
+
+            <div class="insight-item">
+              <span class="insight-label h-text-secondary">PUBLIC REPOS</span>
+              <span class="insight-value">{{ insights.publicReposCount }}</span>
+              <span class="insight-sub h-text-secondary">{{ insights.activeReposThisMonth }} active this month</span>
+            </div>
+
+            <div class="insight-item languages">
+              <span class="insight-label h-text-secondary">TOP LANGUAGES</span>
+              @for (lang of insights.topLanguages; track lang.name) {
+                <div class="lang-row">
+                  <div class="lang-info" style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                    <span class="lang-name" style="font-size: 12px;">{{ lang.name }}</span>
+                    <span class="lang-percent" style="font-size: 11px; opacity: 0.7;">{{ lang.percent }}%</span>
+                  </div>
+                  <mat-progress-bar mode="determinate" [value]="lang.percent" style="height: 6px; border-radius: 3px;"></mat-progress-bar>
+                </div>
+              }
+            </div>
+          </div>
+        </mat-card>
+      } @else {
+        <mat-card class="h-card insights-card empty-insights">
+          <div class="empty-state">
+            <mat-icon>analytics</mat-icon>
+            <p>Connect GitHub in settings to see your insights.</p>
+          </div>
+        </mat-card>
+      }
 
       <div class="tabs-container">
         <mat-tab-group class="h-tabs">

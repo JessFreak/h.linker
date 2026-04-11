@@ -53,18 +53,77 @@
 
 .insights-card {
   padding: 32px;
+
   .card-header {
-    display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px;
-    .header-title { display: flex; align-items: center; gap: 12px; }
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      color: var(--h-text-secondary);
+      text-transform: uppercase;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+    }
+
     mat-icon { color: var(--h-primary-blue); }
   }
+
   .insights-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+
     .insight-item {
-      padding: 20px; background: rgba(0, 0, 0, 0.2);
-      border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.03);
-      .insight-value { font-size: 36px; font-weight: 700; margin: 8px 0; display: block; }
-      .insight-trend { color: #4caf50; font-size: 12px; }
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+
+      .insight-label {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+
+      .insight-value {
+        font-size: 36px;
+        font-weight: 700;
+        margin: 12px 0;
+        display: block;
+        line-height: 1;
+      }
+
+      .insight-sub, .insight-trend {
+        font-size: 12px;
+        color: var(--h-safety-orange)
+      }
+
+      &.languages {
+        align-items: stretch;
+        text-align: left;
+
+        .insight-label {
+          text-align: center;
+          margin-bottom: 16px;
+        }
+
+        .lang-row {
+          margin-bottom: 12px;
+          &:last-child { margin-bottom: 0; }
+        }
+      }
     }
   }
 }
