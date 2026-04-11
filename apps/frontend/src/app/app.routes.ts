@@ -4,6 +4,7 @@ import { ProfileSettingsComponent } from './components/profile-settings/profile-
 import { guestGuard } from './utils/guards/guest.guard';
 import { MainPageComponent } from './components/main-page/main-page.component';
 import { authGuard } from './utils/guards/auth.guard';
+import { UserProfileComponent } from './components/user-profile/user-profile.component';
 
 export const appRoutes: Route[] = [
   { path: '', component: MainPageComponent, pathMatch: 'full' },
@@ -13,6 +14,10 @@ export const appRoutes: Route[] = [
     path: 'profile/settings',
     component: ProfileSettingsComponent,
     canActivate: [authGuard],
+  },
+  {
+    path: 'users/:username',
+    component: UserProfileComponent,
   },
   { path: '**', redirectTo: '' },
 ];

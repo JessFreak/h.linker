@@ -13,7 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
-import { AuthService } from '../../services/auth.service';
+import AuthService from '../../services/auth.service';
 import { NotificationService } from '../../utils/notification.service';
 
 @Component({

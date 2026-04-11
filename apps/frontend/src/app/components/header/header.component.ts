@@ -1,6 +1,7 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,15 +9,13 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { AuthService } from '../../services/auth.service';
 import { NotificationService } from '../../utils/notification.service';
-import { UserResponse } from '@h.linker/libs';
+import AuthService from '../../services/auth.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
   imports: [
-    CommonModule,
     RouterModule,
     MatToolbarModule,
     MatButtonModule,
@@ -35,7 +34,7 @@ export class HeaderComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly notify = inject(NotificationService);
 
-  public user = signal<UserResponse | null>(null);
+  public user = toSignal(this.authService.user$);
 
   ngOnInit(): void {
     const urlParams = new URLSearchParams(window.location.search);
@@ -51,14 +50,9 @@ export class HeaderComponent implements OnInit {
     }
 
     this.authService.setUser();
-
-    this.authService.user$.subscribe((userData) => {
-      this.user.set(userData);
-    });
   }
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/login']);
   }
 }

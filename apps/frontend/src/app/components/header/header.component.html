@@ -18,22 +18,23 @@
   </div>
 
   <div class="auth-section">
-    @if (authService.user$ | async; as currentUser) {
-      <div class="user-profile" routerLink="/profile">
+    @if (user(); as currentUser) {
+      <div class="user-profile" [routerLink]="['/users', currentUser.username]">
         <div class="user-details">
           <span class="full-name">{{ currentUser.firstName }} {{ currentUser.lastName }}</span>
-          <span class="username">&#64;{{ currentUser.username }}</span>
+          <span class="username h-text-secondary">&#64;{{ currentUser.username }}</span>
         </div>
+
         <div class="avatar-circle">
           @if (currentUser.avatarUrl) {
             <img [ngSrc]="currentUser.avatarUrl"
                  [alt]="currentUser.firstName"
                  width="40"
                  height="40"
-                 class="user-avatar-img"
+                 class="user-avatar-img h-avatar"
                  priority>
           } @else {
-            <mat-icon>account_circle</mat-icon>
+            <mat-icon class="h-text-secondary">account_circle</mat-icon>
           }
         </div>
       </div>

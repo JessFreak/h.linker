@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { Router } from '@angular/router';
+import { BehaviorSubject, Observable, tap, catchError, of } from 'rxjs';
 import {
   LoginDTO,
   RegisterDTO,
@@ -9,9 +10,11 @@ import {
 } from '@h.linker/libs';
 
 @Injectable({ providedIn: 'root' })
-export class AuthService {
+class AuthService {
   private http = inject(HttpClient);
+  private router = inject(Router);
   private readonly baseUrl = '/api/auth';
+  private readonly AUTH_KEY = 'isAuthorised';
 
   private readonly userSubject = new BehaviorSubject<UserResponse | null>(null);
   user$ = this.userSubject.asObservable();
@@ -23,7 +26,7 @@ export class AuthService {
   login(loginForm: LoginDTO): Observable<object> {
     return this.http.post(`${this.baseUrl}/login`, loginForm).pipe(
       tap(() => {
-        localStorage.setItem('isAuthorised', 'true');
+        this.setAuthState(true);
         this.setUser();
       }),
     );
@@ -33,36 +36,55 @@ export class AuthService {
     return this.http.get<UserResponse>(`${this.baseUrl}/me`).pipe(
       tap((user) => {
         this.userSubject.next(user);
-        localStorage.setItem('isAuthorised', 'true');
+        this.setAuthState(true);
+      }),
+      catchError((err) => {
+        this.clearAuthState();
+        return of(err);
       }),
     );
   }
 
-  updateUserState(user: UserResponse): void {
-    this.userSubject.next(user);
+  setUser(): void {
+    if (localStorage.getItem(this.AUTH_KEY) === 'true') {
+      this.getMe().subscribe();
+    }
   }
 
-  setUser(): void {
-    if (localStorage.getItem('isAuthorised') !== 'true') {
-      return;
-    }
+  logout(): void {
+    this.clearAuthState();
+    this.http
+      .post(`${this.baseUrl}/logout`, {}, { withCredentials: true })
+      .subscribe({
+        next: () => this.router.navigate(['/login']),
+        error: () => this.router.navigate(['/login']),
+      });
+  }
 
-    this.getMe().subscribe({
-      next: (user) => {
-        this.userSubject.next(user);
-      },
-      error: () => {
-        this.userSubject.next(null);
-        localStorage.removeItem('isAuthorised');
+  deleteMe(): void {
+    this.http.delete(`${this.baseUrl}/me`).subscribe({
+      next: () => {
+        this.clearAuthState();
+        this.router.navigate(['/login']);
       },
     });
   }
 
-  logout(): void {
-    localStorage.removeItem('isAuthorised');
-    this.userSubject.next(null);
+  private setAuthState(isAuth: boolean): void {
+    if (isAuth) {
+      localStorage.setItem(this.AUTH_KEY, 'true');
+    } else {
+      this.clearAuthState();
+    }
+  }
 
-    this.http.post(`${this.baseUrl}/logout`, {}, { withCredentials: true });
+  private clearAuthState(): void {
+    localStorage.removeItem(this.AUTH_KEY);
+    this.userSubject.next(null);
+  }
+
+  updateUserState(user: UserResponse): void {
+    this.userSubject.next(user);
   }
 
   loginWithGoogle(): void {
@@ -77,18 +99,6 @@ export class AuthService {
     window.location.href = `${this.baseUrl}/github/connect`;
   }
 
-  deleteMe(): void {
-    this.http.delete(`${this.baseUrl}/me`, {}).subscribe({
-      next: () => {
-        localStorage.removeItem('isAuthorised');
-        this.userSubject.next(null);
-      },
-      error: (err) => {
-        console.error('Failed to delete account', err);
-      },
-    });
-  }
-
   updatePassword(passwordForm: UpdatePasswordDTO): Observable<UserResponse> {
     return this.http.patch<UserResponse>(
       `${this.baseUrl}/password`,
@@ -96,3 +106,5 @@ export class AuthService {
     );
   }
 }
+
+export default AuthService;

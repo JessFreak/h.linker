@@ -1,0 +1,115 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+.profile-layout {
+  padding: 60px 20px;
+  gap: 40px;
+  grid-template-columns: 320px 1fr;
+
+  .sidebar {
+    .user-main-card {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding: 40px 24px;
+
+      .avatar-wrapper { width: 160px; height: 160px; margin: 0 auto; }
+
+      .user-info {
+        h1 { font-size: 26px; font-weight: 700; margin-bottom: 4px; }
+        .username {
+          color: var(--h-primary-blue);
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 14px;
+        }
+        .bio { font-size: 14px; line-height: 1.6; margin-top: 12px; }
+      }
+
+      .social-links { margin: 8px 0; }
+
+      .skills {
+        text-align: left;
+        h3 { font-size: 11px; letter-spacing: 1.5px; color: rgba(255, 255, 255, 0.5); margin-bottom: 16px; }
+      }
+    }
+  }
+
+  .main-content { gap: 48px; }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  .stat-box {
+    background: var(--h-bg-deep-navy);
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    .count { font-size: 26px; font-weight: 700; display: block; }
+    .label { font-size: 10px; text-transform: uppercase; }
+  }
+}
+
+.insights-card {
+  padding: 32px;
+  .card-header {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px;
+    .header-title { display: flex; align-items: center; gap: 12px; }
+    mat-icon { color: var(--h-primary-blue); }
+  }
+  .insights-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+    .insight-item {
+      padding: 20px; background: rgba(0, 0, 0, 0.2);
+      border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.03);
+      .insight-value { font-size: 36px; font-weight: 700; margin: 8px 0; display: block; }
+      .insight-trend { color: #4caf50; font-size: 12px; }
+    }
+  }
+}
+
+.tab-content { padding: 32px 0; min-height: 200px; display: flex; flex-direction: column; gap: 16px; }
+
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 60px;
+  border: 2px dashed rgba(255, 255, 255, 0.05); border-radius: 16px;
+  mat-icon { font-size: 48px; width: 48px; height: 48px; opacity: 0.3; }
+}
+
+.event-card, .team-card {
+  padding: 20px;
+  .event-header { display: flex; justify-content: space-between; align-items: center; }
+  h2, h3 { margin: 0; font-size: 18px; }
+  .view-link { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--h-primary-blue); text-decoration: none; }
+}
+
+.role-badge {
+  background: rgba(65, 105, 165, 0.1);
+  color: var(--h-primary-blue);
+  padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;
+}
+
+.badges-section {
+  padding-top: 40px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+
+  h3 { font-size: 22px; font-weight: 600; margin-bottom: 8px; }
+  .sub { margin-bottom: 32px; }
+
+  .badge-grid {
+    display: flex; gap: 24px;
+    .badge-circle {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: var(--h-bg-deep-navy);
+      border: 2px dashed rgba(255, 255, 255, 0.1);
+      display: flex; align-items: center; justify-content: center; font-size: 28px;
+      transition: all 0.3s ease;
+      cursor: help;
+
+      &:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.3); }
+      &.winner { border: 2px solid var(--h-safety-orange); box-shadow: 0 0 20px rgba(240, 136, 0, 0.2); }
+      &.ai { border: 2px solid var(--h-primary-blue); }
+    }
+  }
+}

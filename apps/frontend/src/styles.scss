@@ -1,5 +1,10 @@
 @use '@angular/material' as mat;
 
+* {
+  margin: 0;
+  padding: 0;
+}
+
 :root {
   --h-bg-deep-navy: #0D1117;    // Background (60%)
   --h-surface-gray: #30363D;    // Surface (30%)
@@ -34,6 +39,7 @@ html, body {
   height: 100%;
   margin: 0;
   background-color: var(--h-bg-deep-navy);
+  color: #FFFFFF; // ОСЬ ТУТ: тепер весь текст по дефолту білий
   font-family: 'Inter', sans-serif;
 }
 
@@ -73,4 +79,55 @@ html, body {
   .success-icon {
     color: #416945;
   }
+}
+
+::ng-deep {
+  .mat-mdc-form-field {
+    width: 100%;
+    .mdc-text-field--outline:not(.mdc-text-field--disabled) .mdc-notched-outline__leading,
+    .mdc-text-field--outline:not(.mdc-text-field--disabled) .mdc-notched-outline__notch,
+    .mdc-text-field--outline:not(.mdc-text-field--disabled) .mdc-notched-outline__trailing {
+      border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+  }
+
+  .h-tabs {
+    .mat-mdc-tab-header { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+    .mat-mdc-tab .mdc-tab__text-label { color: rgba(255, 255, 255, 0.6) !important; text-transform: none; }
+    .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label { color: white !important; font-weight: 600; }
+    .mat-mdc-tab-indicator__content { border-color: var(--h-primary-blue) !important; border-width: 3px !important; }
+  }
+
+  .mat-mdc-progress-bar {
+    --mdc-linear-progress-active-indicator-color: var(--h-primary-blue);
+    --mdc-linear-progress-track-color: rgba(255, 255, 255, 0.1);
+    height: 8px !important; border-radius: 4px;
+  }
+}
+
+.h-card {
+  background-color: var(--h-surface-gray) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.h-text-secondary {
+  color: rgba(255, 255, 255, 0.6) !important;
+  font-size: 13px;
+}
+
+.h-avatar {
+  border-radius: 50%;
+  border: 2px solid var(--h-primary-blue);
+  object-fit: cover;
+}
+
+.h-page-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
 }
