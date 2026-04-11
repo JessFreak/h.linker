@@ -1,40 +1,67 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Prisma, User } from '@prisma/client';
+import { FullUser, UserWithSkills } from '../entities/user.entity';
 
 @Injectable()
 export class UserRepository {
-  constructor (private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
+  private readonly FULL_USER_INCLUDE = {
+    skills: true,
+    createdHackathons: true,
+    memberships: {
+      include: {
+        team: {
+          include: {
+            participations: {
+              include: {
+                hackathon: true,
+              },
+            },
+          },
+        },
+      },
+    },
+  };
 
-  async create (data: Prisma.UserUncheckedCreateInput): Promise<User> {
+  async create(data: Prisma.UserUncheckedCreateInput): Promise<User> {
     return this.prisma.user.create({ data });
   }
 
-  async find (where: Prisma.UserWhereInput): Promise<User[]> {
+  async find(where: Prisma.UserWhereInput): Promise<User[]> {
     return this.prisma.user.findMany({ where });
   }
 
-  async findById (id: string): Promise<User> {
-    return this.prisma.user.findFirst({ where: { id }, include: { skills: true } });
+  async findById(id: string): Promise<UserWithSkills> {
+    return this.prisma.user.findFirst({
+      where: { id },
+      include: { skills: true },
+    });
   }
 
-  async findByEmail (email: string): Promise<User> {
+  async findByEmail(email: string): Promise<User> {
     return this.prisma.user.findFirst({ where: { email } });
   }
 
-  async findByUsername (username: string): Promise<User> {
-    return this.prisma.user.findFirst({ where: { username }, include: { skills: true, memberships: true} });
+  async findByUsername(username: string, full = false,): Promise<FullUser | User> {
+    return this.prisma.user.findFirst({
+      where: { username },
+      include: full ? this.FULL_USER_INCLUDE : undefined,
+    }) as Promise<FullUser | User>;
   }
 
-  async findByGithubId (githubId: string): Promise<User> {
+  async findByGithubId(githubId: string): Promise<User> {
     return this.prisma.user.findFirst({ where: { githubId } });
   }
 
-  async findMany (where: Prisma.UserWhereInput): Promise<User[]> {
+  async findMany(where: Prisma.UserWhereInput): Promise<User[]> {
     return this.prisma.user.findMany({ where });
   }
 
-  async updateById (id: string, data: Prisma.UserUncheckedUpdateInput): Promise<User> {
+  async updateById(
+    id: string,
+    data: Prisma.UserUncheckedUpdateInput,
+  ): Promise<UserWithSkills> {
     return this.prisma.user.update({
       where: { id },
       data,
@@ -42,7 +69,7 @@ export class UserRepository {
     });
   }
 
-  async deleteById (id: string): Promise<User> {
+  async deleteById(id: string): Promise<User> {
     return this.prisma.user.delete({ where: { id } });
   }
 }

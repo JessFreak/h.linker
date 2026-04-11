@@ -6,7 +6,7 @@ generator client {
   provider = "prisma-client-js"
 }
 
-enum HackatonStatus {
+enum HackathonStatus {
   DRAFT
   REGISTRATION
   ACTIVE
@@ -28,9 +28,9 @@ model Role {
 }
 
 model Category {
-  name                String             @id
-  usersCategories     UserCategory[]
-  hackatonsCategories HackatonCategory[]
+  name                 String              @id
+  usersCategories      UserCategory[]
+  hackathonsCategories HackathonCategory[]
 
   @@map("categories")
 }
@@ -46,11 +46,11 @@ model User {
   avatarUrl String? @map("avatar_url")
   password  String
 
-  ownedTeams       Team[]         @relation("TeamLeader")
-  createdHackatons Hackaton[]     @relation("HackatonCreator")
-  memberships      UserTeam[]
-  skills           UserCategory[]
-  juryRoles        Jury[]
+  ownedTeams        Team[]         @relation("TeamLeader")
+  createdHackathons Hackathon[]    @relation("HackathonCreator")
+  memberships       UserTeam[]
+  skills            UserCategory[]
+  juryRoles         Jury[]
 
   @@map("users")
 }
@@ -86,23 +86,23 @@ model UserTeam {
   @@map("users_teams")
 }
 
-model Hackaton {
-  id          String         @id @default(uuid())
-  creatorId   String         @map("creator_id")
+model Hackathon {
+  id          String          @id @default(uuid())
+  creatorId   String          @map("creator_id")
   title       String
   description String?
-  status      HackatonStatus @default(DRAFT)
-  startDate   DateTime       @map("start_date")
-  endDate     DateTime       @map("end_date")
-  imageUrl    String?        @map("image_url")
+  status      HackathonStatus @default(DRAFT)
+  startDate   DateTime        @map("start_date")
+  endDate     DateTime        @map("end_date")
+  imageUrl    String?         @map("image_url")
 
-  creator        User               @relation("HackatonCreator", fields: [creatorId], references: [id], onDelete: Cascade)
-  categories     HackatonCategory[]
+  creator        User                @relation("HackathonCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  categories     HackathonCategory[]
   criteria       Criterion[]
   jury           Jury[]
   participations Participation[]
 
-  @@map("hackatons")
+  @@map("hackathons")
 }
 
 model UserCategory {
@@ -115,56 +115,56 @@ model UserCategory {
   @@map("users_categories")
 }
 
-model HackatonCategory {
-  hackatonId String   @map("hackaton_id")
-  category   String
-  hackaton   Hackaton @relation(fields: [hackatonId], references: [id], onDelete: Cascade)
-  cat        Category @relation(fields: [category], references: [name], onDelete: Cascade)
+model HackathonCategory {
+  hackathonId String    @map("hackathon_id")
+  category    String
+  hackathon   Hackathon @relation(fields: [hackathonId], references: [id], onDelete: Cascade)
+  cat         Category  @relation(fields: [category], references: [name], onDelete: Cascade)
 
-  @@id([hackatonId, category])
-  @@map("hackatons_categories")
+  @@id([hackathonId, category])
+  @@map("hackathons_categories")
 }
 
 model Participation {
   id            String  @id @default(uuid())
   teamId        String  @map("team_id")
-  hackatonId    String  @map("hackaton_id")
+  hackathonId   String  @map("hackathon_id")
   githubRepoUrl String? @map("github_repo_url")
   finalScore    Float   @default(0) @map("final_score")
 
-  team     Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  hackaton Hackaton @relation(fields: [hackatonId], references: [id], onDelete: Cascade)
-  scores   Score[]
-  reviews  Review[]
+  team      Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  hackathon Hackathon @relation(fields: [hackathonId], references: [id], onDelete: Cascade)
+  scores    Score[]
+  reviews   Review[]
 
-  @@unique([teamId, hackatonId])
+  @@unique([teamId, hackathonId])
   @@map("participations")
 }
 
 model Criterion {
-  id         String @id @default(uuid())
-  hackatonId String @map("hackaton_id")
-  name       String
-  weight     Float
-  maxValue   Int    @default(10) @map("max_value")
+  id          String @id @default(uuid())
+  hackathonId String @map("hackathon_id")
+  name        String
+  weight      Float
+  maxValue    Int    @default(10) @map("max_value")
 
-  hackaton Hackaton @relation(fields: [hackatonId], references: [id], onDelete: Cascade)
-  scores   Score[]
+  hackathon Hackathon @relation(fields: [hackathonId], references: [id], onDelete: Cascade)
+  scores    Score[]
 
   @@map("criteria")
 }
 
 model Jury {
-  id         String @id @default(uuid())
-  userId     String @map("user_id")
-  hackatonId String @map("hackaton_id")
+  id          String @id @default(uuid())
+  userId      String @map("user_id")
+  hackathonId String @map("hackathon_id")
 
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  hackaton Hackaton @relation(fields: [hackatonId], references: [id], onDelete: Cascade)
-  scores   Score[]
-  reviews  Review[]
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hackathon Hackathon @relation(fields: [hackathonId], references: [id], onDelete: Cascade)
+  scores    Score[]
+  reviews   Review[]
 
-  @@unique([hackatonId, userId])
+  @@unique([hackathonId, userId])
   @@map("jury")
 }
 

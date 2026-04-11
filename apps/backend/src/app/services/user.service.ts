@@ -7,6 +7,7 @@ import { UserRepository } from '../database/repositories/user.repository';
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { CategoryService } from './category.service';
+import { FullUser, UserWithSkills } from '../database/entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -26,11 +27,14 @@ export class UserService {
     return this.userRepository.findByEmail(email);
   }
 
-  async findByUsername(username: string): Promise<User> {
-    return this.userRepository.findByUsername(username);
+  async findByUsername(
+    username: string,
+    full = false,
+  ): Promise<FullUser | User> {
+    return this.userRepository.findByUsername(username, full);
   }
 
-  async findById(id: string): Promise<User> {
+  async findById(id: string): Promise<UserWithSkills> {
     const user = await this.userRepository.findById(id);
     if (!user) throw new NotRegisteredException();
     return user;
@@ -44,15 +48,24 @@ export class UserService {
     return this.userRepository.findByGithubId(githubId);
   }
 
-  async updateGithubId(userId: string, githubId: string): Promise<User> {
+  async updateGithubId(
+    userId: string,
+    githubId: string,
+  ): Promise<UserWithSkills> {
     return this.userRepository.updateById(userId, { githubId });
   }
 
-  async updatePassword(userId: string, hashedPass: string): Promise<User> {
+  async updatePassword(
+    userId: string,
+    hashedPass: string,
+  ): Promise<UserWithSkills> {
     return this.userRepository.updateById(userId, { password: hashedPass });
   }
 
-  async updateProfile(userId: string, dto: UpdateUserDTO): Promise<User> {
+  async updateProfile(
+    userId: string,
+    dto: UpdateUserDTO,
+  ): Promise<UserWithSkills> {
     if (dto.username) {
       await this.checkUsernameUniqueness(dto.username, userId);
     }

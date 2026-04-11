@@ -2,8 +2,14 @@ import { Body, Controller, Get, Param, Patch } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { Access } from '../../config/security/decorators/acces';
 import { UserRequest } from '../../config/security/decorators/user-request';
-import { UpdateUserDTO, UserResponse, UsersResponse } from '@h.linker/libs';
+import {
+  FullUserResponse,
+  UpdateUserDTO,
+  UserResponse,
+  UsersResponse,
+} from '@h.linker/libs';
 import { UserMapper } from '../utils/mappers/user.mapper';
+import { FullUser } from '../database/entities/user.entity';
 
 @Controller('users')
 export class UserController {
@@ -18,9 +24,9 @@ export class UserController {
   @Get(':username')
   async getByUsername(
     @Param('username') username: string,
-  ): Promise<UserResponse> {
-    const user = await this.userService.findByUsername(username);
-    return UserMapper.getUserResponse(user);
+  ): Promise<FullUserResponse> {
+    const user = await this.userService.findByUsername(username, true) as FullUser;
+    return UserMapper.getFullUserResponse(user);
   }
 
   @Patch()

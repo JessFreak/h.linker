@@ -1,3 +1,6 @@
+import { Hackathon } from './hackathon.response';
+import { Team } from './team.response';
+
 export class UserResponse {
   id: string;
   email: string;
@@ -12,4 +15,22 @@ export class UserResponse {
 
 export class UsersResponse {
   users: UserResponse[];
+}
+
+export class UserTeamResponse extends Team {
+  userRole: string;
+  status: string;
+}
+
+export class UserProjectResponse {
+  hackathonTitle: string;
+  repoUrl: string | null;
+  teamName: string;
+  finalScore: number;
+}
+
+export class FullUserResponse extends UserResponse {
+  createdHackathons: Hackathon[];
+  teams: UserTeamResponse[];
+  projects: UserProjectResponse[];
 }
