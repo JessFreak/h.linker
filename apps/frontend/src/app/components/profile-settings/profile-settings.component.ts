@@ -217,7 +217,7 @@ export class ProfileSettingsComponent implements OnInit {
       const updateData: UpdateUserDTO = {
         ...this.profileForm.value,
         avatarUrl: this.user()?.avatarUrl,
-        skills: this.skills(), // Відправляємо актуальний масив скілів
+        skills: this.skills(),
       };
 
       this.userService.updateProfile(updateData).subscribe({

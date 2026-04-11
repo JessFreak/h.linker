@@ -11,6 +11,7 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatTab, MatTabGroup } from '@angular/material/tabs';
 import { NgOptimizedImage } from '@angular/common';
 import AuthService from '../../services/auth.service';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-user-profile',
@@ -27,6 +28,7 @@ import AuthService from '../../services/auth.service';
     MatTabGroup,
     MatTab,
     NgOptimizedImage,
+    MatProgressSpinner,
   ],
 })
 export class UserProfileComponent {

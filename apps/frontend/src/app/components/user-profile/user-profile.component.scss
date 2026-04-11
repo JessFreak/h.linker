@@ -1,6 +1,29 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
+.profile-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 100px);
+  gap: 16px;
+
+  p {
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+}
+
+.profile-layout {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .profile-layout {
   padding: 60px 20px;
   gap: 40px;
