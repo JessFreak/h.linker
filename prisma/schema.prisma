@@ -36,15 +36,16 @@ model Category {
 }
 
 model User {
-  id        String  @id @default(uuid())
-  email     String  @unique
-  username  String  @unique
-  firstName String  @map("first_name")
-  lastName  String? @map("last_name")
-  githubId  String? @unique @map("github_id")
-  bio       String?
-  avatarUrl String? @map("avatar_url")
-  password  String
+  id             String  @id @default(uuid())
+  email          String  @unique
+  username       String  @unique
+  firstName      String  @map("first_name")
+  lastName       String? @map("last_name")
+  githubId       String? @unique @map("github_id")
+  githubUsername String? @unique @map("github_username")
+  bio            String?
+  avatarUrl      String? @map("avatar_url")
+  password       String
 
   ownedTeams        Team[]         @relation("TeamLeader")
   createdHackathons Hackathon[]    @relation("HackathonCreator")

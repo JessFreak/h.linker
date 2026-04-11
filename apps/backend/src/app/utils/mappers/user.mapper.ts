@@ -19,6 +19,7 @@ export class UserMapper {
       avatarUrl: user.avatarUrl,
       bio: user.bio,
       githubId: user.githubId,
+      githubUsername: user.githubUsername,
       skills: user.skills?.map((uc) => uc.category) || [],
     };
   }

@@ -64,7 +64,7 @@ export class AuthService {
     currentUser?: User,
   ): Promise<User> {
     const user = currentUser
-      ? await this.handleAccountLinking(currentUser, gitHub.githubId)
+      ? await this.handleAccountLinking(currentUser, gitHub.githubId, gitHub.githubUsername)
       : await this.handleGithubAuth(gitHub);
 
     if (skills?.length) {
@@ -79,6 +79,7 @@ export class AuthService {
   private async handleAccountLinking(
     user: User,
     githubId: string,
+    githubUsername: string,
   ): Promise<User> {
     const linkedUser = await this.userService.findByGithubId(githubId);
 
@@ -88,7 +89,7 @@ export class AuthService {
       );
     }
 
-    return this.userService.updateGithubId(user.id, githubId);
+    return this.userService.updateGithub(user.id, githubId, githubUsername);
   }
 
   private async handleGithubAuth(data: GithubUser): Promise<User> {
@@ -97,7 +98,7 @@ export class AuthService {
 
     user = await this.userService.findByEmail(data.email);
     if (user) {
-      return this.userService.updateGithubId(user.id, data.githubId);
+      return this.userService.updateGithub(user.id, data.githubId, data.githubUsername);
     }
 
     return this.userService.create(data);

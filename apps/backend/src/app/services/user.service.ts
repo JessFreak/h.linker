@@ -48,11 +48,12 @@ export class UserService {
     return this.userRepository.findByGithubId(githubId);
   }
 
-  async updateGithubId(
+  async updateGithub(
     userId: string,
     githubId: string,
+    githubUsername: string,
   ): Promise<UserWithSkills> {
-    return this.userRepository.updateById(userId, { githubId });
+    return this.userRepository.updateById(userId, { githubId, githubUsername });
   }
 
   async updatePassword(

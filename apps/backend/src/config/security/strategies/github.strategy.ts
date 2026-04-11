@@ -44,6 +44,7 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
           githubId: id,
           email: emails[0].value,
           username: username || _json.login,
+          githubUsername: username || _json.login,
           firstName: nameParts[0],
           lastName: nameParts.slice(1).join(' ') || '',
           avatarUrl: photos[0]?.value || _json.avatar_url,

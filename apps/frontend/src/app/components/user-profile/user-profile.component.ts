@@ -35,11 +35,10 @@ export class UserProfileComponent {
   }
 
   private userService = inject(UserService);
-  private authService = inject(AuthService); // Ін’єктуємо сервіс авторизації
+  private authService = inject(AuthService);
 
   public user = signal<FullUserResponse | null>(null);
   public isLoading = signal(true);
-
   public currentUser = toSignal(this.authService.user$);
 
   fetchProfile(username: string) {
