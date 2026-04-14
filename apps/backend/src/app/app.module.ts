@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import config from '../config/config';
 import { join } from 'path';
 import { CacheModule } from '@nestjs/cache-manager';
+import { TeamModule } from './modules/team.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { CacheModule } from '@nestjs/cache-manager';
     PrismaModule,
     UserModule,
     AuthModule,
+    TeamModule,
   ],
   controllers: [AppController],
   providers: [AppService],
