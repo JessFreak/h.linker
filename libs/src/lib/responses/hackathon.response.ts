@@ -1,6 +1,6 @@
 import { HackathonStatus } from '@prisma/client';
 
-export class Hackathon {
+export interface Hackathon {
   id: string;
   title: string;
   description: string | null;

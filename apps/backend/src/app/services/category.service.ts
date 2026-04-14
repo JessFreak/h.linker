@@ -5,7 +5,7 @@ import { CategoryRepository } from '../database/repositories/category.repository
 export class CategoryService {
   constructor(private readonly categoryRepository: CategoryRepository) {}
 
-  async syncUserSkills(userId: string, skills: string[]) {
+  async syncUserSkills(userId: string, skills: string[]): Promise<void> {
     const syncTasks = skills.map(async (skill) => {
       await this.categoryRepository.upsertCategory(skill);
 
@@ -15,7 +15,7 @@ export class CategoryService {
     await Promise.all(syncTasks);
   }
 
-  async deleteUserSkills(userId: string) {
+  async deleteUserSkills(userId: string): Promise<void> {
     await this.categoryRepository.deleteUserSkills(userId);
   }
 }

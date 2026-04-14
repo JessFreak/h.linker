@@ -1,18 +1,19 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
-import { Role } from '@prisma/client';
 import { RoleService } from '../services/role.service';
+import { RoleResponse, RolesResponse } from '@h.linker/libs';
 
 @Controller('roles')
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
   @Get()
-  async getAll(): Promise<Role[]> {
-    return this.roleService.getAll();
+  async getAll(): Promise<RolesResponse> {
+    const roles = await this.roleService.getAll()
+    return { roles };
   }
 
   @Post()
-  async create(@Body('name') name: string): Promise<Role> {
+  async create(@Body('name') name: string): Promise<RoleResponse> {
     return this.roleService.create(name);
   }
 }

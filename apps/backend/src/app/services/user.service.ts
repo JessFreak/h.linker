@@ -1,5 +1,5 @@
 import { NotRegisteredException } from '../utils/exceptions/not-registered.exception';
-import { AlreadyRegisteredException } from '../utils/exceptions/already-registered.exception';
+import { AlreadyExistsException } from '../utils/exceptions/already-exists.exception';
 import { RegisterDTO, UpdateUserDTO } from '@h.linker/libs';
 import { ExternalUser } from '../utils/external-users';
 import * as bcrypt from 'bcryptjs';
@@ -40,7 +40,7 @@ export class UserService {
     return user;
   }
 
-  async find(): Promise<User[]> {
+  async getAll(): Promise<User[]> {
     return this.userRepository.find({});
   }
 
@@ -88,7 +88,7 @@ export class UserService {
   async checkEmailUniqueness(email: string, userId?: string): Promise<void> {
     const user = await this.userRepository.findByEmail(email);
     if (user && user.id !== userId) {
-      throw new AlreadyRegisteredException('User', 'email');
+      throw new AlreadyExistsException('User', 'email');
     }
   }
 
@@ -98,7 +98,7 @@ export class UserService {
   ): Promise<void> {
     const user = await this.userRepository.findByUsername(username);
     if (user && user.id !== userId) {
-      throw new AlreadyRegisteredException('User', 'username');
+      throw new AlreadyExistsException('User', 'username');
     }
   }
 }

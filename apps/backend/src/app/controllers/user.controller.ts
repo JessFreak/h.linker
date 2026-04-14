@@ -24,7 +24,7 @@ export class UserController {
 
   @Get()
   async getAllUsers(): Promise<UsersResponse> {
-    const users = await this.userService.find();
+    const users = await this.userService.getAll();
     return UserMapper.getUsersResponse(users);
   }
 

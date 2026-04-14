@@ -1,7 +1,7 @@
 import { Hackathon } from './hackathon.response';
-import { Team } from './team.response';
+import { TeamResponse } from './team.response';
 
-export class UserResponse {
+export interface UserResponse {
   id: string;
   email: string;
   username: string;
@@ -14,16 +14,16 @@ export class UserResponse {
   skills: string[];
 }
 
-export class UsersResponse {
+export interface UsersResponse {
   users: UserResponse[];
 }
 
-export class UserTeamResponse extends Team {
+export interface UserTeamResponse extends TeamResponse {
   userRole: string;
   status: string;
 }
 
-export class UserProjectResponse {
+export interface UserProjectResponse {
   hackathonTitle: string;
   repoUrl: string | null;
   teamName: string;
@@ -45,7 +45,7 @@ export interface GitHubInsights {
   topLanguages: GitHubLanguage[];
 }
 
-export class FullUserResponse extends UserResponse {
+export interface FullUserResponse extends UserResponse {
   createdHackathons: Hackathon[];
   teams: UserTeamResponse[];
   projects: UserProjectResponse[];

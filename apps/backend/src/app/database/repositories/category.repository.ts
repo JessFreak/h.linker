@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
+import { Category } from '@prisma/client';
 
 @Injectable()
 export class CategoryRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async upsertCategory(name: string) {
+  async upsertCategory(name: string): Promise<Category> {
     return this.prisma.category.upsert({
       where: { name },
       update: {},
