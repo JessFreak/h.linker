@@ -13,6 +13,11 @@ enum HackathonStatus {
   FINISHED
 }
 
+enum UserTeamType {
+  INVITATION
+  REQUEST
+}
+
 enum UserTeamStatus {
   PENDING
   ACCEPTED
@@ -76,7 +81,7 @@ model UserTeam {
   teamId   String         @map("team_id")
   roleName String         @map("role_name")
   status   UserTeamStatus @default(PENDING)
-  type     String?
+  type     UserTeamType
   message  String?
   created  DateTime       @default(now())
 
@@ -84,6 +89,7 @@ model UserTeam {
   team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
   role Role @relation(fields: [roleName], references: [name])
 
+  @@unique([userId, teamId])
   @@map("users_teams")
 }
 
