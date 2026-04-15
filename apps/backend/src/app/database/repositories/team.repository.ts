@@ -7,12 +7,12 @@ import { TeamWithMembers } from '../entities/team.entity';
 export class TeamRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  private readonly include: {
+  private readonly include = {
     members: {
       include: {
-        user: true;
-      };
-    };
+        user: true,
+      },
+    },
   };
 
   async create(
@@ -27,7 +27,7 @@ export class TeamRepository {
         members: {
           create: {
             userId: data.leaderId,
-            roleName: 'LEADER',
+            roleName: 'Team Lead',
             type: UserTeamType.REQUEST,
             status: UserTeamStatus.ACCEPTED,
           },

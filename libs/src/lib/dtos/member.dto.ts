@@ -5,7 +5,13 @@ import {
   IsUUID,
   IsNotEmpty,
 } from 'class-validator';
-import { UserTeamType } from '@prisma/client';
+
+export enum MemberStatus {
+  PENDING = 'PENDING',
+  ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED',
+  LEFT = 'LEFT',
+}
 
 export class AddMemberDTO {
   @IsUUID()
@@ -13,10 +19,10 @@ export class AddMemberDTO {
 
   @IsString()
   @IsNotEmpty()
-    roleName: string
+    roleName: string;
 
-  @IsEnum(UserTeamType)
-    type: UserTeamType;
+  @IsEnum(['INVITATION', 'REQUEST'])
+    type: 'INVITATION' | 'REQUEST';
 
   @IsString()
   @IsOptional()

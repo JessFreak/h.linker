@@ -1,0 +1,74 @@
+<div class="h-page-layout">
+  <aside class="filters-sidebar">
+    <h2 class="mat-headline-3">Discovery Filters</h2>
+
+    <div class="filter-group">
+      <mat-checkbox
+        color="primary"
+        [checked]="showOnlyMyTeams()"
+        (change)="toggleMyTeams()">
+        My Teams
+      </mat-checkbox>
+
+      <mat-checkbox
+        color="primary"
+        [checked]="showOnlyIAMLeader()"
+        (change)="toggleLeaderTeams()">
+        I am Leader
+      </mat-checkbox>
+    </div>
+
+    <button mat-flat-button color="primary" class="create-btn" (click)="openCreateDialog()">
+      <mat-icon>add</mat-icon> Create Team
+    </button>
+  </aside>
+
+  <main class="teams-grid">
+    <div class="header">
+      <h1 class="mat-headline-2">Teams</h1>
+      <span class="h-text-secondary">{{ filteredTeams().length }} teams match criteria</span>
+    </div>
+
+    <div class="grid">
+      @for (team of filteredTeams(); track team.id) {
+        <div class="h-card team-card">
+          <div class="card-header">
+            <h3 class="mat-headline-3">{{ team.name }}</h3>
+
+            @if (team.leaderId === currentUser()?.id) {
+              <span class="badge leader-badge">Leader</span>
+            } @else if (isMember(team)) {
+              <span class="badge member-badge">Member</span>
+            }
+          </div>
+
+          <p class="h-text-secondary description">
+            {{ team.description || 'No description provided.' }}
+          </p>
+
+          <div class="footer">
+            <div class="members-info">
+              <mat-icon class="h-text-secondary">groups</mat-icon>
+              <span>{{ team.members?.length || 0 }} members</span>
+            </div>
+
+            <div class="actions">
+              <button mat-button color="primary" [routerLink]="['/teams', team.id]">Details</button>
+
+              @if (team.leaderId !== currentUser()?.id && !isMember(team)) {
+                <button mat-flat-button color="accent" (click)="openApplyDialog(team)">
+                  Join Team
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      } @empty {
+        <div class="empty-state">
+          <mat-icon class="h-text-secondary">search_off</mat-icon>
+          <p class="h-text-secondary">No teams found. Try changing filters or create your own!</p>
+        </div>
+      }
+    </div>
+  </main>
+</div>

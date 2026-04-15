@@ -5,6 +5,7 @@ import {
   MaxLength,
   MinLength,
   IsUrl,
+  ValidateIf,
 } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
 
@@ -22,6 +23,7 @@ export class CreateTeamDTO {
 
   @IsString()
   @IsOptional()
+  @ValidateIf((o) => o.communicationLink && o.communicationLink !== '')
   @IsUrl()
     communicationLink?: string;
 }

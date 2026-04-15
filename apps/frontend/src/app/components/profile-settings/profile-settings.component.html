@@ -120,7 +120,7 @@
                 <strong>GitHub</strong>
               </div>
               <span class="h-text-secondary">
-                {{ user()?.githubId ? 'Connected as ' + user()?.username : 'Sync repositories and skills' }}
+                {{ user()?.githubId ? 'Connected as ' + user()?.githubUsername : 'Sync repositories and skills' }}
               </span>
             </div>
             @if (user()?.githubId) {

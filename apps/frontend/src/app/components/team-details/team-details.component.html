@@ -1,0 +1,110 @@
+<div class="h-page-layout team-details-container">
+
+  <header class="team-header">
+    <div class="title-group">
+      <h1 class="mat-headline-1">{{ team()?.name }}</h1>
+    </div>
+
+    <div class="header-actions">
+      @if (currentUser()) {
+        @if (isLeader()) {
+          <button mat-stroked-button color="primary">Edit Team</button>
+        }
+        <button mat-stroked-button color="warn">Leave Team</button>
+      }
+    </div>
+  </header>
+
+  <div class="main-column">
+
+    <section class="h-card about-card">
+      <div class="section-label">TEAM OVERVIEW</div>
+      <p class="h-text-secondary description">
+        {{ team()?.description || 'This team hasn’t added a description yet.' }}
+      </p>
+    </section>
+
+    <section class="h-card repo-list-card">
+      <div class="section-label">TEAM REPOSITORIES</div>
+      <div class="repo-list">
+        <div class="repo-item">
+          <div class="repo-info">
+            <mat-icon>folder</mat-icon>
+            <span class="code-tag">h-linker-core</span>
+          </div>
+          <a href="#" class="mat-button mat-primary">View on GitHub</a>
+        </div>
+
+        <div class="repo-item">
+          <div class="repo-info">
+            <mat-icon>folder</mat-icon>
+            <span class="code-tag">ai-accessibility-agent</span>
+          </div>
+          <a href="#" class="mat-button mat-primary">View on GitHub</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="h-card history-card">
+      <div class="section-label">HACKATHON HISTORY</div>
+      <div class="history-list">
+        <div class="history-item">
+          <div class="event-info">
+            <div class="event-name">Global AI Hack 2026</div>
+            <div class="h-text-secondary">Rank: #4 | Score: 91.4</div>
+          </div>
+          <mat-chip class="code-tag">Finished</mat-chip>
+        </div>
+
+        <div class="history-item">
+          <div class="event-info">
+            <div class="event-name">Kyiv KPI Tech Week</div>
+            <div class="h-text-secondary">Rank: #1 | Score: 98.0</div>
+          </div>
+          <mat-chip class="code-tag">Winner</mat-chip>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <aside class="sidebar-column">
+    <section class="h-card chat-card">
+      <div class="section-label">COMMUNICATION</div>
+      <button mat-flat-button color="accent" class="w-100" (click)="openChat()">
+        Open Team Chat <mat-icon>send</mat-icon>
+      </button>
+      <div class="chat-caption h-text-secondary">
+        Link provided by Team Lead
+      </div>
+    </section>
+
+    <section class="h-card members-card">
+      <div class="section-label">MEMBERS ({{ team()?.members?.length || 0 }} / 5)</div>
+      <div class="members-list">
+        @for (member of team()?.members; track member.id) {
+          <div class="member-item">
+            <img
+              [src]="member.avatarUrl || 'assets/default-avatar.png'"
+              [alt]="member.username + ' avatar'"
+              class="h-avatar-sm"
+            >
+            <div class="member-info">
+              <span class="username">{{ member.username }}</span>
+              <span class="role">{{ member.roleName }}</span>
+            </div>
+            <span class="badge" [class.leader]="member.id === team()?.leaderId">
+              {{ member.id === team()?.leaderId ? 'Leader' : 'Member' }}
+            </span>
+          </div>
+        }
+      </div>
+
+      @if (isLeader()) {
+        <button mat-button color="primary" class="w-100 invite-btn">
+          <mat-icon>person_add</mat-icon> Invite Members
+        </button>
+      }
+    </section>
+  </aside>
+
+</div>
