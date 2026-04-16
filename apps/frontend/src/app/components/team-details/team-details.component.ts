@@ -1,5 +1,5 @@
 import { Component, inject, Input, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -8,6 +8,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { TeamService } from '../../services/team.service';
 import AuthService from '../../services/auth.service';
 import { TeamResponse } from '@h.linker/libs';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-team-details',
@@ -18,6 +19,8 @@ import { TeamResponse } from '@h.linker/libs';
     MatChipsModule,
     MatIconModule,
     MatDividerModule,
+    NgOptimizedImage,
+    RouterLink,
   ],
   templateUrl: './team-details.component.html',
   styleUrls: ['./team-details.component.scss'],

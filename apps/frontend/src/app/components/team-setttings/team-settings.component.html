@@ -1,0 +1,115 @@
+<div class="h-page-layout settings-container">
+  <aside class="settings-sidebar">
+    <div class="h-card mini-card">
+      <div>
+        <mat-icon>groups</mat-icon>
+      </div>
+      <h3>{{ team()?.name }}</h3>
+      <p class="h-text-secondary">Team Settings</p>
+    </div>
+
+    <nav class="settings-nav">
+      <a mat-button class="active" tabindex="0"
+         (click)="scrollToSection('general')"
+         (keydown.enter)="scrollToSection('general')">
+        <mat-icon>info</mat-icon> General Info
+      </a>
+      <a mat-button tabindex="0"
+         (click)="scrollToSection('members')"
+         (keydown.enter)="scrollToSection('members')">
+        <mat-icon>people</mat-icon> Members & Requests
+        @if (pendingRequests().length > 0) {
+          <span class="badge warn">{{ pendingRequests().length }}</span>
+        }
+      </a>
+      <a mat-button tabindex="0"
+         (click)="scrollToSection('danger')"
+         (keydown.enter)="scrollToSection('danger')">
+        <mat-icon>report_problem</mat-icon> Danger Zone
+      </a>
+
+      <button mat-button class="back-btn" [routerLink]="['/teams', team()?.id]">
+        <mat-icon>arrow_back</mat-icon> Back to Team Page
+      </button>
+    </nav>
+  </aside>
+
+  <main class="settings-content">
+    <h1>Manage Team</h1>
+
+    <form [formGroup]="teamForm">
+      <app-settings-section id="general" title="General Information">
+        <div class="fields-column">
+          <mat-form-field appearance="outline">
+            <mat-label>Team Name</mat-label>
+            <input matInput formControlName="name">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description" rows="4"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Communication Link (Discord/Telegram)</mat-label>
+            <input matInput formControlName="communicationLink">
+            <mat-icon matSuffix>link</mat-icon>
+          </mat-form-field>
+        </div>
+      </app-settings-section>
+
+      <app-settings-section id="members" [title]="'Join Requests (' + pendingRequests().length + ')'">
+        <div class="request-list">
+          @for (req of pendingRequests(); track req.id) {
+            <div class="request-item">
+              <div class="user-info">
+                <img
+                  [ngSrc]="req.avatarUrl || 'https://ui-avatars.com/api/?name=' + req.username"
+                  width="32" height="32" class="h-avatar-sm"
+                  [alt]="req.username + ' avatar'">
+                <span>{{ req.username }} <small>as {{ req.roleName }}</small></span>
+              </div>
+              <div class="actions">
+                <button mat-icon-button color="primary" (click)="handleRequest(req.id, 'ACCEPTED')">
+                  <mat-icon>check_circle</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="handleRequest(req.id, 'REJECTED')">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </div>
+            </div>
+          } @empty {
+            <p class="h-text-secondary">No pending requests.</p>
+          }
+        </div>
+      </app-settings-section>
+
+      <app-settings-section id="danger" title="Danger Zone" class="danger-zone">
+        <div class="danger-item">
+          <div class="info">
+            <strong>Transfer Ownership</strong>
+            <p class="h-text-secondary">Assign another member as the team leader.</p>
+          </div>
+          <button mat-stroked-button color="primary">Transfer</button>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="danger-item">
+          <div class="info">
+            <strong>Disband Team</strong>
+            <p class="h-text-secondary">This action is permanent and cannot be undone.</p>
+          </div>
+          <button mat-flat-button color="warn" (click)="onDeleteTeam()">Disband Team</button>
+        </div>
+      </app-settings-section>
+    </form>
+  </main>
+
+  <app-settings-footer
+    [isDirty]="teamForm.dirty"
+    [isSaving]="isSaving()"
+    (vase)="onSave()"
+    (discard)="loadTeamData(team()!.id)">
+  </app-settings-footer>
+</div>

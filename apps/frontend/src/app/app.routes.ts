@@ -7,6 +7,7 @@ import { authGuard } from './utils/guards/auth.guard';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { TeamsComponent } from './components/teams/teams.component';
 import { TeamDetailsComponent } from './components/team-details/team-details.component';
+import { TeamSettingsComponent } from './components/team-setttings/team-settings.component';
 
 export const appRoutes: Route[] = [
   { path: '', component: MainPageComponent, pathMatch: 'full' },
@@ -20,5 +21,6 @@ export const appRoutes: Route[] = [
   { path: 'users/:username', component: UserProfileComponent },
   { path: 'teams', component: TeamsComponent },
   { path: 'teams/:id', component: TeamDetailsComponent },
+  { path: 'teams/:id/settings', component: TeamSettingsComponent },
   { path: '**', redirectTo: '' },
 ];

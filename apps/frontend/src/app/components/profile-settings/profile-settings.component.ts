@@ -15,7 +15,6 @@ import {
   MatChipRemove,
   MatChipRow,
 } from '@angular/material/chips';
-import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatFormField, MatHint, MatInput, MatLabel } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -25,20 +24,19 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ImageUploadService } from '../../services/image-upload.service';
 import { ConfirmDeleteDialogComponent } from './confirm-delete-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { SettingsFooterComponent } from '../settings/settings-footer.component';
+import { SettingsSectionComponent } from '../settings/settings-section.component';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-profile-settings',
   templateUrl: './profile-settings.component.html',
-  styleUrls: ['./profile-settings.component.scss'],
+  styleUrls: ['../settings/settings.scss' ,'./profile-settings.component.scss'],
   imports: [
     MatChipGrid,
-    MatCardContent,
     MatChipRemove,
-    MatCardHeader,
-    MatCard,
     MatLabel,
     MatHint,
-    MatCardTitle,
     MatFormField,
     MatIcon,
     ReactiveFormsModule,
@@ -46,6 +44,9 @@ import { MatDialog } from '@angular/material/dialog';
     MatChipRow,
     MatIconButton,
     MatInput,
+    SettingsFooterComponent,
+    SettingsSectionComponent,
+    NgOptimizedImage,
   ],
 })
 export class ProfileSettingsComponent implements OnInit {
@@ -137,6 +138,7 @@ export class ProfileSettingsComponent implements OnInit {
           bio: userData.bio,
           username: userData.username,
         });
+        this.profileForm.markAsPristine();
       }
     });
   }

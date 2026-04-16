@@ -1,0 +1,22 @@
+.settings-footer {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background-color: rgba(13, 17, 23, 0.95); backdrop-filter: blur(10px);
+  border-top: 1px solid var(--h-surface-gray);
+  padding: 16px 40px; display: flex; justify-content: space-between; align-items: center;
+  z-index: 1000;
+
+  .status { display: flex; align-items: center; gap: 10px; }
+  .dot {
+    width: 10px; height: 10px; border-radius: 50%; background: #4caf50;
+    &.dirty {
+      background: var(--h-safety-orange);
+      box-shadow: 0 0 10px var(--h-safety-orange);
+      animation: pulse 2s infinite;
+    }
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.6; }
+}

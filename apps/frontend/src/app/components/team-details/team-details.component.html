@@ -8,7 +8,7 @@
     <div class="header-actions">
       @if (currentUser()) {
         @if (isLeader()) {
-          <button mat-stroked-button color="primary">Edit Team</button>
+          <button mat-stroked-button [routerLink]="['/teams', team()?.id, 'settings']" color="primary">Edit Team</button>
         }
         <button mat-stroked-button color="warn">Leave Team</button>
       }
@@ -79,13 +79,15 @@
     </section>
 
     <section class="h-card members-card">
-      <div class="section-label">MEMBERS ({{ team()?.members?.length || 0 }} / 5)</div>
+      <div class="section-label">MEMBERS ({{ team()?.members?.length || 0 }})</div>
       <div class="members-list">
         @for (member of team()?.members; track member.id) {
           <div class="member-item">
             <img
-              [src]="member.avatarUrl || 'assets/default-avatar.png'"
+              [ngSrc]="member.avatarUrl || 'https://ui-avatars.com/api/?name=' + member.username"
               [alt]="member.username + ' avatar'"
+              width="32"
+              height="32"
               class="h-avatar-sm"
             >
             <div class="member-info">
