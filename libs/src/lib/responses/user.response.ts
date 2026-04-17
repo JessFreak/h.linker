@@ -20,7 +20,6 @@ export interface UsersResponse {
 
 export interface UserTeamResponse extends TeamResponse {
   userRole: string;
-  status: string;
 }
 
 export interface UserProjectResponse {

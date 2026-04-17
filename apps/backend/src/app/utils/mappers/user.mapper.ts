@@ -34,26 +34,18 @@ export class UserMapper {
     const base = this.getUserResponse(user);
 
     const teams: UserTeamResponse[] = user.memberships.map((m) => ({
-      id: m.team.id,
-      name: m.team.name,
-      description: m.team.description,
-      communicationLink: m.team.communicationLink,
-      leaderId: m.team.leaderId,
+      ...m.team,
       userRole: m.roleName,
-      status: m.status,
     }));
 
-    const projects: UserProjectResponse[] = [];
-    user.memberships.forEach((m) => {
-      m.team.participations.forEach((p) => {
-        projects.push({
-          hackathonTitle: p.hackathon.title,
-          repoUrl: p.githubRepoUrl,
-          teamName: m.team.name,
-          finalScore: p.finalScore,
-        });
-      });
-    });
+    const projects: UserProjectResponse[] = user.memberships.flatMap((m) =>
+      m.team.participations.map((p) => ({
+        hackathonTitle: p.hackathon.title,
+        repoUrl: p.githubRepoUrl,
+        teamName: m.team.name,
+        finalScore: p.finalScore,
+      })),
+    );
 
     return {
       ...base,

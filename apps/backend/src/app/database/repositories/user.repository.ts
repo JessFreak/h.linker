@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { Prisma, User } from '@prisma/client';
+import { Prisma, User, UserTeamStatus } from '@prisma/client';
 import { FullUser, UserWithSkills } from '../entities/user.entity';
 
 @Injectable()
@@ -10,6 +10,9 @@ export class UserRepository {
     skills: true,
     createdHackathons: true,
     memberships: {
+      where: {
+        status: UserTeamStatus.ACCEPTED,
+      },
       include: {
         team: {
           include: {
