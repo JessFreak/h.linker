@@ -6,7 +6,7 @@ import { MainPageComponent } from './components/main-page/main-page.component';
 import { authGuard } from './utils/guards/auth.guard';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { TeamsComponent } from './components/teams/teams.component';
-import { TeamDetailsComponent } from './components/team-details/team-details.component';
+import TeamDetailsComponent from './components/team-details/team-details.component';
 import { TeamSettingsComponent } from './components/team-setttings/team-settings.component';
 
 export const appRoutes: Route[] = [

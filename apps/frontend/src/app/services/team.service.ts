@@ -52,4 +52,8 @@ export class TeamService {
       { status },
     );
   }
+
+  leave(teamId: string) {
+    return this.http.delete<void>(`${this.baseUrl}/${teamId}/leave`);
+  }
 }

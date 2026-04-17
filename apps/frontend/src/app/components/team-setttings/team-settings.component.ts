@@ -16,10 +16,10 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { TeamService } from '../../services/team.service';
 import { NotificationService } from '../../utils/notification.service';
 import { TeamResponse } from '@h.linker/libs';
-import { ConfirmDeleteDialogComponent } from '../profile-settings/confirm-delete-dialog.component';
 import { MatDividerModule } from '@angular/material/divider';
 import { SettingsFooterComponent } from '../settings/settings-footer.component';
 import { SettingsSectionComponent } from '../settings/settings-section.component';
+import { ConfirmDialogComponent } from '../utils/confirm-dialog.component';
 
 @Component({
   selector: 'app-team-settings',
@@ -111,8 +111,15 @@ export class TeamSettingsComponent implements OnInit {
     const currentTeam = this.team();
     if (!currentTeam) return;
 
-    const dialogRef = this.dialog.open(ConfirmDeleteDialogComponent, {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '400px',
+      data: {
+        title: 'Disband Team',
+        message:
+          'This action is permanent and cannot be undone. All members will be removed.',
+        confirmText: 'Disband',
+        isDanger: true,
+      },
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {

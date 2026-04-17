@@ -2,15 +2,31 @@
 
   <header class="team-header">
     <div class="title-group">
+      <div class="team-badge-icon">
+        <mat-icon>groups</mat-icon>
+      </div>
       <h1 class="mat-headline-1">{{ team()?.name }}</h1>
     </div>
 
     <div class="header-actions">
       @if (currentUser()) {
         @if (isLeader()) {
-          <button mat-stroked-button [routerLink]="['/teams', team()?.id, 'settings']" color="primary">Edit Team</button>
+          <button mat-flat-button color="primary" [routerLink]="['/teams', team()?.id, 'settings']">
+            <mat-icon>settings</mat-icon> Manage Team
+          </button>
         }
-        <button mat-stroked-button color="warn">Leave Team</button>
+
+        @if (isMember() && !isLeader()) {
+          <button mat-stroked-button color="warn" (click)="onLeaveTeam()">
+            <mat-icon>logout</mat-icon> Leave Team
+          </button>
+        }
+
+        @if (!isMember()) {
+          <button mat-flat-button color="accent">
+            Join Team
+          </button>
+        }
       }
     </div>
   </header>

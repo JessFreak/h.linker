@@ -97,21 +97,4 @@ export class TeamService {
   ): Promise<TeamWithMembers> {
     return this.teamRepository.updateById(id, { leaderId: newLeaderId });
   }
-
-  async leaveTeam(teamId: string, userId: string): Promise<TeamWithMembers> {
-    const team = await this.teamRepository.findById(teamId);
-
-    if (!team) {
-      throw new NotFoundException('Team not found');
-    }
-
-    if (team.leaderId === userId) {
-      throw new BadRequestException(
-        'Leader cannot leave the team. Transfer ownership or disband the team instead.',
-      );
-    }
-
-    await this.memberRepository.removeMember(teamId, userId);
-    return this.findById(teamId);
-  }
 }

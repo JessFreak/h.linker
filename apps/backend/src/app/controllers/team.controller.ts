@@ -122,7 +122,7 @@ export class TeamController {
     @Param('id') teamId: string,
     @UserRequest() user: User,
   ): Promise<TeamResponse> {
-    const team = await this.teamService.leaveTeam(teamId, user.id);
+    const team = await this.teamService.removeMember(teamId, user.id);
     return TeamMapper.getTeamResponse(team);
   }
 }

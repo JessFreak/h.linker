@@ -24,6 +24,36 @@
     display: flex;
     gap: 12px;
   }
+
+  .title-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    .team-badge-icon {
+      width: 56px;
+      height: 56px;
+      background: var(--h-bg-deep-navy);
+      border: 1px solid var(--h-primary-blue);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      mat-icon {
+        font-size: 32px;
+        width: 32px;
+        height: 32px;
+        color: var(--h-primary-blue);
+      }
+    }
+  }
+
+  h1 {
+    margin: 0;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
 }
 
 .main-column {

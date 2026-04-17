@@ -22,16 +22,16 @@ import AuthService from '../../services/auth.service';
 import { NotificationService } from '../../utils/notification.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ImageUploadService } from '../../services/image-upload.service';
-import { ConfirmDeleteDialogComponent } from './confirm-delete-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { SettingsFooterComponent } from '../settings/settings-footer.component';
 import { SettingsSectionComponent } from '../settings/settings-section.component';
 import { NgOptimizedImage } from '@angular/common';
+import { ConfirmDialogComponent } from '../utils/confirm-dialog.component';
 
 @Component({
   selector: 'app-profile-settings',
   templateUrl: './profile-settings.component.html',
-  styleUrls: ['../settings/settings.scss' ,'./profile-settings.component.scss'],
+  styleUrls: ['../settings/settings.scss', './profile-settings.component.scss'],
   imports: [
     MatChipGrid,
     MatChipRemove,
@@ -184,9 +184,15 @@ export class ProfileSettingsComponent implements OnInit {
   }
 
   onDeleteAccount() {
-    const dialogRef = this.dialog.open(ConfirmDeleteDialogComponent, {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '400px',
-      panelClass: 'custom-dialog-container',
+      data: {
+        title: 'Delete Account',
+        message:
+          'Are you sure you want to delete your account? This action is permanent and all your data (skills, integrations, bio) will be lost forever.',
+        confirmText: 'Yes, Delete',
+        isDanger: true,
+      },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
