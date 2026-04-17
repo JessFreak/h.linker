@@ -22,7 +22,7 @@ import { MatButtonModule } from '@angular/material/button';
           mat-flat-button
           color="primary"
           [disabled]="!isDirty || isSaving"
-          (click)="vase.emit()"
+          (click)="save.emit()"
         >
           {{ isSaving ? 'Saving...' : 'Save Changes' }}
         </button>
@@ -34,6 +34,6 @@ import { MatButtonModule } from '@angular/material/button';
 export class SettingsFooterComponent {
   @Input() isDirty = false;
   @Input() isSaving = false;
-  @Output() vase = new EventEmitter<void>();
+  @Output() save = new EventEmitter<void>();
   @Output() discard = new EventEmitter<void>();
 }

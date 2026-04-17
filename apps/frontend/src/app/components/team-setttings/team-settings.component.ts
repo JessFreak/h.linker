@@ -59,13 +59,8 @@ export class TeamSettingsComponent implements OnInit {
     communicationLink: [''],
   });
 
-  pendingRequests = computed(
-    () => this.team()?.members?.filter((m) => m.status === 'PENDING') || [],
-  );
-
-  activeMembers = computed(
-    () => this.team()?.members?.filter((m) => m.status === 'ACCEPTED') || [],
-  );
+  pendingRequests = computed(() => this.team()?.requests || []);
+  activeMembers = computed(() => this.team()?.members || []);
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -80,13 +75,12 @@ export class TeamSettingsComponent implements OnInit {
         description: data.description,
         communicationLink: data.communicationLink,
       });
-
       this.teamForm.markAsPristine();
     });
   }
 
   onSave() {
-    const currentTeam = this.team(); // Зберігаємо в константу для перевірки
+    const currentTeam = this.team();
     if (this.teamForm.valid && currentTeam) {
       this.isSaving.set(true);
       this.teamService.update(currentTeam.id, this.teamForm.value).subscribe({
