@@ -115,4 +115,14 @@ export class TeamController {
     const team = await this.teamService.changeLeader(id, newLeaderId);
     return TeamMapper.getTeamResponse(team);
   }
+
+  @Access()
+  @Delete(':id/leave')
+  async leave(
+    @Param('id') teamId: string,
+    @UserRequest() user: User,
+  ): Promise<TeamResponse> {
+    const team = await this.teamService.leaveTeam(teamId, user.id);
+    return TeamMapper.getTeamResponse(team);
+  }
 }
