@@ -2,14 +2,14 @@ import { TeamWithMembers } from '../../database/entities/team.entity';
 import {
   TeamResponse,
   TeamsResponse,
-  TeamMemberResponse,
 } from '@h.linker/libs';
 import { UserMapper } from './user.mapper';
 
 export class TeamMapper {
   static getTeamResponse(team: TeamWithMembers): TeamResponse {
     if (!team) return null;
-    const members: TeamMemberResponse[] = team.members.map((m) => {
+
+    const allMapped = team.members.map((m) => {
       const userBase = UserMapper.getUserResponse(m.user);
       return {
         ...userBase,
@@ -19,6 +19,9 @@ export class TeamMapper {
       };
     });
 
+    const members = allMapped.filter((m) => m.status === 'ACCEPTED');
+    const requests = allMapped.filter((m) => m.status === 'PENDING');
+
     return {
       id: team.id,
       name: team.name,
@@ -26,6 +29,7 @@ export class TeamMapper {
       communicationLink: team.communicationLink,
       leaderId: team.leaderId,
       members,
+      requests: requests.length > 0 ? requests : undefined,
     };
   }
 

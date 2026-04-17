@@ -14,6 +14,7 @@ export interface TeamResponse {
   communicationLink: string | null;
   leaderId: string;
   members?: TeamMemberResponse[];
+  requests?: TeamMemberResponse[];
 }
 
 export interface TeamsResponse {
