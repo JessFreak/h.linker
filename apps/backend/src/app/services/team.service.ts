@@ -57,6 +57,7 @@ export class TeamService {
       userId: dto.userId,
       roleName: dto.roleName,
       type: UserTeamType.REQUEST,
+      message: dto.message,
     });
 
     return this.teamRepository.findById(teamId);

@@ -5,6 +5,7 @@ export interface TeamMemberResponse extends UserResponse {
   roleName: string;
   status: UserTeamStatus;
   type: UserTeamType;
+  message: string;
 }
 
 export interface TeamResponse {

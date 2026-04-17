@@ -16,6 +16,7 @@ export class TeamMapper {
         roleName: m.roleName,
         status: m.status,
         type: m.type,
+        message: m.message,
       };
     });
 
