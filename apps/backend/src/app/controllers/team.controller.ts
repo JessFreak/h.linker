@@ -8,6 +8,7 @@ import {
   Param,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { TeamService } from '../services/team.service';
 import { TeamMapper } from '../utils/mappers/team.mapper';
@@ -37,8 +38,8 @@ export class TeamController {
   }
 
   @Get()
-  async getAll(): Promise<TeamsResponse> {
-    const teams = await this.teamService.getAll();
+  async getAll(@Query('leaderId') leaderId: string): Promise<TeamsResponse> {
+    const teams = await this.teamService.getAll(leaderId);
     return TeamMapper.getTeamsResponse(teams);
   }
 

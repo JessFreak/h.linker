@@ -11,7 +11,7 @@ import {
   CreateTeamDTO,
   UpdateTeamDTO,
 } from '@h.linker/libs';
-import { UserTeamStatus, UserTeamType } from '@prisma/client';
+import { Prisma, UserTeamStatus, UserTeamType } from '@prisma/client';
 
 @Injectable()
 export class TeamService {
@@ -32,8 +32,13 @@ export class TeamService {
     return this.teamRepository.find({ members: { some: { userId } } });
   }
 
-  async getAll(): Promise<TeamWithMembers[]> {
-    return this.teamRepository.find({});
+  async getAll(leaderId?: string): Promise<TeamWithMembers[]> {
+    const where: Prisma.TeamWhereInput = {};
+    if (leaderId) {
+      where.leaderId = leaderId;
+    }
+
+    return this.teamRepository.find(where);
   }
 
   async updateById(id: string, dto: UpdateTeamDTO): Promise<TeamWithMembers> {
