@@ -210,3 +210,57 @@
     }
   }
 }
+
+.clickable-card {
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: var(--h-primary-blue) !important;
+    transform: translateY(-2px);
+
+    .arrow-icon {
+      transform: translateX(4px);
+      color: var(--h-primary-blue);
+    }
+  }
+}
+
+.team-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .team-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .role-badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      background: var(--h-bg-deep-navy);
+      border-radius: 4px;
+      color: var(--h-primary-blue);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .arrow-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      opacity: 0.3;
+      transition: all 0.2s ease;
+    }
+  }
+}

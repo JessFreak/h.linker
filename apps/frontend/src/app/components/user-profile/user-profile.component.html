@@ -142,10 +142,13 @@
             <mat-tab label="Teams">
               <div class="tab-content">
                 @for (team of userData.teams; track team.id) {
-                  <mat-card class="h-card team-card">
+                  <mat-card class="h-card team-card clickable-card" [routerLink]="['/teams', team.id]">
                     <div class="team-content">
                       <h3>{{ team.name }}</h3>
-                      <span class="role-badge">{{ team.userRole }}</span>
+                      <div class="team-footer">
+                        <span class="role-badge">{{ team.userRole }}</span>
+                        <mat-icon class="arrow-icon">chevron_right</mat-icon>
+                      </div>
                     </div>
                   </mat-card>
                 } @empty {
