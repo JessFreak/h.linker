@@ -1,5 +1,6 @@
 import { TeamWithMembers } from '../../database/entities/team.entity';
 import {
+  TeamMemberResponse,
   TeamResponse,
   TeamsResponse,
 } from '@h.linker/libs';
@@ -20,8 +21,20 @@ export class TeamMapper {
       };
     });
 
-    const members = allMapped.filter((m) => m.status === 'ACCEPTED');
-    const requests = allMapped.filter((m) => m.status === 'PENDING');
+    const { members, requests } = allMapped.reduce(
+      (acc, m) => {
+        if (m.status === 'ACCEPTED') {
+          acc.members.push(m);
+        } else {
+          acc.requests.push(m);
+        }
+        return acc;
+      },
+      {
+        members: [] as TeamMemberResponse[],
+        requests: [] as TeamMemberResponse[],
+      },
+    );
 
     return {
       id: team.id,

@@ -17,10 +17,23 @@ export class MemberRepository {
   async addMember(
     data: Prisma.UserTeamUncheckedCreateInput,
   ): Promise<UserTeam> {
-    return this.prisma.userTeam.create({
-      data: {
-        ...data,
-        status: UserTeamStatus.PENDING,
+    return this.prisma.userTeam.upsert({
+      where: {
+        userId_teamId: { userId: data.userId, teamId: data.teamId },
+      },
+      update: {
+        status: 'PENDING',
+        roleName: data.roleName,
+        message: data.message,
+        type: 'REQUEST',
+      },
+      create: {
+        userId: data.userId,
+        teamId: data.teamId,
+        roleName: data.roleName,
+        message: data.message,
+        status: 'PENDING',
+        type: 'REQUEST',
       },
     });
   }

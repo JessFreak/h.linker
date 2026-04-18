@@ -9,9 +9,6 @@ export class TeamRepository {
 
   private readonly include = {
     members: {
-      where: {
-        status: { in: [UserTeamStatus.ACCEPTED, UserTeamStatus.PENDING] },
-      },
       include: {
         user: true,
       },

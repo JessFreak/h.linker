@@ -6,7 +6,6 @@ import {
 import { TeamRepository } from '../database/repositories/team.repository';
 import { TeamWithMembers } from '../database/entities/team.entity';
 import { MemberRepository } from '../database/repositories/member.repository';
-import { AlreadyExistsException } from '../utils/exceptions/already-exists.exception';
 import {
   AddMemberDTO,
   CreateTeamDTO,
@@ -46,12 +45,6 @@ export class TeamService {
   }
 
   async addMember(teamId: string, dto: AddMemberDTO): Promise<TeamWithMembers> {
-    const exists = await this.memberRepository.findMember(teamId, dto.userId);
-
-    if (exists) {
-      throw new AlreadyExistsException('Member', 'userId');
-    }
-
     await this.memberRepository.addMember({
       teamId,
       userId: dto.userId,
