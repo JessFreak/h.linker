@@ -26,16 +26,12 @@
         </div>
 
         <div class="avatar-circle">
-          @if (currentUser.avatarUrl) {
-            <img [ngSrc]="currentUser.avatarUrl"
-                 [alt]="currentUser.firstName"
-                 width="40"
-                 height="40"
-                 class="user-avatar-img h-avatar"
-                 priority>
-          } @else {
-            <mat-icon class="h-text-secondary">account_circle</mat-icon>
-          }
+          <img [ngSrc]="currentUser.avatarUrl || '/default-avatar.png'"
+               [alt]="currentUser.firstName"
+               width="40"
+               height="40"
+               class="user-avatar-img h-avatar"
+               priority>
         </div>
       </div>
 

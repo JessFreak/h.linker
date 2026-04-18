@@ -34,6 +34,8 @@
   align-items: center;
   gap: 12px;
   cursor: pointer;
+  min-width: 0;
+  flex-shrink: 1;
 
   &:hover .full-name { color: var(--h-primary-blue); }
 }
@@ -43,8 +45,10 @@
   flex-direction: column;
   justify-content: center;
   text-align: right;
-  margin-right: 12px;
+  margin-right: 4px;
   gap: 2px;
+  min-width: 0;
+  max-width: 160px;
 
   .full-name {
     font-size: 14px;
@@ -52,6 +56,9 @@
     color: white;
     line-height: 1;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
   }
 
   .username {
@@ -63,6 +70,7 @@
 }
 
 .avatar-circle {
+  flex-shrink: 0;
   width: 40px;
   height: 40px;
   display: flex;

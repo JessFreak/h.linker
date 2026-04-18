@@ -39,7 +39,16 @@
       .avatar-wrapper { width: 160px; height: 160px; margin: 0 auto; }
 
       .user-info {
-        h1 { font-size: 26px; font-weight: 700; margin-bottom: 4px; }
+        h1 {
+          font-size: 26px;
+          font-weight: 700;
+          margin-bottom: 4px;
+          line-height: 1.2;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          word-break: break-word;
+          white-space: normal;
+        }
         .username {
           color: var(--h-primary-blue);
           font-family: 'JetBrains Mono', monospace;

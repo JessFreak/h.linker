@@ -8,6 +8,7 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
 import { TeamsComponent } from './components/teams/teams.component';
 import TeamDetailsComponent from './components/teams/team-details/team-details.component';
 import { TeamSettingsComponent } from './components/teams/team-setttings/team-settings.component';
+import { UsersComponent } from './components/teams/users/users.component';
 
 export const appRoutes: Route[] = [
   { path: '', component: MainPageComponent, pathMatch: 'full' },
@@ -18,6 +19,7 @@ export const appRoutes: Route[] = [
     component: ProfileSettingsComponent,
     canActivate: [authGuard],
   },
+  { path: 'users', component: UsersComponent },
   { path: 'users/:username', component: UserProfileComponent },
   { path: 'teams', component: TeamsComponent },
   { path: 'teams/:id', component: TeamDetailsComponent },

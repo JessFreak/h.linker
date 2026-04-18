@@ -31,8 +31,8 @@ export class UserRepository {
     return this.prisma.user.create({ data });
   }
 
-  async find(where: Prisma.UserWhereInput): Promise<User[]> {
-    return this.prisma.user.findMany({ where });
+  async find(where: Prisma.UserWhereInput): Promise<UserWithSkills[]> {
+    return this.prisma.user.findMany({ where, include: { skills: true } });
   }
 
   async findById(id: string): Promise<UserWithSkills> {
@@ -46,7 +46,10 @@ export class UserRepository {
     return this.prisma.user.findFirst({ where: { email } });
   }
 
-  async findByUsername(username: string, full = false,): Promise<FullUser | User> {
+  async findByUsername(
+    username: string,
+    full = false,
+  ): Promise<FullUser | User> {
     return this.prisma.user.findFirst({
       where: { username },
       include: full ? this.FULL_USER_INCLUDE : undefined,

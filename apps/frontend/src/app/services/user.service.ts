@@ -1,7 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { FullUserResponse, UpdateUserDTO, UserResponse } from '@h.linker/libs';
+import {
+  FullUserResponse,
+  UpdateUserDTO,
+  UserResponse,
+  UsersResponse,
+} from '@h.linker/libs';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +23,7 @@ export class UserService {
     return this.http.get<FullUserResponse>(`${this.baseUrl}/${username}`);
   }
 
-  getAll(): Observable<UserResponse[]> {
-    return this.http.get<UserResponse[]>(this.baseUrl);
+  getAll(): Observable<UsersResponse> {
+    return this.http.get<UsersResponse>(this.baseUrl);
   }
 }

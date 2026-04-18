@@ -1,0 +1,97 @@
+<div class="h-page-layout">
+  <aside class="sidebar-filters">
+    <h2 class="mat-headline-3">Find Talent</h2>
+
+    <div class="filter-group">
+      <div class="search-box">
+        <mat-icon>search</mat-icon>
+        <input type="text" placeholder="Search by name or skill..." (input)="onSearch($event)">
+      </div>
+
+      <div class="divider"></div>
+
+      <mat-checkbox
+        color="primary"
+        [checked]="showOnlyWithGithub()"
+        (change)="showOnlyWithGithub.set(!showOnlyWithGithub())">
+        Connected GitHub
+      </mat-checkbox>
+    </div>
+
+    <div class="sidebar-footer h-text-secondary">
+      <p style="font-size: 11px;">Looking for specific stack? Use the search bar to filter skills.</p>
+    </div>
+  </aside>
+
+  <main class="discovery-grid">
+    <div class="header">
+      <h1 class="mat-headline-2">Developers</h1>
+      <span class="count-label h-text-secondary">{{ filteredUsers().length }} specialists found</span>
+    </div>
+
+    <div class="grid">
+      @for (user of filteredUsers(); track user.id) {
+        <div class="h-card discovery-card user-card">
+          <div class="card-header">
+            <div class="user-meta-group">
+              <img [ngSrc]="user.avatarUrl || 'https://ui-avatars.com/api/?name=' + user.username"
+                   width="48" height="48" class="h-avatar-sm" alt="Avatar">
+              <div class="name-info">
+                <h3 class="mat-headline-3">{{ user.firstName }} {{ user.lastName }}</h3>
+                <span class="h-text-secondary username">&#64;{{ user.username }}</span>
+              </div>
+            </div>
+
+            @if (user.githubId) {
+              <mat-icon class="github-status-icon" title="GitHub Linked">verified</mat-icon>
+            }
+          </div>
+
+          <p class="h-text-secondary card-description">
+            {{ user.bio || 'This developer prefers to keep their bio a mystery.' }}
+          </p>
+
+          <div class="card-meta">
+            <mat-icon>terminal</mat-icon>
+            <div class="skills-mini-list">
+              @let expanded = isExpanded(user.id);
+              @let visibleSkills = expanded ? user.skills : user.skills.slice(0, 10);
+
+              @for (skill of visibleSkills; track skill) {
+                <span class="skill-tag">{{ skill }}</span>
+              }
+
+              @if (user.skills.length > 10) {
+                <span class="skill-tag more"
+                      role="button"
+                      tabindex="0"
+                      [class.active]="expanded"
+                      (click)="toggleSkills(user.id, $event)"
+                      (keydown.enter)="toggleSkills(user.id, $event)"
+                      (keydown.space)="toggleSkills(user.id, $event); $event.preventDefault()">
+  {{ expanded ? 'show less' : '+' + (user.skills.length - 10) }}
+</span>
+              }
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <button mat-button color="primary" [routerLink]="['/users', user.username]">
+              View Profile
+            </button>
+
+            <button mat-flat-button color="accent" class="invite-btn">
+              <mat-icon>person_add</mat-icon>
+              Invite
+            </button>
+          </div>
+        </div>
+      } @empty {
+        <div class="empty-state">
+          <mat-icon class="h-text-secondary">person_search</mat-icon>
+          <p class="h-text-secondary">No developers match your search. Try broadening your criteria!</p>
+        </div>
+      }
+    </div>
+  </main>
+</div>
