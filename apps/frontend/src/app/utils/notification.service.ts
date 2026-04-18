@@ -17,4 +17,11 @@ export class NotificationService {
       duration: 6000,
     });
   }
+
+  info(message: string): void {
+    this.snackBar.open(`ℹ️ ${message}`, 'Close', {
+      panelClass: ['info-snackbar'],
+      duration: 4000,
+    });
+  }
 }

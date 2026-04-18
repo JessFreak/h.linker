@@ -9,28 +9,26 @@
     </div>
 
     <div class="header-actions">
-      @if (currentUser()) {
-        @if (isLeader()) {
-          <button mat-flat-button color="primary" [routerLink]="['/teams', team()?.id, 'settings']">
-            <mat-icon>settings</mat-icon> Manage Team
-          </button>
-        }
+      @if (isLeader()) {
+        <button mat-flat-button color="primary" [routerLink]="['/teams', team()?.id, 'settings']">
+          <mat-icon>settings</mat-icon> Manage Team
+        </button>
+      }
 
-        @if (isMember() && !isLeader()) {
-          <button mat-stroked-button color="warn" (click)="onLeaveTeam()">
-            <mat-icon>logout</mat-icon> Leave Team
-          </button>
-        }
+      @if (isMember() && !isLeader()) {
+        <button mat-stroked-button color="warn" (click)="onLeaveTeam()">
+          <mat-icon>logout</mat-icon> Leave Team
+        </button>
+      }
 
-        @if (isMember()) {
-          <span class="badge">Member</span>
-        } @else if (hasRequest()) {
-          <span class="badge pending">Request Sent</span>
-        } @else {
-          <button mat-flat-button color="accent" (click)="openApplyDialog()">
-            Join Team
-          </button>
-        }
+      @if (isMember()) {
+        <span class="badge">Member</span>
+      } @else if (hasRequest()) {
+        <span class="badge pending">Request Sent</span>
+      } @else {
+        <button mat-flat-button color="accent" (click)="openApplyDialog()">
+          Join Team
+        </button>
       }
     </div>
   </header>

@@ -8,7 +8,7 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
-import { UserService } from '../../services/user.service';
+import { UserService } from '../../../services/user.service';
 import { UpdateUserDTO, UserResponse } from '@h.linker/libs';
 import {
   MatChipGrid,
@@ -18,20 +18,20 @@ import {
 import { MatFormField, MatHint, MatInput, MatLabel } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import AuthService from '../../services/auth.service';
-import { NotificationService } from '../../utils/notification.service';
+import AuthService from '../../../services/auth.service';
+import { NotificationService } from '../../../utils/notification.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ImageUploadService } from '../../services/image-upload.service';
+import { ImageUploadService } from '../../../services/image-upload.service';
 import { MatDialog } from '@angular/material/dialog';
-import { SettingsFooterComponent } from '../settings/settings-footer.component';
-import { SettingsSectionComponent } from '../settings/settings-section.component';
+import { SettingsFooterComponent } from '../../settings/settings-footer.component';
+import { SettingsSectionComponent } from '../../settings/settings-section.component';
 import { NgOptimizedImage } from '@angular/common';
-import { ConfirmDialogComponent } from '../../utils/confirm-dialog.component';
+import { ConfirmDialogComponent } from '../../../utils/confirm-dialog.component';
 
 @Component({
   selector: 'app-profile-settings',
   templateUrl: './profile-settings.component.html',
-  styleUrls: ['../settings/settings.scss', './profile-settings.component.scss'],
+  styleUrls: ['../../settings/settings.scss', './profile-settings.component.scss'],
   imports: [
     MatChipGrid,
     MatChipRemove,

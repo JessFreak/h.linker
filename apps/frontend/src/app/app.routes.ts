@@ -1,6 +1,6 @@
 import { Route } from '@angular/router';
 import { AuthComponent } from './components/auth/auth.component';
-import { ProfileSettingsComponent } from './components/profile-settings/profile-settings.component';
+import { ProfileSettingsComponent } from './components/user-profile/profile-settings/profile-settings.component';
 import { guestGuard } from './utils/guards/guest.guard';
 import { MainPageComponent } from './components/main-page/main-page.component';
 import { authGuard } from './utils/guards/auth.guard';

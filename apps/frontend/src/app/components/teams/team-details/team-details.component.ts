@@ -8,7 +8,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { TeamService } from '../../../services/team.service';
 import AuthService from '../../../services/auth.service';
 import { TeamResponse } from '@h.linker/libs';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { NotificationService } from '../../../utils/notification.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../utils/confirm-dialog.component';
@@ -31,11 +31,12 @@ import { TeamActionsService } from '../../../utils/team-actions.service';
   styleUrls: ['./team-details.component.scss'],
 })
 class TeamDetailsComponent {
-  private teamService = inject(TeamService);
-  private authService = inject(AuthService);
-  private notify = inject(NotificationService);
+  private readonly teamService = inject(TeamService);
+  private readonly authService = inject(AuthService);
+  private readonly notify = inject(NotificationService);
   private readonly dialog = inject(MatDialog);
-  private teamActions = inject(TeamActionsService);
+  private readonly teamActions = inject(TeamActionsService);
+  private readonly router = inject(Router);
 
   @Input() set id(teamId: string) {
     this.loadTeam(teamId);
@@ -63,7 +64,14 @@ class TeamDetailsComponent {
   openApplyDialog() {
     const user = this.currentUser();
     const team = this.team();
-    if (!user || !team) return;
+
+    if (!user) {
+      this.notify.info('Please login or register first to join the team');
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    if (!team) return;
 
     this.teamActions.openApplyDialog(team, user.id, () =>
       this.loadTeam(team.id),
