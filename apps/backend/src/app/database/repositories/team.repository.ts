@@ -7,23 +7,21 @@ import { TeamWithMembers } from '../entities/team.entity';
 export class TeamRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  private getInclude(statuses: UserTeamStatus[] = ['ACCEPTED']) {
-    return {
-      members: {
-        where: {
-          status: { in: statuses },
-        },
-        include: {
-          user: true,
-        },
+  private readonly include = {
+    members: {
+      where: {
+        status: { in: [UserTeamStatus.ACCEPTED, UserTeamStatus.PENDING] },
       },
-      participations: {
-        include: {
-          hackathon: true,
-        },
+      include: {
+        user: true,
       },
-    };
-  }
+    },
+    participations: {
+      include: {
+        hackathon: true,
+      },
+    },
+  };
 
   async create(
     data: Prisma.TeamUncheckedCreateInput,
@@ -43,21 +41,21 @@ export class TeamRepository {
           },
         },
       },
-      include: this.getInclude(),
+      include: this.include,
     });
   }
 
   async find(where: Prisma.TeamWhereInput): Promise<TeamWithMembers[]> {
     return this.prisma.team.findMany({
       where,
-      include: this.getInclude(),
+      include: this.include,
     });
   }
 
   async findById(id: string): Promise<TeamWithMembers> {
     return this.prisma.team.findFirst({
       where: { id },
-      include: this.getInclude(['ACCEPTED', 'PENDING']),
+      include: this.include,
     });
   }
 
@@ -69,7 +67,7 @@ export class TeamRepository {
     return this.prisma.team.update({
       where: { id },
       data,
-      include: this.getInclude(['ACCEPTED', 'PENDING']),
+      include: this.include,
     });
   }
 

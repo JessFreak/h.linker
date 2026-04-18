@@ -30,7 +30,7 @@ export class TeamMapper {
       communicationLink: team.communicationLink,
       leaderId: team.leaderId,
       members,
-      requests: requests.length > 0 ? requests : undefined,
+      requests,
     };
   }
 

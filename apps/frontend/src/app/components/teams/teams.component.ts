@@ -9,8 +9,10 @@ import { TeamResponse } from '@h.linker/libs';
 import { CreateTeamDialogComponent } from './create-team-dialog.component';
 import { TeamService } from '../../services/team.service';
 import AuthService from '../../services/auth.service';
-import { ApplyTeamDialogComponent } from './apply-team-dialog.component';
 import { RouterLink } from '@angular/router';
+import { NotificationService } from '../../utils/notification.service';
+import { TeamUtils } from '../../utils/team.utils';
+import { TeamActionsService } from '../../utils/team-actions.service';
 
 @Component({
   selector: 'app-teams',
@@ -30,6 +32,8 @@ export class TeamsComponent implements OnInit {
   private teamService = inject(TeamService);
   private authService = inject(AuthService);
   private dialog = inject(MatDialog);
+  private notify = inject(NotificationService);
+  private teamActions = inject(TeamActionsService);
 
   teams: TeamResponse[] = [];
 
@@ -80,6 +84,7 @@ export class TeamsComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
+        this.notify.success('Successfully created team');
         this.teamService.create(result).subscribe(() => this.loadTeams());
       }
     });
@@ -89,29 +94,14 @@ export class TeamsComponent implements OnInit {
     const user = this.currentUser();
     if (!user) return;
 
-    const dialogRef = this.dialog.open(ApplyTeamDialogComponent, {
-      width: '500px',
-      data: { teamName: team.name },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        const dto = {
-          userId: user.id,
-          roleName: result.roleName,
-          message: result.message,
-          type: 'REQUEST' as const,
-        };
-
-        this.teamService.addMember(team.id, dto).subscribe(() => {
-          this.loadTeams();
-        });
-      }
-    });
+    this.teamActions.openApplyDialog(team, user.id, () => this.loadTeams());
   }
 
   isMember(team: TeamResponse): boolean {
-    const user = this.currentUser();
-    return !!team.members?.some((m) => m.id === user?.id);
+    return TeamUtils.isMember(team, this.currentUser()?.id);
+  }
+
+  hasRequest(team: TeamResponse): boolean {
+    return TeamUtils.hasPendingRequest(team, this.currentUser()?.id);
   }
 }

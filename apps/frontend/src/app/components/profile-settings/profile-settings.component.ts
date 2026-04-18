@@ -26,7 +26,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { SettingsFooterComponent } from '../settings/settings-footer.component';
 import { SettingsSectionComponent } from '../settings/settings-section.component';
 import { NgOptimizedImage } from '@angular/common';
-import { ConfirmDialogComponent } from '../utils/confirm-dialog.component';
+import { ConfirmDialogComponent } from '../../utils/confirm-dialog.component';
 
 @Component({
   selector: 'app-profile-settings',

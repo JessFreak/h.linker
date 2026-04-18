@@ -22,8 +22,12 @@
           </button>
         }
 
-        @if (!isMember()) {
-          <button mat-flat-button color="accent">
+        @if (isMember()) {
+          <span class="badge">Member</span>
+        } @else if (hasRequest()) {
+          <span class="badge pending">Request Sent</span>
+        } @else {
+          <button mat-flat-button color="accent" (click)="openApplyDialog()">
             Join Team
           </button>
         }

@@ -55,7 +55,11 @@
             <div class="actions">
               <button mat-button color="primary" [routerLink]="['/teams', team.id]">Details</button>
 
-              @if (team.leaderId !== currentUser()?.id && !isMember(team)) {
+              @if (isMember(team)) {
+                <span class="badge">Member</span>
+              } @else if (hasRequest(team)) {
+                <span class="badge pending">Request Sent</span>
+              } @else {
                 <button mat-flat-button color="accent" (click)="openApplyDialog(team)">
                   Join Team
                 </button>

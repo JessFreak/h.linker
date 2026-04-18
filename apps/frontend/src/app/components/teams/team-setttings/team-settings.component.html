@@ -70,10 +70,9 @@
                        width="32" height="32" class="h-avatar-sm" alt="Avatar">
                   <span>
             {{ member.username }}
+                    <small>as {{ member.roleName }}</small>
                     @if (member.id === team()?.leaderId) {
                       <small class="leader-badge">Leader</small>
-                    } @else {
-                      <small>as {{ member.roleName }}</small>
                     }
           </span>
                 </div>

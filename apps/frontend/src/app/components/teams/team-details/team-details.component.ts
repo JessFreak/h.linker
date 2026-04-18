@@ -1,17 +1,19 @@
-import { Component, computed, inject, Input, signal } from '@angular/core';
+import { Component, inject, Input, signal } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
-import { TeamService } from '../../services/team.service';
-import AuthService from '../../services/auth.service';
+import { TeamService } from '../../../services/team.service';
+import AuthService from '../../../services/auth.service';
 import { TeamResponse } from '@h.linker/libs';
 import { RouterLink } from '@angular/router';
-import { NotificationService } from '../../utils/notification.service';
+import { NotificationService } from '../../../utils/notification.service';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmDialogComponent } from '../utils/confirm-dialog.component';
+import { ConfirmDialogComponent } from '../../../utils/confirm-dialog.component';
+import { TeamUtils } from '../../../utils/team.utils';
+import { TeamActionsService } from '../../../utils/team-actions.service';
 
 @Component({
   selector: 'app-team-details',
@@ -33,6 +35,7 @@ class TeamDetailsComponent {
   private authService = inject(AuthService);
   private notify = inject(NotificationService);
   private readonly dialog = inject(MatDialog);
+  private teamActions = inject(TeamActionsService);
 
   @Input() set id(teamId: string) {
     this.loadTeam(teamId);
@@ -45,16 +48,27 @@ class TeamDetailsComponent {
     this.teamService.getById(id).subscribe((res) => this.team.set(res));
   }
 
-  isMember = computed(() => {
+  isMember(): boolean {
+    return TeamUtils.isMember(this.team(), this.currentUser()?.id);
+  }
+
+  hasRequest(): boolean {
+    return TeamUtils.hasPendingRequest(this.team(), this.currentUser()?.id);
+  }
+
+  isLeader(): boolean {
+    return TeamUtils.isLeader(this.team(), this.currentUser()?.id);
+  }
+
+  openApplyDialog() {
     const user = this.currentUser();
     const team = this.team();
-    if (!user || !team) return false;
+    if (!user || !team) return;
 
-    return team.members?.some((m) => m.id === user.id);
-  });
-  isLeader = computed(() => {
-    return this.team()?.leaderId === this.currentUser()?.id;
-  });
+    this.teamActions.openApplyDialog(team, user.id, () =>
+      this.loadTeam(team.id),
+    );
+  }
 
   onLeaveTeam() {
     const currentTeam = this.team();

@@ -13,13 +13,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { TeamService } from '../../services/team.service';
-import { NotificationService } from '../../utils/notification.service';
+import { TeamService } from '../../../services/team.service';
+import { NotificationService } from '../../../utils/notification.service';
 import { TeamResponse } from '@h.linker/libs';
 import { MatDividerModule } from '@angular/material/divider';
-import { SettingsFooterComponent } from '../settings/settings-footer.component';
-import { SettingsSectionComponent } from '../settings/settings-section.component';
-import { ConfirmDialogComponent } from '../utils/confirm-dialog.component';
+import { SettingsFooterComponent } from '../../settings/settings-footer.component';
+import { SettingsSectionComponent } from '../../settings/settings-section.component';
+import { ConfirmDialogComponent } from '../../../utils/confirm-dialog.component';
 
 @Component({
   selector: 'app-team-settings',
@@ -40,7 +40,7 @@ import { ConfirmDialogComponent } from '../utils/confirm-dialog.component';
     SettingsSectionComponent,
   ],
   templateUrl: './team-settings.component.html',
-  styleUrls: ['../settings/settings.scss', './team-settings.component.scss'],
+  styleUrls: ['../../settings/settings.scss', './team-settings.component.scss'],
 })
 export class TeamSettingsComponent implements OnInit {
   private fb = inject(FormBuilder);
