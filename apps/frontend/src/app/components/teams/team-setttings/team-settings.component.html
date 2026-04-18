@@ -66,7 +66,7 @@
             @for (member of activeMembers(); track member.id) {
               <div class="request-item active-member">
                 <div class="user-info">
-                  <img [ngSrc]="member.avatarUrl || 'https://ui-avatars.com/api/?name=' + member.username"
+                  <img [ngSrc]="member.avatarUrl || 'default-avatar.png'"
                        width="32" height="32" class="h-avatar-sm" alt="Avatar">
                   <span>
             {{ member.username }}
@@ -88,7 +88,7 @@
               <div class="request-item pending-box">
                 <div class="request-header">
                   <div class="user-info">
-                    <img [ngSrc]="req.avatarUrl || 'https://ui-avatars.com/api/?name=' + req.username"
+                    <img [ngSrc]="req.avatarUrl || 'default-avatar.png'"
                          width="32" height="32" class="h-avatar-sm" alt="Avatar">
                     <span>{{ req.username }} <small>wants to be {{ req.roleName }}</small></span>
                   </div>

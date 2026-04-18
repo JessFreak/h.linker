@@ -109,7 +109,7 @@
         @for (member of team()?.members; track member.id) {
           <div class="member-item">
             <img
-              [ngSrc]="member.avatarUrl || 'https://ui-avatars.com/api/?name=' + member.username"
+              [ngSrc]="member.avatarUrl || 'default-avatar.png'"
               [alt]="member.username + ' avatar'"
               width="32"
               height="32"
