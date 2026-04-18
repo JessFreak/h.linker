@@ -1,22 +1,23 @@
-.filters-sidebar {
+.sidebar-filters {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
+  position: sticky;
+  top: 24px;
 
   .filter-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
   }
 
-  .divider {
-    border: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    margin: 16px 0;
+  .action-btn {
+    width: 100%;
+    margin-top: 12px;
   }
 }
 
-.teams-grid {
+.discovery-grid {
   .header {
     margin-bottom: 24px;
     display: flex;
@@ -31,7 +32,7 @@
   }
 }
 
-.team-card {
+.discovery-card {
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -40,15 +41,23 @@
 
   &:hover {
     transform: translateY(-4px);
+    border-color: rgba(65, 105, 165, 0.3);
+    background: rgba(255, 255, 255, 0.02);
   }
 
   .card-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    gap: 12px;
+
+    h3 {
+      margin: 0;
+      font-weight: 600;
+    }
   }
 
-  .description {
+  .card-description {
     height: 48px;
     overflow: hidden;
     display: -webkit-box;
@@ -56,29 +65,39 @@
     -webkit-box-orient: vertical;
   }
 
-  .members-info {
+  .card-meta {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 14px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5);
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
   }
 
-  .actions {
+  .card-footer {
     margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;
     justify-content: space-between;
+    align-items: center;
   }
 
-  .badge {
+  .h-badge {
     padding: 2px 8px;
     border-radius: 4px;
     font-size: 10px;
-    font-weight: bold;
+    font-weight: 700;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
 
-    &.leader-badge {
-      background: var(--h-safety-orange);
-      color: black;
-    }
+    &.primary { background: var(--h-primary-blue); color: white; }
+    &.warning { background: var(--h-safety-orange); color: black; }
+    &.pending { background: rgba(255, 255, 255, 0.1); color: white; }
   }
 }

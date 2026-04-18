@@ -22,16 +22,16 @@
       }
 
       @if (isMember()) {
-        <span class="badge">Member</span>
+        <span class="h-badge">Member</span>
       } @else if (isRejected()) {
         <div class="rejected-actions">
-          <span class="badge rejected">Request declined</span>
+          <span class="h-badge rejected">Request declined</span>
           <button mat-button color="primary" class="retry-btn" (click)="openApplyDialog()">
             Try Again
           </button>
         </div>
       } @else if (hasRequest()) {
-        <span class="badge pending">Request Sent</span>
+        <span class="h-badge pending">Request Sent</span>
       } @else {
         <button mat-flat-button color="accent" (click)="openApplyDialog()">
           Join Team
@@ -44,7 +44,7 @@
 
     <section class="h-card about-card">
       <div class="section-label">TEAM OVERVIEW</div>
-      <p class="h-text-secondary description">
+      <p class="h-text-secondary card-description">
         {{ team()?.description || 'This team hasn’t added a description yet.' }}
       </p>
     </section>
@@ -119,7 +119,7 @@
               <span class="username">{{ member.username }}</span>
               <span class="role">{{ member.roleName }}</span>
             </div>
-            <span class="badge" [class.leader]="member.id === team()?.leaderId">
+            <span class="h-badge" [class.leader]="member.id === team()?.leaderId">
               {{ member.id === team()?.leaderId ? 'Leader' : 'Member' }}
             </span>
           </div>

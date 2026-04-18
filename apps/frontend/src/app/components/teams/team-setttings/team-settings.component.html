@@ -20,7 +20,7 @@
            (keydown.enter)="scrollToSection('members')">
           <mat-icon>people</mat-icon> Members & Requests
           @if (pendingRequests().length > 0) {
-            <span class="badge warn">{{ pendingRequests().length }}</span>
+            <span class="h-badge warn">{{ pendingRequests().length }}</span>
           }
         </a>
         <a mat-button tabindex="0"
@@ -92,7 +92,7 @@
                          width="32" height="32" class="h-avatar-sm" alt="Avatar">
                     <span>{{ req.username }} <small>wants to be {{ req.roleName }}</small></span>
                   </div>
-                  <div class="actions">
+                  <div class="card-footer">
                     <button mat-icon-button color="primary" (click)="handleRequest(req.id, 'ACCEPTED')">
                       <mat-icon>check_circle</mat-icon>
                     </button>

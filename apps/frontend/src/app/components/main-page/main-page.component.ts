@@ -10,7 +10,7 @@ import { RouterLink } from '@angular/router';
     <div class="hero-section">
       <h1>Welcome to ServiceStation 🛠️</h1>
       <p>The ultimate platform for KPI students and developers.</p>
-      <div class="actions">
+      <div class="card-footer">
         <button mat-flat-button color="primary" routerLink="/register">
           Get Started
         </button>
@@ -20,24 +20,26 @@ import { RouterLink } from '@angular/router';
   `,
   styles: [
     `
-      .hero-section {
-        height: 80vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        color: white;
-      }
-      h1 {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-      }
-      .actions {
-        display: flex;
-        gap: 1rem;
-        margin-top: 2rem;
-      }
+        .hero-section {
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-footer {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
     `,
   ],
 })

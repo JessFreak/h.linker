@@ -14,7 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
           {{ isDirty ? 'Unsaved changes' : 'All changes saved' }}
         </span>
       </div>
-      <div class="actions">
+      <div class="card-footer">
         <button mat-button type="button" (click)="discard.emit()">
           Discard
         </button>

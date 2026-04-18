@@ -26,7 +26,7 @@ import { TeamActionsService } from '../../utils/team-actions.service';
     RouterLink,
   ],
   templateUrl: './teams.component.html',
-  styleUrls: ['./teams.component.scss', './.rejected.scss'],
+  styleUrls: ['./discovery-shared.scss', './.rejected.scss'],
 })
 export class TeamsComponent implements OnInit {
   private teamService = inject(TeamService);
