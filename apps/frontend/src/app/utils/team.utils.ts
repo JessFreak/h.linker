@@ -24,4 +24,14 @@ export class TeamUtils {
     if (!team || !userId) return false;
     return !!team.requests?.some((r) => r.id === userId);
   }
+
+  static isRejected(
+    team: TeamResponse | null | undefined,
+    userId: string | undefined,
+  ): boolean {
+    if (!team || !userId) return false;
+    return !!team.requests?.some(
+      (r) => r.id === userId && r.status === 'REJECTED',
+    );
+  }
 }

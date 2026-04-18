@@ -28,7 +28,7 @@ import { TeamActionsService } from '../../../utils/team-actions.service';
     RouterLink,
   ],
   templateUrl: './team-details.component.html',
-  styleUrls: ['./team-details.component.scss'],
+  styleUrls: ['./team-details.component.scss', '../.rejected.scss'],
 })
 class TeamDetailsComponent {
   private readonly teamService = inject(TeamService);
@@ -59,6 +59,11 @@ class TeamDetailsComponent {
 
   isLeader(): boolean {
     return TeamUtils.isLeader(this.team(), this.currentUser()?.id);
+  }
+
+  isRejected(): boolean {
+    console.log(this.team());
+    return TeamUtils.isRejected(this.team(), this.currentUser()?.id);
   }
 
   openApplyDialog() {

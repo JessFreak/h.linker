@@ -26,7 +26,7 @@ import { TeamActionsService } from '../../utils/team-actions.service';
     RouterLink,
   ],
   templateUrl: './teams.component.html',
-  styleUrls: ['./teams.component.scss'],
+  styleUrls: ['./teams.component.scss', './.rejected.scss'],
 })
 export class TeamsComponent implements OnInit {
   private teamService = inject(TeamService);
@@ -108,5 +108,9 @@ export class TeamsComponent implements OnInit {
 
   hasRequest(team: TeamResponse): boolean {
     return TeamUtils.hasPendingRequest(team, this.currentUser()?.id);
+  }
+
+  isRejected(team: TeamResponse): boolean {
+    return TeamUtils.isRejected(team, this.currentUser()?.id);
   }
 }

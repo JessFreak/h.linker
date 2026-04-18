@@ -57,6 +57,13 @@
 
               @if (isMember(team)) {
                 <span class="badge">Member</span>
+              } @else if (isRejected(team)) {
+                <div class="rejected-actions">
+                  <span class="badge rejected">Request declined</span>
+                  <button mat-button color="primary" class="retry-btn" (click)="openApplyDialog(team)">
+                    Try Again
+                  </button>
+                </div>
               } @else if (hasRequest(team)) {
                 <span class="badge pending">Request Sent</span>
               } @else {

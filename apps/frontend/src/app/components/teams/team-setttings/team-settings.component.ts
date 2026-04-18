@@ -59,7 +59,9 @@ export class TeamSettingsComponent implements OnInit {
     communicationLink: [''],
   });
 
-  pendingRequests = computed(() => this.team()?.requests || []);
+  pendingRequests = computed(
+    () => this.team()?.requests?.filter((r) => r.status === 'PENDING') || [],
+  );
   activeMembers = computed(() => this.team()?.members || []);
 
   ngOnInit() {
