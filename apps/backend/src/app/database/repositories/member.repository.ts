@@ -14,7 +14,13 @@ export class MemberRepository {
     });
   }
 
-  async addMember(
+  async findConnection(teamId: string, userId: string): Promise<UserTeam> {
+    return this.prisma.userTeam.findUnique({
+      where: { userId_teamId: { userId, teamId } },
+    });
+  }
+
+  async upsertConnection(
     data: Prisma.UserTeamUncheckedCreateInput,
   ): Promise<UserTeam> {
     return this.prisma.userTeam.upsert({
@@ -22,19 +28,13 @@ export class MemberRepository {
         userId_teamId: { userId: data.userId, teamId: data.teamId },
       },
       update: {
-        status: 'PENDING',
+        status: data.status,
         roleName: data.roleName,
         message: data.message,
-        type: 'REQUEST',
+        type: data.type,
+        created: new Date(),
       },
-      create: {
-        userId: data.userId,
-        teamId: data.teamId,
-        roleName: data.roleName,
-        message: data.message,
-        status: 'PENDING',
-        type: 'REQUEST',
-      },
+      create: data,
     });
   }
 

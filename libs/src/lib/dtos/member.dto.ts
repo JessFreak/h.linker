@@ -1,5 +1,4 @@
 import {
-  IsEnum,
   IsString,
   IsOptional,
   IsUUID,
@@ -13,18 +12,17 @@ export enum MemberStatus {
   LEFT = 'LEFT',
 }
 
-export class AddMemberDTO {
-  @IsUUID()
-    userId: string;
-
+export class JoinRequestDTO {
   @IsString()
   @IsNotEmpty()
     roleName: string;
 
-  @IsEnum(['INVITATION', 'REQUEST'])
-    type: 'INVITATION' | 'REQUEST';
-
   @IsString()
   @IsOptional()
     message?: string;
+}
+
+export class InviteUserDTO extends JoinRequestDTO {
+  @IsUUID()
+    userId: string;
 }

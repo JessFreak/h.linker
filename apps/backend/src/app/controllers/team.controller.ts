@@ -13,11 +13,12 @@ import {
 import { TeamService } from '../services/team.service';
 import { TeamMapper } from '../utils/mappers/team.mapper';
 import {
-  AddMemberDTO,
   CreateTeamDTO,
   UpdateTeamDTO,
   TeamResponse,
   TeamsResponse,
+  JoinRequestDTO,
+  InviteUserDTO,
 } from '@h.linker/libs';
 import { User, UserTeamStatus } from '@prisma/client';
 import { Access } from '../../config/security/decorators/acces';
@@ -73,12 +74,23 @@ export class TeamController {
   }
 
   @Access()
-  @Post(':id/members')
-  async addMember(
+  @Post(':id/apply')
+  async applyToTeam(
+    @UserRequest() user: User,
     @Param('id') teamId: string,
-    @Body() dto: AddMemberDTO,
+    @Body() dto: JoinRequestDTO,
   ): Promise<TeamResponse> {
-    const team = await this.teamService.addMember(teamId, dto);
+    const team = await this.teamService.joinRequest(teamId, user.id, dto);
+    return TeamMapper.getTeamResponse(team);
+  }
+
+  @Access()
+  @Post(':id/invite')
+  async inviteUser(
+    @Param('id') teamId: string,
+    @Body() dto: InviteUserDTO,
+  ): Promise<TeamResponse> {
+    const team = await this.teamService.inviteUser(teamId, dto);
     return TeamMapper.getTeamResponse(team);
   }
 

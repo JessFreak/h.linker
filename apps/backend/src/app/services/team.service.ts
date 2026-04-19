@@ -7,11 +7,12 @@ import { TeamRepository } from '../database/repositories/team.repository';
 import { TeamWithMembers } from '../database/entities/team.entity';
 import { MemberRepository } from '../database/repositories/member.repository';
 import {
-  AddMemberDTO,
   CreateTeamDTO,
+  InviteUserDTO,
+  JoinRequestDTO,
   UpdateTeamDTO,
 } from '@h.linker/libs';
-import { Prisma, UserTeamStatus, UserTeamType } from '@prisma/client';
+import { Prisma, UserTeamStatus } from '@prisma/client';
 
 @Injectable()
 export class TeamService {
@@ -49,16 +50,55 @@ export class TeamService {
     return this.teamRepository.deleteById(id);
   }
 
-  async addMember(teamId: string, dto: AddMemberDTO): Promise<TeamWithMembers> {
-    await this.memberRepository.addMember({
+  async joinRequest(
+    teamId: string,
+    userId: string,
+    dto: JoinRequestDTO,
+  ): Promise<TeamWithMembers> {
+    await this.validateConnection(teamId, userId);
+
+    await this.memberRepository.upsertConnection({
       teamId,
-      userId: dto.userId,
+      userId,
       roleName: dto.roleName,
-      type: UserTeamType.REQUEST,
       message: dto.message,
+      type: 'REQUEST',
+      status: 'PENDING',
     });
 
     return this.teamRepository.findById(teamId);
+  }
+
+  async inviteUser(
+    teamId: string,
+    dto: InviteUserDTO,
+  ): Promise<TeamWithMembers> {
+    await this.validateConnection(teamId, dto.userId);
+
+    await this.memberRepository.upsertConnection({
+      teamId,
+      userId: dto.userId,
+      roleName: dto.roleName,
+      message: dto.message,
+      type: 'INVITATION',
+      status: 'PENDING',
+    });
+
+    return this.teamRepository.findById(teamId);
+  }
+
+  private async validateConnection(teamId: string, userId: string) {
+    const existing = await this.memberRepository.findConnection(teamId, userId);
+
+    if (existing?.status === 'ACCEPTED') {
+      throw new BadRequestException('User is already a member of this team');
+    }
+
+    if (existing?.status === 'PENDING') {
+      throw new BadRequestException(
+        'There is already a pending request/invitation',
+      );
+    }
   }
 
   async removeMember(teamId: string, userId: string): Promise<TeamWithMembers> {

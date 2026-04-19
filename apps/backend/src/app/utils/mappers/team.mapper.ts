@@ -18,6 +18,7 @@ export class TeamMapper {
         status: m.status,
         type: m.type,
         message: m.message,
+        createdAt: m.created,
       };
     });
 

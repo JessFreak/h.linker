@@ -6,6 +6,7 @@ export interface TeamMemberResponse extends UserResponse {
   status: UserTeamStatus;
   type: UserTeamType;
   message: string;
+  createdAt: Date;
 }
 
 export interface TeamResponse {
