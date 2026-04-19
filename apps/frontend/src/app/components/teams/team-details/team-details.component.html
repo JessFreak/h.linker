@@ -113,21 +113,24 @@
               [alt]="member.username + ' avatar'"
               width="32"
               height="32"
-              class="h-avatar-sm"
+              class="h-avatar-sm clickable-avatar"
+              [routerLink]="['/users', member.username]"
             >
             <div class="member-info">
-              <span class="username">{{ member.username }}</span>
+        <span class="username" [routerLink]="['/users', member.username]">
+          {{ member.username }}
+        </span>
               <span class="role">{{ member.roleName }}</span>
             </div>
             <span class="h-badge" [class.leader]="member.id === team()?.leaderId">
-              {{ member.id === team()?.leaderId ? 'Leader' : 'Member' }}
-            </span>
+        {{ member.id === team()?.leaderId ? 'Leader' : 'Member' }}
+      </span>
           </div>
         }
       </div>
 
       @if (isLeader()) {
-        <button mat-button color="primary" class="w-100 invite-btn">
+        <button [routerLink]="['/users']" mat-button color="primary" class="w-100 invite-btn">
           <mat-icon>person_add</mat-icon> Invite Members
         </button>
       }

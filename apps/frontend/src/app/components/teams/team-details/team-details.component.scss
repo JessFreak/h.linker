@@ -139,6 +139,17 @@
   padding: 12px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 
+  .clickable-avatar {
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+
+    &:hover {
+      transform: scale(1.1);
+      border-color: var(--h-primary-blue);
+      box-shadow: 0 0 8px rgba(var(--h-primary-blue-rgb), 0.3);
+    }
+  }
+
   &:last-child { border-bottom: none; }
 
   .h-avatar-sm {
@@ -153,8 +164,24 @@
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    .username { font-size: 14px; font-weight: 600; }
-    .role { font-size: 11px; color: rgba(255, 255, 255, 0.5); }
+
+    .username {
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color 0.2s ease;
+      display: inline-block;
+
+      &:hover {
+        color: var(--h-primary-blue);
+        text-decoration: underline;
+      }
+    }
+
+    .role {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.5);
+    }
   }
 
   .h-badge {

@@ -13,12 +13,14 @@
         <a mat-button class="active" tabindex="0"
            (click)="scrollToSection('general')"
            (keydown.enter)="scrollToSection('general')">
-          <mat-icon>info</mat-icon> General Info
+          <mat-icon>info</mat-icon>
+          General Info
         </a>
         <a mat-button tabindex="0"
            (click)="scrollToSection('members')"
            (keydown.enter)="scrollToSection('members')">
-          <mat-icon>people</mat-icon> Members & Requests
+          <mat-icon>people</mat-icon>
+          Members & Requests
           @if (pendingRequests().length > 0) {
             <span class="h-badge warn">{{ pendingRequests().length }}</span>
           }
@@ -26,11 +28,13 @@
         <a mat-button tabindex="0"
            (click)="scrollToSection('danger')"
            (keydown.enter)="scrollToSection('danger')">
-          <mat-icon>report_problem</mat-icon> Danger Zone
+          <mat-icon>report_problem</mat-icon>
+          Danger Zone
         </a>
 
         <button mat-button class="back-btn" [routerLink]="['/teams', currentTeam.id]">
-          <mat-icon>arrow_back</mat-icon> Back to Team Page
+          <mat-icon>arrow_back</mat-icon>
+          Back to Team Page
         </button>
       </nav>
     </aside>
@@ -67,11 +71,14 @@
               <div class="request-item active-member">
                 <div class="user-info">
                   <img [ngSrc]="member.avatarUrl || 'default-avatar.png'"
-                       width="36" height="36" class="h-avatar-sm" alt="Avatar">
-
+                       width="36" height="36" class="h-avatar-sm" alt="Avatar"
+                       [routerLink]="['/users', member.username]"
+                       style="cursor: pointer;">
                   <div class="text-group">
                     <div class="name-row">
-                      <span class="username">{{ member.username }}</span>
+      <span class="username" [routerLink]="['/users', member.username]">
+        {{ member.username }}
+      </span>
                       <span class="role-text">as {{ member.roleName }}</span>
                       <small class="join-date">{{ member.createdAt | date:'dd.MM.yyyy' }}</small>
                     </div>
@@ -94,12 +101,17 @@
                 <div class="request-header">
                   <div class="user-info">
                     <img [ngSrc]="req.avatarUrl || 'default-avatar.png'"
-                         width="32" height="32" class="h-avatar-sm" alt="Avatar">
+                         width="32" height="32" class="h-avatar-sm" alt="Avatar"
+                         [routerLink]="['/users', req.username]"
+                         style="cursor: pointer;">
                     <div class="text-group">
                       <div class="name-row">
-                        <span class="username">{{ req.username }}</span>
+      <span class="username" [routerLink]="['/users', req.username]">
+        {{ req.username }}
+      </span>
                         <small>wants to be {{ req.roleName }}</small>
-                        <small class="request-time">{{ req.createdAt | date:'shortTime' }} • {{ req.createdAt | date:'MMM d' }}</small>
+                        <small class="request-time">{{ req.createdAt | date:'shortTime' }}
+                          • {{ req.createdAt | date:'MMM d' }}</small>
                       </div>
                     </div>
                   </div>
