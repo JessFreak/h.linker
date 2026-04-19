@@ -1,13 +1,63 @@
-.fields-column { display: flex; flex-direction: column; gap: 16px; }
+.fields-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
 .request-item {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 12px; background: var(--h-bg-deep-navy);
-  border-radius: 8px; margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: var(--h-bg-deep-navy);
+  border-radius: 8px;
+  margin-bottom: 8px;
 
   .user-info {
-    display: flex; align-items: center; gap: 12px;
-    small { color: var(--h-primary-blue); }
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    flex: 1;
+
+    .text-group {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      flex-wrap: wrap;
+
+      .name-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+
+        .username {
+          font-weight: 600;
+          font-size: 14px;
+        }
+
+        .join-date, .request-time {
+          font-size: 11px;
+          color: var(--h-text-secondary);
+          opacity: 0.6;
+          &::before { content: '•'; margin-right: 8px; opacity: 0.5; }
+        }
+
+        .role-text {
+          color: var(--h-primary-blue) !important;
+        }
+      }
+
+      small {
+        color: var(--h-primary-blue) !important;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+      }
+    }
   }
 
   &.pending-box {
@@ -21,6 +71,12 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
+
+    .actions {
+      display: flex;
+      gap: 4px;
+      flex-shrink: 0;
+    }
   }
 }
 
@@ -51,16 +107,27 @@
 
 .leader-badge {
   background: var(--h-safety-orange);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: bold;
-  margin: 8px;
   color: black !important;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
 }
 
 .danger-item {
-  display: flex; justify-content: space-between; align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 20px 0;
   &:first-child { padding-top: 0; }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    strong { font-size: 15px; }
+  }
 }

@@ -67,15 +67,20 @@
               <div class="request-item active-member">
                 <div class="user-info">
                   <img [ngSrc]="member.avatarUrl || 'default-avatar.png'"
-                       width="32" height="32" class="h-avatar-sm" alt="Avatar">
-                  <span>
-            {{ member.username }}
-                    <small>as {{ member.roleName }}</small>
-                    @if (member.id === team()?.leaderId) {
-                      <small class="leader-badge">Leader</small>
-                    }
-          </span>
+                       width="36" height="36" class="h-avatar-sm" alt="Avatar">
+
+                  <div class="text-group">
+                    <div class="name-row">
+                      <span class="username">{{ member.username }}</span>
+                      <span class="role-text">as {{ member.roleName }}</span>
+                      <small class="join-date">{{ member.createdAt | date:'dd.MM.yyyy' }}</small>
+                    </div>
+                  </div>
                 </div>
+
+                @if (member.id === team()?.leaderId) {
+                  <span class="leader-badge">Leader</span>
+                }
               </div>
             }
           </div>
@@ -90,9 +95,15 @@
                   <div class="user-info">
                     <img [ngSrc]="req.avatarUrl || 'default-avatar.png'"
                          width="32" height="32" class="h-avatar-sm" alt="Avatar">
-                    <span>{{ req.username }} <small>wants to be {{ req.roleName }}</small></span>
+                    <div class="text-group">
+                      <div class="name-row">
+                        <span class="username">{{ req.username }}</span>
+                        <small>wants to be {{ req.roleName }}</small>
+                        <small class="request-time">{{ req.createdAt | date:'shortTime' }} • {{ req.createdAt | date:'MMM d' }}</small>
+                      </div>
+                    </div>
                   </div>
-                  <div class="card-footer">
+                  <div class="card-footer actions">
                     <button mat-icon-button color="primary" (click)="handleRequest(req.id, 'ACCEPTED')">
                       <mat-icon>check_circle</mat-icon>
                     </button>
