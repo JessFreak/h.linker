@@ -8,8 +8,9 @@ import {
   UpdateTeamDTO,
   JoinRequestDTO,
   InviteUserDTO,
+  MemberStatus,
+  UserInvitationsResponse,
 } from '@h.linker/libs';
-import { UserTeamStatus } from '@prisma/client';
 
 @Injectable({ providedIn: 'root' })
 export class TeamService {
@@ -56,7 +57,7 @@ export class TeamService {
   respondToRequest(
     teamId: string,
     userId: string,
-    status: UserTeamStatus,
+    status: MemberStatus,
   ): Observable<TeamResponse> {
     return this.http.patch<TeamResponse>(
       `${this.baseUrl}/${teamId}/members/${userId}/status`,
@@ -66,5 +67,11 @@ export class TeamService {
 
   leave(teamId: string) {
     return this.http.delete<void>(`${this.baseUrl}/${teamId}/leave`);
+  }
+
+  getMyInvitations(): Observable<UserInvitationsResponse> {
+    return this.http.get<UserInvitationsResponse>(
+      `${this.baseUrl}/invitations`,
+    );
   }
 }

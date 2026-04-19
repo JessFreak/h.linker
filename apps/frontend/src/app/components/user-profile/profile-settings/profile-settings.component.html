@@ -32,6 +32,15 @@
       </a>
 
       <a mat-button tabindex="0"
+         (click)="scrollToSection('invitations')"
+         (keydown.enter)="scrollToSection('invitations')">
+        <mat-icon>mail</mat-icon> Team Invitations
+        @if (invitations().length > 0) {
+          <span class="h-badge warn">{{ invitations().length }}</span>
+        }
+      </a>
+
+      <a mat-button tabindex="0"
          (click)="scrollToSection('security')"
          (keydown.enter)="scrollToSection('security')">
         <mat-icon>security</mat-icon> Security
@@ -147,6 +156,53 @@
         <div class="add-skill-box">
           <input placeholder="Add new skill..." #skillInput (keyup.enter)="addSkill(skillInput)">
           <button mat-flat-button type="button" (click)="addSkill(skillInput)">+ Add</button>
+        </div>
+      </app-settings-section>
+
+      <app-settings-section id="invitations" title="Team Invitations">
+        <div class="invitations-list">
+          @for (inv of invitations(); track inv.teamId) {
+            <div class="h-connection-item h-stacked">
+              <div class="h-item-header">
+                <div class="h-item-body">
+                  <div class="h-avatar-sm" style="display: flex; align-items: center; justify-content: center; background: var(--h-bg-deep-navy); border: 1px solid var(--h-primary-blue);">
+                    <mat-icon style="font-size: 18px; width: 18px; height: 18px; color: var(--h-primary-blue);">groups</mat-icon>
+                  </div>
+
+                  <div class="h-info-group">
+                    <div class="h-title-row">
+                <span class="h-item-link" [routerLink]="['/teams', inv.teamId]">
+                  {{ inv.teamName }}
+                </span>
+                      <small class="h-meta-text">
+                        {{ inv.createdAt | date:'shortTime' }} • {{ inv.createdAt | date:'MMM d' }}
+                      </small>
+                    </div>
+                    <span class="h-item-accent">Invites you as {{ inv.roleName }}</span>
+                  </div>
+                </div>
+
+                <div class="h-item-actions">
+                  <button mat-icon-button color="primary" (click)="acceptInvitation(inv.teamId)">
+                    <mat-icon>check_circle</mat-icon>
+                  </button>
+
+                  <button mat-icon-button color="warn" (click)="rejectInvitation(inv.teamId)">
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                </div>
+              </div>
+
+              @if (inv.message) {
+                <div class="h-item-note">
+                  <mat-icon>format_quote</mat-icon>
+                  <p>{{ inv.message }}</p>
+                </div>
+              }
+            </div>
+          } @empty {
+            <p class="h-text-secondary">You have no pending invitations at the moment.</p>
+          }
         </div>
       </app-settings-section>
 

@@ -68,20 +68,21 @@
           <div class="members-list">
             <p class="section-subtitle">Active Members ({{ activeMembers().length }})</p>
             @for (member of activeMembers(); track member.id) {
-              <div class="request-item active-member">
-                <div class="user-info">
+              <div class="h-connection-item">
+                <div class="h-item-body">
                   <img [ngSrc]="member.avatarUrl || 'default-avatar.png'"
                        width="36" height="36" class="h-avatar-sm" alt="Avatar"
                        [routerLink]="['/users', member.username]"
                        style="cursor: pointer;">
-                  <div class="text-group">
-                    <div class="name-row">
-      <span class="username" [routerLink]="['/users', member.username]">
-        {{ member.username }}
-      </span>
-                      <span class="role-text">as {{ member.roleName }}</span>
-                      <small class="join-date">{{ member.createdAt | date:'dd.MM.yyyy' }}</small>
+
+                  <div class="h-info-group">
+                    <div class="h-title-row">
+              <span class="h-item-link" [routerLink]="['/users', member.username]">
+                {{ member.username }}
+              </span>
+                      <small class="h-meta-text">{{ member.createdAt | date:'dd.MM.yyyy' }}</small>
                     </div>
+                    <span class="h-item-accent">as {{ member.roleName }}</span>
                   </div>
                 </div>
 
@@ -97,36 +98,39 @@
           <div class="request-list">
             <p class="section-subtitle">Pending Requests ({{ pendingRequests().length }})</p>
             @for (req of pendingRequests(); track req.id) {
-              <div class="request-item pending-box">
-                <div class="request-header">
-                  <div class="user-info">
+              <div class="h-connection-item h-stacked">
+                <div class="h-item-header">
+                  <div class="h-item-body">
                     <img [ngSrc]="req.avatarUrl || 'default-avatar.png'"
                          width="32" height="32" class="h-avatar-sm" alt="Avatar"
                          [routerLink]="['/users', req.username]"
                          style="cursor: pointer;">
-                    <div class="text-group">
-                      <div class="name-row">
-      <span class="username" [routerLink]="['/users', req.username]">
-        {{ req.username }}
-      </span>
-                        <small>wants to be {{ req.roleName }}</small>
-                        <small class="request-time">{{ req.createdAt | date:'shortTime' }}
-                          • {{ req.createdAt | date:'MMM d' }}</small>
+
+                    <div class="h-info-group">
+                      <div class="h-title-row">
+                <span class="h-item-link" [routerLink]="['/users', req.username]">
+                  {{ req.username }}
+                </span>
+                        <small class="h-meta-text">
+                          {{ req.createdAt | date:'shortTime' }} • {{ req.createdAt | date:'MMM d' }}
+                        </small>
                       </div>
+                      <span class="h-item-accent">wants to be {{ req.roleName }}</span>
                     </div>
                   </div>
-                  <div class="card-footer actions">
-                    <button mat-icon-button color="primary" (click)="handleRequest(req.id, 'ACCEPTED')">
+
+                  <div class="h-item-actions">
+                    <button mat-icon-button color="primary" (click)='acceptMember(req.id)'>
                       <mat-icon>check_circle</mat-icon>
                     </button>
-                    <button mat-icon-button color="warn" (click)="handleRequest(req.id, 'REJECTED')">
+                    <button mat-icon-button color="warn" (click)='rejectMember(req.id)'>
                       <mat-icon>cancel</mat-icon>
                     </button>
                   </div>
                 </div>
 
                 @if (req.message) {
-                  <div class="request-message">
+                  <div class="h-item-note">
                     <mat-icon>format_quote</mat-icon>
                     <p>{{ req.message }}</p>
                   </div>

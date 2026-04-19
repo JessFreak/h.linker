@@ -9,7 +9,12 @@ import {
   ValidationErrors,
 } from '@angular/forms';
 import { UserService } from '../../../services/user.service';
-import { UpdateUserDTO, UserResponse } from '@h.linker/libs';
+import {
+  MemberStatus,
+  UpdateUserDTO,
+  UserInvitationResponse,
+  UserResponse,
+} from '@h.linker/libs';
 import {
   MatChipGrid,
   MatChipRemove,
@@ -20,18 +25,22 @@ import { MatIcon } from '@angular/material/icon';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import AuthService from '../../../services/auth.service';
 import { NotificationService } from '../../../utils/notification.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ImageUploadService } from '../../../services/image-upload.service';
 import { MatDialog } from '@angular/material/dialog';
 import { SettingsFooterComponent } from '../../settings/settings-footer.component';
 import { SettingsSectionComponent } from '../../settings/settings-section.component';
-import { NgOptimizedImage } from '@angular/common';
+import { DatePipe, NgOptimizedImage } from '@angular/common';
 import { ConfirmDialogComponent } from '../../../utils/confirm-dialog.component';
+import { TeamService } from '../../../services/team.service';
 
 @Component({
   selector: 'app-profile-settings',
   templateUrl: './profile-settings.component.html',
-  styleUrls: ['../../settings/settings.scss', './profile-settings.component.scss'],
+  styleUrls: [
+    '../../settings/settings.scss',
+    './profile-settings.component.scss',
+  ],
   imports: [
     MatChipGrid,
     MatChipRemove,
@@ -47,6 +56,8 @@ import { ConfirmDialogComponent } from '../../../utils/confirm-dialog.component'
     SettingsFooterComponent,
     SettingsSectionComponent,
     NgOptimizedImage,
+    RouterLink,
+    DatePipe,
   ],
 })
 export class ProfileSettingsComponent implements OnInit {
@@ -56,6 +67,7 @@ export class ProfileSettingsComponent implements OnInit {
 
   user = signal<UserResponse | null>(null);
   skills = signal<string[]>([]);
+  invitations = signal<UserInvitationResponse[]>([]);
 
   connectedCount = computed(() => {
     let count = 1;
@@ -68,6 +80,7 @@ export class ProfileSettingsComponent implements OnInit {
   isSaving = signal(false);
   protected readonly authService = inject(AuthService);
   protected readonly userService = inject(UserService);
+  protected readonly teamService = inject(TeamService);
   private readonly fb = inject(FormBuilder);
   private readonly notify = inject(NotificationService);
   private readonly route = inject(ActivatedRoute);
@@ -113,6 +126,7 @@ export class ProfileSettingsComponent implements OnInit {
 
   ngOnInit() {
     this.loadUserData();
+    this.loadInvitations();
     this.checkExternalErrors();
   }
 
@@ -140,6 +154,48 @@ export class ProfileSettingsComponent implements OnInit {
         });
         this.profileForm.markAsPristine();
       }
+    });
+  }
+
+  loadInvitations() {
+    this.teamService.getMyInvitations().subscribe({
+      next: (res) => {
+        this.invitations.set(res.invitations);
+        console.log(res);
+      },
+      error: () => this.notify.error('Failed to load invitations'),
+    });
+  }
+
+  acceptInvitation(teamId: string) {
+    this.handleInvitation(teamId, MemberStatus.ACCEPTED);
+  }
+
+  rejectInvitation(teamId: string) {
+    this.handleInvitation(teamId, MemberStatus.REJECTED);
+  }
+
+  private handleInvitation(teamId: string, status: MemberStatus) {
+    const currentUserId = this.user()?.id;
+    if (!currentUserId) return;
+
+    this.teamService.respondToRequest(teamId, currentUserId, status).subscribe({
+      next: () => {
+        const msg =
+          status === MemberStatus.ACCEPTED
+            ? 'Joined the team!'
+            : 'Invitation declined';
+        this.notify.success(msg);
+
+        this.invitations.update((prev) =>
+          prev.filter((i) => i.teamId !== teamId),
+        );
+
+        if (status === MemberStatus.ACCEPTED) {
+          this.loadUserData();
+        }
+      },
+      error: (err) => this.notify.error(err.error?.message || 'Action failed'),
     });
   }
 

@@ -15,7 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { TeamService } from '../../../../services/team.service';
 import { NotificationService } from '../../../../utils/notification.service';
-import { TeamResponse } from '@h.linker/libs';
+import { MemberStatus, TeamResponse } from '@h.linker/libs';
 import { MatDividerModule } from '@angular/material/divider';
 import { SettingsFooterComponent } from '../../../settings/settings-footer.component';
 import { SettingsSectionComponent } from '../../../settings/settings-section.component';
@@ -106,7 +106,15 @@ export class TeamSettingsComponent implements OnInit {
     }
   }
 
-  handleRequest(memberId: string, status: 'ACCEPTED' | 'REJECTED') {
+  acceptMember(memberId: string) {
+    this.handleRequest(memberId, MemberStatus.ACCEPTED);
+  }
+
+  rejectMember(memberId: string) {
+    this.handleRequest(memberId, MemberStatus.REJECTED);
+  }
+
+  private handleRequest(memberId: string, status: MemberStatus) {
     const currentTeam = this.team();
     if (!currentTeam) return;
 

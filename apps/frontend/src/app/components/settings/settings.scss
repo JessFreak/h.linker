@@ -40,3 +40,112 @@
     }
   }
 }
+
+.h-connection-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: var(--h-bg-deep-navy);
+  border-radius: 8px;
+  margin-bottom: 8px;
+
+  .h-item-body {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    flex: 1;
+
+    .h-info-group {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      flex-wrap: wrap;
+
+      .h-title-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+
+        .h-item-link {
+          font-weight: 600;
+          font-size: 14px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          position: relative;
+
+          &:hover {
+            color: var(--h-primary-blue);
+            text-decoration: underline;
+          }
+        }
+
+        .h-meta-text {
+          font-size: 11px;
+          color: var(--h-text-secondary);
+          opacity: 0.6;
+          &::before {
+            content: '•';
+            margin-right: 8px;
+            opacity: 0.5;
+          }
+        }
+      }
+
+      .h-item-accent {
+        color: var(--h-primary-blue) !important;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+
+  &.h-stacked {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+  }
+
+  .h-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    .h-item-actions {
+      display: flex;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+  }
+}
+
+.h-item-note {
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-left: 3px solid var(--h-primary-blue);
+  border-radius: 4px;
+  display: flex;
+  gap: 8px;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    opacity: 0.5;
+  }
+
+  p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.8);
+    font-style: italic;
+  }
+}
