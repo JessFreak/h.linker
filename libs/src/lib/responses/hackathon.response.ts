@@ -1,4 +1,9 @@
-import { HackathonStatus } from '@prisma/client';
+export enum HackathonStatus {
+  DRAFT = 'DRAFT',
+  REGISTRATION = 'REGISTRATION',
+  ACTIVE = 'ACTIVE',
+  FINISHED = 'FINISHED',
+}
 
 export interface Hackathon {
   id: string;

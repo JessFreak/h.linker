@@ -12,6 +12,11 @@ export enum MemberStatus {
   LEFT = 'LEFT',
 }
 
+export enum MemberType {
+  INVITATION = 'INVITATION',
+  REQUEST = 'REQUEST',
+}
+
 export class JoinRequestDTO {
   @IsString()
   @IsNotEmpty()

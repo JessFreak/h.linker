@@ -1,4 +1,3 @@
-import { PickType, OmitType, PartialType } from '@nestjs/mapped-types';
 import {
   IsEmail,
   IsNotEmpty,
@@ -11,7 +10,19 @@ import {
   IsArray,
 } from 'class-validator';
 
-class UserBase {
+export class LoginDTO {
+  @IsEmail()
+  @IsNotEmpty()
+  @IsString()
+    email: string;
+
+  @IsNotEmpty()
+  @MinLength(6)
+  @IsString()
+    password: string;
+}
+
+export class RegisterDTO {
   @IsEmail()
   @IsNotEmpty()
   @IsString()
@@ -38,6 +49,25 @@ class UserBase {
   @IsOptional()
   @IsString()
     lastName?: string;
+}
+
+export class UpdateUserDTO {
+  @IsOptional()
+  @IsString()
+    firstName?: string;
+
+  @IsOptional()
+  @IsString()
+    lastName?: string;
+
+  @IsOptional()
+  @IsString()
+  @MinLength(3)
+  @MaxLength(20)
+  @Matches(/^[a-zA-Z0-9_]+$/, {
+    message: 'Username can only contain letters, numbers, and underscores',
+  })
+    username?: string;
 
   @IsOptional()
   @IsString()
@@ -53,18 +83,3 @@ class UserBase {
   @IsString({ each: true })
     skills?: string[];
 }
-
-export class LoginDTO extends PickType(UserBase, [
-  'email',
-  'password',
-] as const) {}
-
-export class RegisterDTO extends OmitType(UserBase, [
-  'bio',
-  'avatarUrl',
-  'skills',
-] as const) {}
-
-export class UpdateUserDTO extends PartialType(
-  OmitType(UserBase, ['email', 'password'] as const),
-) {}

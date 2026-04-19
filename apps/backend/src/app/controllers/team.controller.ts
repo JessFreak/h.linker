@@ -19,6 +19,7 @@ import {
   TeamsResponse,
   JoinRequestDTO,
   InviteUserDTO,
+  UserInvitationsResponse,
 } from '@h.linker/libs';
 import { User, UserTeamStatus } from '@prisma/client';
 import { Access } from '../../config/security/decorators/acces';
@@ -42,6 +43,15 @@ export class TeamController {
   async getAll(@Query('leaderId') leaderId: string): Promise<TeamsResponse> {
     const teams = await this.teamService.getAll(leaderId);
     return TeamMapper.getTeamsResponse(teams);
+  }
+
+  @Access()
+  @Get('invitations')
+  async getMyInvitations(
+    @UserRequest() user: User,
+  ): Promise<UserInvitationsResponse> {
+    const invitations = await this.teamService.findUserInvitations(user.id);
+    return TeamMapper.getInvitationsResponse(invitations);
   }
 
   @Get(':id')

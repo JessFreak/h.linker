@@ -4,7 +4,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { TeamRepository } from '../database/repositories/team.repository';
-import { TeamWithMembers } from '../database/entities/team.entity';
+import {
+  TeamWithMembers,
+  UserInvitationWithTeam,
+} from '../database/entities/team.entity';
 import { MemberRepository } from '../database/repositories/member.repository';
 import {
   CreateTeamDTO,
@@ -134,5 +137,9 @@ export class TeamService {
     newLeaderId: string,
   ): Promise<TeamWithMembers> {
     return this.teamRepository.updateById(id, { leaderId: newLeaderId });
+  }
+
+  async findUserInvitations(userId: string): Promise<UserInvitationWithTeam[]> {
+    return this.teamRepository.findUserInvitations(userId);
   }
 }

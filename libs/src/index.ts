@@ -6,3 +6,4 @@ export * from './lib/dtos/update-password.dto';
 export * from './lib/responses/user.response';
 export * from './lib/responses/team.response';
 export * from './lib/responses/role.response';
+export * from './lib/responses/hackathon.response';

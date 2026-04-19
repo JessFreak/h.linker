@@ -5,6 +5,7 @@ import {
   UserProjectResponse,
   UserResponse,
   UsersResponse,
+  HackathonStatus,
 } from '@h.linker/libs';
 
 export class UserMapper {
@@ -47,9 +48,14 @@ export class UserMapper {
       })),
     );
 
+    const createdHackathons = user.createdHackathons.map((h) => ({
+      ...h,
+      status: h.status as HackathonStatus,
+    }));
+
     return {
       ...base,
-      createdHackathons: user.createdHackathons,
+      createdHackathons,
       teams,
       projects,
     };

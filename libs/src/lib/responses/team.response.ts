@@ -1,10 +1,10 @@
-import { UserTeamStatus, UserTeamType } from '@prisma/client';
 import { UserResponse } from './user.response';
+import { MemberStatus, MemberType } from '../dtos/member.dto';
 
 export interface TeamMemberResponse extends UserResponse {
   roleName: string;
-  status: UserTeamStatus;
-  type: UserTeamType;
+  status: MemberStatus;
+  type: MemberType;
   message: string;
   createdAt: Date;
 }
@@ -21,4 +21,16 @@ export interface TeamResponse {
 
 export interface TeamsResponse {
   teams: TeamResponse[];
+}
+
+export interface UserInvitationResponse {
+  teamId: string;
+  teamName: string;
+  roleName: string;
+  message?: string;
+  createdAt: Date;
+}
+
+export interface UserInvitationsResponse {
+  invitations: UserInvitationResponse[];
 }

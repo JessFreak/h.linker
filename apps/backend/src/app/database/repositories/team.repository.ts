@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Prisma, UserTeamStatus, UserTeamType } from '@prisma/client';
-import { TeamWithMembers } from '../entities/team.entity';
+import {
+  TeamWithMembers,
+  UserInvitationWithTeam,
+} from '../entities/team.entity';
 
 @Injectable()
 export class TeamRepository {
@@ -70,5 +73,21 @@ export class TeamRepository {
 
   async deleteById(id: string): Promise<void> {
     await this.prisma.team.delete({ where: { id } });
+  }
+
+  async findUserInvitations(userId: string): Promise<UserInvitationWithTeam[]> {
+    return this.prisma.userTeam.findMany({
+      where: {
+        userId,
+        type: UserTeamType.INVITATION,
+        status: UserTeamStatus.PENDING,
+      },
+      include: {
+        team: true,
+      },
+      orderBy: {
+        created: 'desc',
+      },
+    });
   }
 }
