@@ -40,7 +40,10 @@ import { ConfirmDialogComponent } from '../../../../utils/confirm-dialog.compone
     SettingsSectionComponent,
   ],
   templateUrl: './team-settings.component.html',
-  styleUrls: ['../../../settings/settings.scss', './team-settings.component.scss'],
+  styleUrls: [
+    '../../../settings/settings.scss',
+    './team-settings.component.scss',
+  ],
 })
 export class TeamSettingsComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -60,7 +63,13 @@ export class TeamSettingsComponent implements OnInit {
   });
 
   pendingRequests = computed(
-    () => this.team()?.requests?.filter((r) => r.status === 'PENDING') || [],
+    () =>
+      this.team()
+        ?.requests?.filter((r) => r.status === 'PENDING')
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        ) || [],
   );
   activeMembers = computed(() => this.team()?.members || []);
 

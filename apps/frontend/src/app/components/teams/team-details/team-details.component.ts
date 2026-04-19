@@ -78,9 +78,7 @@ class TeamDetailsComponent {
 
     if (!team) return;
 
-    this.teamActions.openApplyDialog(team, user.id, () =>
-      this.loadTeam(team.id),
-    );
+    this.teamActions.openApplyDialog(team, () => this.loadTeam(team.id));
   }
 
   onLeaveTeam() {

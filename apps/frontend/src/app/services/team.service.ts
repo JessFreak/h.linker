@@ -1,12 +1,13 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   TeamResponse,
   TeamsResponse,
   CreateTeamDTO,
   UpdateTeamDTO,
-  AddMemberDTO,
+  JoinRequestDTO,
+  InviteUserDTO,
 } from '@h.linker/libs';
 import { UserTeamStatus } from '@prisma/client';
 
@@ -15,8 +16,14 @@ export class TeamService {
   private http = inject(HttpClient);
   private readonly baseUrl = '/api/teams';
 
-  getAll(): Observable<TeamsResponse> {
-    return this.http.get<TeamsResponse>(this.baseUrl);
+  getAll(leaderId?: string): Observable<TeamsResponse> {
+    let params = new HttpParams();
+
+    if (leaderId) {
+      params = params.set('leaderId', leaderId);
+    }
+
+    return this.http.get<TeamsResponse>(this.baseUrl, { params });
   }
 
   getById(id: string): Observable<TeamResponse> {
@@ -35,9 +42,13 @@ export class TeamService {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 
-  addMember(teamId: string, dto: AddMemberDTO): Observable<TeamResponse> {
+  applyToTeam(teamId: string, dto: JoinRequestDTO): Observable<TeamResponse> {
+    return this.http.post<TeamResponse>(`${this.baseUrl}/${teamId}/apply`, dto);
+  }
+
+  inviteUser(teamId: string, dto: InviteUserDTO): Observable<TeamResponse> {
     return this.http.post<TeamResponse>(
-      `${this.baseUrl}/${teamId}/members`,
+      `${this.baseUrl}/${teamId}/invite`,
       dto,
     );
   }

@@ -10,6 +10,9 @@ import { UserResponse } from '@h.linker/libs';
 import { UserService } from '../../../services/user.service';
 import AuthService from '../../../services/auth.service';
 import { NotificationService } from '../../../utils/notification.service';
+import { MatDialog } from '@angular/material/dialog';
+import { InviteUserDialogComponent } from './invite-user-dialog/invite-user-dialog.component';
+import { TeamService } from '../../../services/team.service';
 
 @Component({
   selector: 'app-users',
@@ -29,7 +32,9 @@ import { NotificationService } from '../../../utils/notification.service';
 export class UsersComponent implements OnInit {
   private userService = inject(UserService);
   private authService = inject(AuthService);
+  private teamService = inject(TeamService);
   private notify = inject(NotificationService);
+  private dialog = inject(MatDialog);
 
   currentUser = toSignal(this.authService.user$);
   allUsers = signal<UserResponse[]>([]);
@@ -78,7 +83,7 @@ export class UsersComponent implements OnInit {
   }
 
   toggleSkills(userId: string, event: Event) {
-    event.stopPropagation(); // Щоб не спрацював перехід по картці, якщо він буде
+    event.stopPropagation();
     this.expandedUsers.update((prev) => {
       const next = new Set(prev);
       if (next.has(userId)) {
@@ -87,6 +92,41 @@ export class UsersComponent implements OnInit {
         next.add(userId);
       }
       return next;
+    });
+  }
+
+  openInviteDialog(user: UserResponse) {
+    const currentUser = this.currentUser();
+    if (!currentUser) return;
+
+    const dialogRef = this.dialog.open(InviteUserDialogComponent, {
+      width: '450px',
+      data: {
+        username: user.username,
+        userId: user.id,
+        currentUserId: currentUser.id,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        const dto = {
+          userId: user.id,
+          roleName: result.roleName,
+          message: result.message,
+        };
+
+        this.teamService
+          .inviteUser(result.teamId, dto)
+          .subscribe({
+            next: () =>
+              this.notify.success(`Invitation sent to ${user.username}`),
+            error: (err) =>
+              this.notify.error(
+                err.error?.message || 'Failed to send invitation',
+              ),
+          });
+      }
     });
   }
 

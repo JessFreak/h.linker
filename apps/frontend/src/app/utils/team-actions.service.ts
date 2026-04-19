@@ -11,7 +11,7 @@ export class TeamActionsService {
   private teamService = inject(TeamService);
   private notify = inject(NotificationService);
 
-  openApplyDialog(team: TeamResponse, userId: string, callback?: () => void) {
+  openApplyDialog(team: TeamResponse, callback?: () => void) {
     const dialogRef = this.dialog.open(ApplyTeamDialogComponent, {
       width: '500px',
       data: { teamName: team.name },
@@ -20,13 +20,11 @@ export class TeamActionsService {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         const dto = {
-          userId: userId,
           roleName: result.roleName,
           message: result.message,
-          type: 'REQUEST' as const,
         };
 
-        this.teamService.addMember(team.id, dto).subscribe({
+        this.teamService.applyToTeam(team.id, dto).subscribe({
           next: () => {
             this.notify.success(`Request sent to the team ${team.name}`);
             if (callback) callback();

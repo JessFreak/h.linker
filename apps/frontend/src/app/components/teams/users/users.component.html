@@ -80,9 +80,8 @@
               View Profile
             </button>
 
-            <button mat-flat-button color="accent" class="invite-btn">
-              <mat-icon>person_add</mat-icon>
-              Invite
+            <button mat-flat-button color="accent" class="invite-btn" (click)="openInviteDialog(user)">
+              <mat-icon>person_add</mat-icon> Invite
             </button>
           </div>
         </div>

@@ -1,0 +1,47 @@
+<h2 mat-dialog-title>Invite &#64;{{ data.username }}</h2>
+
+<mat-dialog-content>
+  @if (isLoading()) {
+    <div class="loader">Loading your teams...</div>
+  } @else if (myTeams().length === 0) {
+    <p class="h-text-secondary">You don't lead any teams yet. Create a team first to invite others.</p>
+  } @else {
+    <form [formGroup]="inviteForm" class="invite-form">
+      <mat-form-field appearance="outline">
+        <mat-label>Select Team</mat-label>
+        <mat-select formControlName="teamId">
+          @for (team of myTeams(); track team.id) {
+            <mat-option [value]="team.id">{{ team.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Role</mat-label>
+        <mat-select formControlName="roleName">
+          @for (role of roles(); track role.name) {
+            <mat-option [value]="role.name">{{ role.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Message (optional)</mat-label>
+        <textarea matInput
+                  formControlName="message"
+                  placeholder="Hey, we need a strong developer like you!"
+                  rows="3"></textarea>
+      </mat-form-field>
+    </form>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-flat-button
+          color="accent"
+          [disabled]="inviteForm.invalid || isLoading()"
+          (click)="onSubmit()">
+    Send Invitation
+  </button>
+</mat-dialog-actions>

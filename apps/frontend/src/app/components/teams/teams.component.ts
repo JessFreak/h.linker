@@ -99,7 +99,7 @@ export class TeamsComponent implements OnInit {
       return;
     }
 
-    this.teamActions.openApplyDialog(team, user.id, () => this.loadTeams());
+    this.teamActions.openApplyDialog(team, () => this.loadTeams());
   }
 
   isMember(team: TeamResponse): boolean {
