@@ -48,36 +48,46 @@ html, body {
   font-size: 14px;
 }
 
-.error-snackbar {
-  --mdc-snackbar-container-color: #30363D;
-  --mdc-snackbar-supporting-text-color: #FFFFFF;
-  border-left: 4px solid var(--h-safety-orange);
-
-  .mat-mdc-snack-bar-label {
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
+.h-snackbar.mat-mdc-snack-bar-container {
+  .mdc-snackbar__surface {
+    background-color: #161b22;
+    border-radius: 6px ;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   }
 
-  .mat-mdc-button {
-    color: var(--h-safety-orange) !important;
-    font-weight: bold;
+  .mdc-snackbar__label {
+    color: #f0f6fc;
+    font-family: 'Inter', sans-serif;
   }
 }
 
-.success-snackbar {
-  --mdc-snackbar-container-color: #30363D;
-  --mdc-snackbar-supporting-text-color: #FFFFFF;
-  border-left: 4px solid #416945;
-
-  .mat-mdc-snack-bar-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-family: 'Inter', sans-serif;
+.success-snackbar.mat-mdc-snack-bar-container {
+  .mdc-snackbar__surface {
+    border-left: 4px solid #3fb950
   }
+  .mat-mdc-button {
+    --mdc-text-button-label-text-color: #3fb950;
+    span { color: #3fb950 }
+  }
+}
 
-  .success-icon {
-    color: #416945;
+.error-snackbar.mat-mdc-snack-bar-container {
+  .mdc-snackbar__surface {
+    border-left: 4px solid #f85149;
+  }
+  .mat-mdc-button {
+    --mdc-text-button-label-text-color: #f85149;
+    span { color: #f85149; }
+  }
+}
+
+.info-snackbar.mat-mdc-snack-bar-container {
+  .mdc-snackbar__surface {
+    border-left: 4px solid #58a6ff;
+  }
+  .mat-mdc-button {
+    --mdc-text-button-label-text-color: #58a6ff;
+    span { color: #58a6ff; }
   }
 }
 
