@@ -4,18 +4,6 @@
   gap: 16px;
 }
 
-.leader-badge {
-  background: var(--h-safety-orange);
-  color: black !important;
-  padding: 4px 12px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  flex-shrink: 0;
-}
-
 .danger-item {
   display: flex;
   justify-content: space-between;

@@ -133,7 +133,7 @@ export class TeamController {
   @Patch(':id/leader')
   async changeLeader(
     @Param('id') id: string,
-    @Body('newLeaderId') newLeaderId: string,
+    @Query('newLeaderId') newLeaderId: string,
   ): Promise<TeamResponse> {
     const team = await this.teamService.changeLeader(id, newLeaderId);
     return TeamMapper.getTeamResponse(team);

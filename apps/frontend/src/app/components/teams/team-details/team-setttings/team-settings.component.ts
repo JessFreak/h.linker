@@ -20,6 +20,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { SettingsFooterComponent } from '../../../settings/settings-footer.component';
 import { SettingsSectionComponent } from '../../../settings/settings-section.component';
 import { ConfirmDialogComponent } from '../../../../utils/confirm-dialog.component';
+import { TransferLeaderDialogComponent } from './transfer-leader-dialog.component';
 
 @Component({
   selector: 'app-team-settings',
@@ -152,5 +153,37 @@ export class TeamSettingsComponent implements OnInit {
 
   scrollToSection(id: string) {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  onTransferOwnership() {
+    const currentTeam = this.team();
+    if (!currentTeam) return;
+
+    const eligibleMembers = this.activeMembers().filter(
+      (m) => m.id !== currentTeam.leaderId,
+    );
+
+    if (eligibleMembers.length === 0) {
+      this.notify.error('No other members available to take leadership');
+      return;
+    }
+
+    const dialogRef = this.dialog.open(TransferLeaderDialogComponent, {
+      width: '400px',
+      data: { members: eligibleMembers },
+    });
+
+    dialogRef.afterClosed().subscribe((newLeaderId: string) => {
+      if (newLeaderId) {
+        this.teamService.changeLeader(currentTeam.id, newLeaderId).subscribe({
+          next: () => {
+            this.notify.success('Ownership transferred successfully');
+            this.router.navigate(['/teams', currentTeam.id]);
+          },
+          error: (err) =>
+            this.notify.error(err.error?.message || 'Transfer failed'),
+        });
+      }
+    });
   }
 }

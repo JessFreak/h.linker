@@ -148,7 +148,9 @@
               <strong>Transfer Ownership</strong>
               <p class="h-text-secondary">Assign another member as the team leader.</p>
             </div>
-            <button mat-stroked-button color="primary">Transfer</button>
+            <button mat-stroked-button color="primary" (click)="onTransferOwnership()">
+              Transfer
+            </button>
           </div>
 
           <mat-divider></mat-divider>

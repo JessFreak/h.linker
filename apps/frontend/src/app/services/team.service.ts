@@ -74,4 +74,12 @@ export class TeamService {
       `${this.baseUrl}/invitations`,
     );
   }
+
+  changeLeader(teamId: string, newLeaderId: string): Observable<TeamResponse> {
+    return this.http.patch<TeamResponse>(
+      `${this.baseUrl}/${teamId}/leader`,
+      {},
+      { params: { newLeaderId } },
+    );
+  }
 }
