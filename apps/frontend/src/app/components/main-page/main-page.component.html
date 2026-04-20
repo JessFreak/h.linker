@@ -1,0 +1,58 @@
+<div class="landing-container">
+  <div class="bg-glow"></div>
+
+  <section class="hero-section">
+    <div class="hero-content">
+      <span class="badge">v1.0 Beta — exclusive for KPI</span>
+      <h1>Build your dream team for <span>Hackathons</span></h1>
+      <p class="h-text-secondary">
+        ServiceStation helps KPI students find teammates, showcase their
+        GitHub projects, and win the best tech competitions.
+      </p>
+
+      <div class="cta-group">
+        <button mat-flat-button color="primary" routerLink="/register">
+          <mat-icon>rocket_launch</mat-icon>
+          Get Started
+        </button>
+        <button mat-stroked-button routerLink="/login">
+          Sign In
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="features-grid">
+    <div class="feature-card h-card">
+      <mat-icon>groups</mat-icon>
+      <h3>Team Management</h3>
+      <p class="h-text-secondary">Create teams, manage requests, and find the perfect role for every member.</p>
+    </div>
+
+    <div class="feature-card h-card">
+      <mat-icon>code</mat-icon>
+      <h3>GitHub Sync</h3>
+      <p class="h-text-secondary">Automatically showcase your skills and repositories to potential leaders.</p>
+    </div>
+
+    <div class="feature-card h-card">
+      <mat-icon>emoji_events</mat-icon>
+      <h3>Hackathons</h3>
+      <p class="h-text-secondary">Browse active competitions, register your team, and track your progress.</p>
+    </div>
+  </section>
+
+  <footer class="mini-stats">
+    <div class="stat-item">
+      <strong>{{ studentsCount() }}+</strong> Students
+    </div>
+    <div class="divider"></div>
+    <div class="stat-item">
+      <strong>{{ teamsCount() }}</strong> Teams
+    </div>
+    <div class="divider"></div>
+    <div class="stat-item">
+      <strong>{{ hackathonsCount() }}</strong> Active Hackathons
+    </div>
+  </footer>
+</div>
