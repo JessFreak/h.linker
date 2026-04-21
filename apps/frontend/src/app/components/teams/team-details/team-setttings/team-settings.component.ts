@@ -21,6 +21,7 @@ import { SettingsFooterComponent } from '../../../settings/settings-footer.compo
 import { SettingsSectionComponent } from '../../../settings/settings-section.component';
 import { ConfirmDialogComponent } from '../../../../utils/confirm-dialog.component';
 import { TransferLeaderDialogComponent } from './transfer-leader-dialog.component';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-team-settings',
@@ -39,6 +40,7 @@ import { TransferLeaderDialogComponent } from './transfer-leader-dialog.componen
     NgOptimizedImage,
     SettingsFooterComponent,
     SettingsSectionComponent,
+    MatTooltip,
   ],
   templateUrl: './team-settings.component.html',
   styleUrls: [
