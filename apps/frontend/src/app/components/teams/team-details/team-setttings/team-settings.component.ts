@@ -186,4 +186,32 @@ export class TeamSettingsComponent implements OnInit {
       }
     });
   }
+
+  onRemoveMember(memberId: string, username: string) {
+    const currentTeam = this.team();
+    if (!currentTeam) return;
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Remove Member',
+        message: `Are you sure you want to remove ${username} from the team?`,
+        confirmText: 'Remove',
+        isDanger: true,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.teamService.removeMember(currentTeam.id, memberId).subscribe({
+          next: (updatedTeam) => {
+            this.team.set(updatedTeam);
+            this.notify.success(`Member ${username} removed`);
+          },
+          error: (err) =>
+            this.notify.error(err.error?.message || 'Failed to remove member'),
+        });
+      }
+    });
+  }
 }

@@ -82,4 +82,10 @@ export class TeamService {
       { params: { newLeaderId } },
     );
   }
+
+  removeMember(teamId: string, userId: string): Observable<TeamResponse> {
+    return this.http.delete<TeamResponse>(
+      `${this.baseUrl}/${teamId}/members/${userId}`,
+    );
+  }
 }

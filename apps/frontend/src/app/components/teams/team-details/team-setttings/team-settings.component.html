@@ -77,18 +77,26 @@
 
                   <div class="h-info-group">
                     <div class="h-title-row">
-              <span class="h-item-link" [routerLink]="['/users', member.username]">
-                {{ member.username }}
-              </span>
+          <span class="h-item-link" [routerLink]="['/users', member.username]">
+            {{ member.username }}
+          </span>
                       <small class="h-meta-text">{{ member.createdAt | date:'dd.MM.yyyy' }}</small>
                     </div>
                     <span class="h-item-accent">as {{ member.roleName }}</span>
                   </div>
                 </div>
 
-                @if (member.id === team()?.leaderId) {
-                  <span class="leader-badge">Leader</span>
-                }
+                <div class="h-item-actions" style="display: flex; align-items: center; gap: 8px;">
+                  @if (member.id === team()?.leaderId) {
+                    <span class="leader-badge">Leader</span>
+                  } @else {
+                    <button mat-icon-button color="warn"
+                            (click)="onRemoveMember(member.id, member.username)"
+                            matTooltip="Remove from team">
+                      <mat-icon>person_remove</mat-icon>
+                    </button>
+                  }
+                </div>
               </div>
             }
           </div>
