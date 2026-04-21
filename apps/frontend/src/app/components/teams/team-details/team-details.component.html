@@ -10,30 +10,38 @@
 
     <div class="header-actions">
       @if (isLeader()) {
-        <button mat-flat-button color="primary" [routerLink]="['/teams', team()?.id, 'settings']">
+        <button mat-flat-button color="primary"
+                [routerLink]="['/teams', team()?.id, 'settings']"
+                matTooltip="Edit team info, manage members and ownership">
           <mat-icon>settings</mat-icon> Manage Team
         </button>
       }
 
       @if (isMember() && !isLeader()) {
-        <button mat-stroked-button color="warn" (click)="onLeaveTeam()">
+        <button mat-stroked-button color="warn"
+                (click)="onLeaveTeam()"
+                matTooltip="Leave this team permanently">
           <mat-icon>logout</mat-icon> Leave Team
         </button>
       }
 
       @if (isMember()) {
-        <span class="h-badge">Member</span>
+        <span class="h-badge" matTooltip="You are a verified member of this team">Member</span>
       } @else if (isRejected()) {
         <div class="rejected-actions">
-          <span class="h-badge rejected">Request declined</span>
-          <button mat-button color="primary" class="retry-btn" (click)="openApplyDialog()">
+          <span class="h-badge rejected" matTooltip="The leader declined your previous application">Request declined</span>
+          <button mat-button color="primary" class="retry-btn"
+                  (click)="openApplyDialog()"
+                  matTooltip="Submit a new application to join">
             Try Again
           </button>
         </div>
       } @else if (hasRequest()) {
-        <span class="h-badge pending">Request Sent</span>
+        <span class="h-badge pending" matTooltip="Your application is awaiting leader's approval">Request Sent</span>
       } @else {
-        <button mat-flat-button color="accent" (click)="openApplyDialog()">
+        <button mat-flat-button color="accent"
+                (click)="openApplyDialog()"
+                matTooltip="Send a request to join this team">
           Join Team
         </button>
       }
@@ -41,7 +49,6 @@
   </header>
 
   <div class="main-column">
-
     <section class="h-card about-card">
       <div class="section-label">TEAM OVERVIEW</div>
       <p class="h-text-secondary card-description">
@@ -52,7 +59,7 @@
     <section class="h-card repo-list-card">
       <div class="section-label">TEAM REPOSITORIES</div>
       <div class="repo-list">
-        <div class="repo-item">
+        <div class="repo-item" matTooltip="Project repository linked to this team">
           <div class="repo-info">
             <mat-icon>folder</mat-icon>
             <span class="code-tag">h-linker-core</span>
@@ -60,7 +67,7 @@
           <a href="#" class="mat-button mat-primary">View on GitHub</a>
         </div>
 
-        <div class="repo-item">
+        <div class="repo-item" matTooltip="Project repository linked to this team">
           <div class="repo-info">
             <mat-icon>folder</mat-icon>
             <span class="code-tag">ai-accessibility-agent</span>
@@ -73,20 +80,20 @@
     <section class="h-card history-card">
       <div class="section-label">HACKATHON HISTORY</div>
       <div class="history-list">
-        <div class="history-item">
+        <div class="history-item" matTooltip="View event results and submissions">
           <div class="event-info">
             <div class="event-name">Global AI Hack 2026</div>
             <div class="h-text-secondary">Rank: #4 | Score: 91.4</div>
           </div>
-          <mat-chip class="code-tag">Finished</mat-chip>
+          <mat-chip class="code-tag" matTooltip="Event has concluded">Finished</mat-chip>
         </div>
 
-        <div class="history-item">
+        <div class="history-item" matTooltip="Top performance in this competition!">
           <div class="event-info">
             <div class="event-name">Kyiv KPI Tech Week</div>
             <div class="h-text-secondary">Rank: #1 | Score: 98.0</div>
           </div>
-          <mat-chip class="code-tag">Winner</mat-chip>
+          <mat-chip class="winner code-tag" matTooltip="First place winner">Winner</mat-chip>
         </div>
       </div>
     </section>
@@ -95,7 +102,9 @@
   <aside class="sidebar-column">
     <section class="h-card chat-card">
       <div class="section-label">COMMUNICATION</div>
-      <button mat-flat-button color="accent" class="w-100" (click)="openChat()">
+      <button mat-flat-button color="accent" class="w-100"
+              (click)="openChat()"
+              matTooltip="Go to Discord/Telegram/Slack workspace">
         Open Team Chat <mat-icon>send</mat-icon>
       </button>
       <div class="chat-caption h-text-secondary">
@@ -115,22 +124,30 @@
               height="32"
               class="h-avatar-sm clickable-avatar"
               [routerLink]="['/users', member.username]"
+              matTooltip="View profile"
             >
             <div class="member-info">
-        <span class="username" [routerLink]="['/users', member.username]">
-          {{ member.username }}
-        </span>
+              <span class="username"
+                    [routerLink]="['/users', member.username]"
+                    matTooltip="View profile">
+                {{ member.username }}
+              </span>
               <span class="role">{{ member.roleName }}</span>
             </div>
-            <span class="h-badge" [class.leader]="member.id === team()?.leaderId">
-        {{ member.id === team()?.leaderId ? 'Leader' : 'Member' }}
-      </span>
+            <span class="h-badge"
+                  [class.leader]="member.id === team()?.leaderId"
+                  [matTooltip]="member.id === team()?.leaderId ? 'Team Owner' : 'Team Participant'">
+              {{ member.id === team()?.leaderId ? 'Leader' : 'Member' }}
+            </span>
           </div>
         }
       </div>
 
       @if (isLeader()) {
-        <button [routerLink]="['/users']" mat-button color="primary" class="w-100 invite-btn">
+        <button [routerLink]="['/users']"
+                mat-button color="primary"
+                class="w-100 invite-btn"
+                matTooltip="Search for new developers for your team">
           <mat-icon>person_add</mat-icon> Invite Members
         </button>
       }

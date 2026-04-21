@@ -5,11 +5,18 @@ import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TeamService } from '../../services/team.service';
 import { UserService } from '../../services/user.service';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-main-page',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, RouterLink],
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatIconModule,
+    RouterLink,
+    MatTooltip,
+  ],
   templateUrl: 'main-page.component.html',
   styleUrls: ['./main-page.components.scss'],
 })

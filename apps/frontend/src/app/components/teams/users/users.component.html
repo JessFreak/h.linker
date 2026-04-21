@@ -3,7 +3,7 @@
     <h2 class="mat-headline-3">Find Talent</h2>
 
     <div class="filter-group">
-      <div class="search-box">
+      <div class="search-box" matTooltip="Search by full name, @username or specific technical skills">
         <mat-icon>search</mat-icon>
         <input type="text" placeholder="Search by name or skill..." (input)="onSearch($event)">
       </div>
@@ -13,20 +13,23 @@
       <mat-checkbox
         color="primary"
         [checked]="showOnlyWithGithub()"
-        (change)="showOnlyWithGithub.set(!showOnlyWithGithub())">
+        (change)="showOnlyWithGithub.set(!showOnlyWithGithub())"
+        matTooltip="Show only developers who have linked their GitHub profile">
         Connected GitHub
       </mat-checkbox>
     </div>
 
     <div class="sidebar-footer h-text-secondary">
-      <p style="font-size: 11px;">Looking for specific stack? Use the search bar to filter skills.</p>
+      <p>Looking for specific stack? Use the search bar to filter skills.</p>
     </div>
   </aside>
 
   <main class="discovery-grid">
     <div class="header">
       <h1 class="mat-headline-2">Developers</h1>
-      <span class="count-label h-text-secondary">{{ filteredUsers().length }} specialists found</span>
+      <span class="count-label h-text-secondary" [matTooltip]="filteredUsers().length + ' developers currently match your filters'">
+        {{ filteredUsers().length }} specialists found
+      </span>
     </div>
 
     <div class="grid">
@@ -43,7 +46,9 @@
             </div>
 
             @if (user.githubId) {
-              <mat-icon class="github-status-icon" title="GitHub Linked">verified</mat-icon>
+              <mat-icon class="github-status-icon"
+                        matTooltip="GitHub account verified and linked"
+                        matTooltipPosition="above">verified</mat-icon>
             }
           </div>
 
@@ -52,7 +57,7 @@
           </p>
 
           <div class="card-meta">
-            <mat-icon>terminal</mat-icon>
+            <mat-icon matTooltip="Skills Stack">terminal</mat-icon>
             <div class="skills-mini-list">
               @let expanded = isExpanded(user.id);
               @let visibleSkills = expanded ? user.skills : user.skills.slice(0, 10);
@@ -66,21 +71,27 @@
                       role="button"
                       tabindex="0"
                       [class.active]="expanded"
+                      [matTooltip]="expanded ? 'Collapse list' : 'Show all ' + user.skills.length + ' skills'"
                       (click)="toggleSkills(user.id, $event)"
                       (keydown.enter)="toggleSkills(user.id, $event)"
                       (keydown.space)="toggleSkills(user.id, $event); $event.preventDefault()">
-  {{ expanded ? 'show less' : '+' + (user.skills.length - 10) }}
-</span>
+                  {{ expanded ? 'show less' : '+' + (user.skills.length - 10) }}
+                </span>
               }
             </div>
           </div>
 
           <div class="card-footer">
-            <button mat-button color="primary" [routerLink]="['/users', user.username]">
+            <button mat-button color="primary"
+                    [routerLink]="['/users', user.username]"
+                    matTooltip="Explore projects and experience">
               View Profile
             </button>
 
-            <button mat-flat-button color="accent" class="invite-btn" (click)="openInviteDialog(user)">
+            <button mat-flat-button color="accent"
+                    class="invite-btn"
+                    (click)="openInviteDialog(user)"
+                    matTooltip="Invite this developer to join your team">
               <mat-icon>person_add</mat-icon> Invite
             </button>
           </div>

@@ -13,6 +13,7 @@ import { NotificationService } from '../../../utils/notification.service';
 import { MatDialog } from '@angular/material/dialog';
 import { InviteUserDialogComponent } from './invite-user-dialog/invite-user-dialog.component';
 import { TeamService } from '../../../services/team.service';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-users',
@@ -25,6 +26,7 @@ import { TeamService } from '../../../services/team.service';
     MatCheckboxModule,
     RouterLink,
     NgOptimizedImage,
+    MatTooltip,
   ],
   templateUrl: './users.component.html',
   styleUrls: ['../discovery-shared.scss', './users.component.scss'],
@@ -116,16 +118,14 @@ export class UsersComponent implements OnInit {
           message: result.message,
         };
 
-        this.teamService
-          .inviteUser(result.teamId, dto)
-          .subscribe({
-            next: () =>
-              this.notify.success(`Invitation sent to ${user.username}`),
-            error: (err) =>
-              this.notify.error(
-                err.error?.message || 'Failed to send invitation',
-              ),
-          });
+        this.teamService.inviteUser(result.teamId, dto).subscribe({
+          next: () =>
+            this.notify.success(`Invitation sent to ${user.username}`),
+          error: (err) =>
+            this.notify.error(
+              err.error?.message || 'Failed to send invitation',
+            ),
+        });
       }
     });
   }

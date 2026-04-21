@@ -12,27 +12,37 @@
       <nav class="settings-nav">
         <a mat-button class="active" tabindex="0"
            (click)="scrollToSection('general')"
-           (keydown.enter)="scrollToSection('general')">
+           (keydown.enter)="scrollToSection('general')"
+           matTooltip="Edit basic team information"
+           matTooltipPosition="right">
           <mat-icon>info</mat-icon>
           General Info
         </a>
         <a mat-button tabindex="0"
            (click)="scrollToSection('members')"
-           (keydown.enter)="scrollToSection('members')">
+           (keydown.enter)="scrollToSection('members')"
+           matTooltip="Manage members and pending applications"
+           matTooltipPosition="right">
           <mat-icon>people</mat-icon>
           Members & Requests
           @if (pendingRequests().length > 0) {
-            <span class="h-badge warn">{{ pendingRequests().length }}</span>
+            <span class="h-badge warn" [matTooltip]="pendingRequests().length + ' pending requests'">
+                {{ pendingRequests().length }}
+            </span>
           }
         </a>
         <a mat-button tabindex="0"
            (click)="scrollToSection('danger')"
-           (keydown.enter)="scrollToSection('danger')">
+           (keydown.enter)="scrollToSection('danger')"
+           matTooltip="Dangerous ownership and deletion actions"
+           matTooltipPosition="right">
           <mat-icon>report_problem</mat-icon>
           Danger Zone
         </a>
 
-        <button mat-button class="back-btn" [routerLink]="['/teams', currentTeam.id]">
+        <button mat-button class="back-btn"
+                [routerLink]="['/teams', currentTeam.id]"
+                matTooltip="Return to the public team profile">
           <mat-icon>arrow_back</mat-icon>
           Back to Team Page
         </button>
@@ -43,7 +53,7 @@
       <h1>Manage Team</h1>
 
       <form [formGroup]="teamForm">
-        <app-settings-section id="general" title="General Information">
+        <app-settings-section id="general" label="General Information">
           <div class="fields-column">
             <mat-form-field appearance="outline">
               <mat-label>Team Name</mat-label>
@@ -53,9 +63,10 @@
             <mat-form-field appearance="outline">
               <mat-label>Description</mat-label>
               <textarea matInput formControlName="description" rows="4"></textarea>
+              <mat-hint>Tell others about your team's goals</mat-hint>
             </mat-form-field>
 
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline" matTooltip="Add a link to Discord, Telegram or Slack for team communication">
               <mat-label>Communication Link (Discord/Telegram)</mat-label>
               <input matInput formControlName="communicationLink">
               <mat-icon matSuffix>link</mat-icon>
@@ -63,7 +74,7 @@
           </div>
         </app-settings-section>
 
-        <app-settings-section id="members" title="Team Members">
+        <app-settings-section id="members" label="Team Members">
 
           <div class="members-list">
             <p class="section-subtitle">Active Members ({{ activeMembers().length }})</p>
@@ -73,13 +84,16 @@
                   <img [ngSrc]="member.avatarUrl || 'default-avatar.png'"
                        width="36" height="36" class="h-avatar-sm" alt="Avatar"
                        [routerLink]="['/users', member.username]"
-                       style="cursor: pointer;">
+                       style="cursor: pointer;"
+                       matTooltip="View profile details">
 
                   <div class="h-info-group">
                     <div class="h-title-row">
-          <span class="h-item-link" [routerLink]="['/users', member.username]">
-            {{ member.username }}
-          </span>
+                      <span class="h-item-link"
+                            [routerLink]="['/users', member.username]"
+                            matTooltip="View profile details">
+                        {{ member.username }}
+                      </span>
                       <small class="h-meta-text">{{ member.createdAt | date:'dd.MM.yyyy' }}</small>
                     </div>
                     <span class="h-item-accent">as {{ member.roleName }}</span>
@@ -88,11 +102,11 @@
 
                 <div class="h-item-actions" style="display: flex; align-items: center; gap: 8px;">
                   @if (member.id === team()?.leaderId) {
-                    <span class="leader-badge">Leader</span>
+                    <span class="leader-badge" matTooltip="This user is the team owner">Leader</span>
                   } @else {
                     <button mat-icon-button color="warn"
                             (click)="onRemoveMember(member.id, member.username)"
-                            matTooltip="Remove from team">
+                            matTooltip="Remove this member from the team">
                       <mat-icon>person_remove</mat-icon>
                     </button>
                   }
@@ -112,13 +126,13 @@
                     <img [ngSrc]="req.avatarUrl || 'default-avatar.png'"
                          width="32" height="32" class="h-avatar-sm" alt="Avatar"
                          [routerLink]="['/users', req.username]"
-                         style="cursor: pointer;">
-
+                         style="cursor: pointer;"
+                         matTooltip="View applicant's profile">
                     <div class="h-info-group">
                       <div class="h-title-row">
-                <span class="h-item-link" [routerLink]="['/users', req.username]">
-                  {{ req.username }}
-                </span>
+                        <span class="h-item-link" [routerLink]="['/users', req.username]" matTooltip="View applicant's profile">
+                          {{ req.username }}
+                        </span>
                         <small class="h-meta-text">
                           {{ req.createdAt | date:'shortTime' }} • {{ req.createdAt | date:'MMM d' }}
                         </small>
@@ -128,17 +142,21 @@
                   </div>
 
                   <div class="h-item-actions">
-                    <button mat-icon-button color="primary" (click)='acceptMember(req.id)'>
+                    <button mat-icon-button color="primary"
+                            (click)='acceptMember(req.id)'
+                            matTooltip="Accept application and add to team">
                       <mat-icon>check_circle</mat-icon>
                     </button>
-                    <button mat-icon-button color="warn" (click)='rejectMember(req.id)'>
+                    <button mat-icon-button color="warn"
+                            (click)='rejectMember(req.id)'
+                            matTooltip="Decline this request">
                       <mat-icon>cancel</mat-icon>
                     </button>
                   </div>
                 </div>
 
                 @if (req.message) {
-                  <div class="h-item-note">
+                  <div class="h-item-note" matTooltip="Personal note from the applicant">
                     <mat-icon>format_quote</mat-icon>
                     <p>{{ req.message }}</p>
                   </div>
@@ -150,13 +168,15 @@
           </div>
         </app-settings-section>
 
-        <app-settings-section id="danger" title="Danger Zone" class="danger-zone">
+        <app-settings-section id="danger" label="Danger Zone" class="danger-zone">
           <div class="danger-item">
             <div class="info">
               <strong>Transfer Ownership</strong>
               <p class="h-text-secondary">Assign another member as the team leader.</p>
             </div>
-            <button mat-stroked-button color="primary" (click)="onTransferOwnership()">
+            <button mat-stroked-button color="primary"
+                    (click)="onTransferOwnership()"
+                    matTooltip="Give leadership to another member">
               Transfer
             </button>
           </div>
@@ -168,7 +188,11 @@
               <strong>Disband Team</strong>
               <p class="h-text-secondary">This action is permanent and cannot be undone.</p>
             </div>
-            <button mat-flat-button color="warn" (click)="onDeleteTeam()">Disband Team</button>
+            <button mat-flat-button color="warn"
+                    (click)="onDeleteTeam()"
+                    matTooltip="Permanently delete this team and remove all members">
+              Disband Team
+            </button>
           </div>
         </app-settings-section>
       </form>

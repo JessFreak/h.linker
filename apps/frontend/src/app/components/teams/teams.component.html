@@ -6,19 +6,28 @@
       <mat-checkbox
         color="primary"
         [checked]="showOnlyMyTeams()"
-        (change)="toggleMyTeams()">
+        (change)="toggleMyTeams()"
+        matTooltip="Show only teams where you are already a member"
+        matTooltipPosition="right">
         My Teams
       </mat-checkbox>
 
       <mat-checkbox
         color="primary"
         [checked]="showOnlyIAMLeader()"
-        (change)="toggleLeaderTeams()">
+        (change)="toggleLeaderTeams()"
+        matTooltip="Show only teams owned by you"
+        matTooltipPosition="right">
         I am Leader
       </mat-checkbox>
     </div>
 
-    <button mat-flat-button color="primary" class="create-btn" (click)="openCreateDialog()">
+    <button mat-flat-button
+            color="primary"
+            class="create-btn"
+            (click)="openCreateDialog()"
+            matTooltip="Start a new team and invite developers"
+            matTooltipPosition="right">
       <mat-icon>add</mat-icon> Create Team
     </button>
   </aside>
@@ -26,7 +35,9 @@
   <main class="discovery-grid">
     <div class="header">
       <h1 class="mat-headline-2">Teams</h1>
-      <span class="h-text-secondary">{{ filteredTeams().length }} teams match criteria</span>
+      <span class="count-label h-text-secondary" [matTooltip]="filteredTeams().length + ' teams currently visible'">
+        {{ filteredTeams().length }} teams match criteria
+      </span>
     </div>
 
     <div class="grid">
@@ -36,9 +47,9 @@
             <h3 class="mat-headline-3">{{ team.name }}</h3>
 
             @if (team.leaderId === currentUser()?.id) {
-              <span class="h-badge leader-badge">Leader</span>
+              <span class="h-badge leader-badge" matTooltip="You are the owner of this team">Leader</span>
             } @else if (isMember(team)) {
-              <span class="h-badge member-badge">Member</span>
+              <span class="h-badge member-badge" matTooltip="You are a verified member of this team">Member</span>
             }
           </div>
 
@@ -47,27 +58,39 @@
           </p>
 
           <div class="footer">
-            <div class="card-meta">
+            <div class="card-meta" [matTooltip]="(team.members?.length || 0) + ' developers in this team'">
               <mat-icon class="h-text-secondary">groups</mat-icon>
               <span>{{ team.members?.length || 0 }} members</span>
             </div>
 
             <div class="card-footer">
-              <button mat-button color="primary" [routerLink]="['/teams', team.id]">Details</button>
+              <button mat-button
+                      color="primary"
+                      [routerLink]="['/teams', team.id]"
+                      matTooltip="View projects, history and members">
+                Details
+              </button>
 
               @if (isMember(team)) {
-                <span class="h-badge">Member</span>
+                <span class="h-badge" matTooltip="You have joined this team">Member</span>
               } @else if (isRejected(team)) {
                 <div class="rejected-actions">
-                  <span class="h-badge rejected">Request declined</span>
-                  <button mat-button color="primary" class="retry-btn" (click)="openApplyDialog(team)">
+                  <span class="h-badge rejected" matTooltip="The leader declined your previous application">Request declined</span>
+                  <button mat-button
+                          color="primary"
+                          class="retry-btn"
+                          (click)="openApplyDialog(team)"
+                          matTooltip="Submit a new application">
                     Try Again
                   </button>
                 </div>
               } @else if (hasRequest(team)) {
-                <span class="h-badge pending">Request Sent</span>
+                <span class="h-badge pending" matTooltip="Awaiting leader's approval">Request Sent</span>
               } @else {
-                <button mat-flat-button color="accent" (click)="openApplyDialog(team)">
+                <button mat-flat-button
+                        color="accent"
+                        (click)="openApplyDialog(team)"
+                        matTooltip="Send a join request to the team leader">
                   Join Team
                 </button>
               }

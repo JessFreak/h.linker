@@ -33,6 +33,7 @@ import { SettingsSectionComponent } from '../../settings/settings-section.compon
 import { DatePipe, NgOptimizedImage } from '@angular/common';
 import { ConfirmDialogComponent } from '../../../utils/confirm-dialog.component';
 import { TeamService } from '../../../services/team.service';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-profile-settings',
@@ -58,6 +59,7 @@ import { TeamService } from '../../../services/team.service';
     NgOptimizedImage,
     RouterLink,
     DatePipe,
+    MatTooltip,
   ],
 })
 export class ProfileSettingsComponent implements OnInit {

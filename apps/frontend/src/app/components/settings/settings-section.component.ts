@@ -8,7 +8,7 @@ import { MatCardModule } from '@angular/material/card';
   template: `
     <mat-card [id]="id" class="h-card settings-section">
       <mat-card-header>
-        <mat-card-title>{{ title }}</mat-card-title>
+        <mat-card-title>{{ label }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
         <ng-content></ng-content>
@@ -33,5 +33,5 @@ import { MatCardModule } from '@angular/material/card';
 })
 export class SettingsSectionComponent {
   @Input({ required: true }) id!: string;
-  @Input({ required: true }) title!: string;
+  @Input({ required: true }) label!: string;
 }

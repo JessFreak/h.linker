@@ -15,6 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import AuthService from '../../services/auth.service';
 import { NotificationService } from '../../utils/notification.service';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-auth',
@@ -29,6 +30,7 @@ import { NotificationService } from '../../utils/notification.service';
     MatCardModule,
     MatIconModule,
     MatDividerModule,
+    MatTooltip,
   ],
   templateUrl: './auth.component.html',
   styleUrl: './auth.component.scss',

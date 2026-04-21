@@ -1,7 +1,7 @@
 <div class="auth-container">
   <mat-card class="auth-card">
     <div class="auth-header">
-      <div class="logo-box">
+      <div class="logo-box" matTooltip="H.Linker — Connect. Code. Win." matTooltipPosition="above">
         <mat-icon>terminal</mat-icon>
       </div>
       <h1>h.linker</h1>
@@ -12,25 +12,35 @@
       <a mat-button
          routerLink="/login"
          routerLinkActive="active"
-         class="toggle-link">Sign In</a>
+         class="toggle-link"
+         matTooltip="Access your existing profile">Sign In</a>
       <a mat-button
          routerLink="/register"
          routerLinkActive="active"
-         class="toggle-link">Sign Up</a>
+         class="toggle-link"
+         matTooltip="Join the community as a developer">Sign Up</a>
     </div>
 
     <mat-card-content>
       <div class="social-auth">
-        <button mat-flat-button class="github-btn" (click)="authService.loginWithGitHub()">
+        <button mat-flat-button
+                type="button"
+                class="github-btn"
+                (click)="authService.loginWithGitHub()"
+                matTooltip="Sync your repositories and skills automatically">
           <mat-icon>code</mat-icon> Continue with GitHub
         </button>
-        <button mat-stroked-button class="google-btn" (click)="authService.loginWithGoogle()">
+        <button mat-stroked-button
+                type="button"
+                class="google-btn"
+                (click)="authService.loginWithGoogle()"
+                matTooltip="Fast login via your Google account">
           <mat-icon>account_circle</mat-icon> Continue with Google
         </button>
       </div>
 
       <div class="divider">
-        <span>or</span>
+        <span matTooltip="Traditional email authentication">or</span>
       </div>
 
       @if (isLogin) {
@@ -43,19 +53,27 @@
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Password</mat-label>
             <input matInput [type]="hide() ? 'password' : 'text'" formControlName="password">
-            <button type="button" mat-icon-button matSuffix (click)="clickEvent($event)">
+            <button type="button"
+                    mat-icon-button
+                    matSuffix
+                    (click)="clickEvent($event)"
+                    [matTooltip]="hide() ? 'Show password' : 'Hide password'">
               <mat-icon>{{ hide() ? 'visibility_off' : 'visibility' }}</mat-icon>
             </button>
           </mat-form-field>
 
-          <button mat-flat-button class="main-action-btn full-width" type="submit" [disabled]="!loginForm.valid">
+          <button mat-flat-button
+                  class="main-action-btn full-width"
+                  type="submit"
+                  [disabled]="!loginForm.valid"
+                  [matTooltip]="loginForm.valid ? 'Ready to go!' : 'Please fill all fields'">
             Enter Dashboard
           </button>
         </form>
       } @else {
         <form [formGroup]="registerForm" (ngSubmit)="onRegisterSubmit()">
           <div class="row">
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline" matTooltip="As it will appear on your certificates">
               <mat-label>First Name</mat-label>
               <input matInput formControlName="firstName">
             </mat-form-field>
@@ -65,25 +83,37 @@
             </mat-form-field>
           </div>
 
-          <mat-form-field appearance="outline" class="full-width">
+          <mat-form-field appearance="outline" class="full-width" matTooltip="Your unique developer handle">
             <mat-label>Username</mat-label>
             <input matInput formControlName="username" name="username" autocomplete="username">
+            <mat-icon matSuffix>alternate_email</mat-icon>
           </mat-form-field>
 
-          <mat-form-field appearance="outline" class="full-width">
+          <mat-form-field appearance="outline" class="full-width" matTooltip="For notification">
             <mat-label>Email</mat-label>
             <input matInput formControlName="email" placeholder="your@email.com" name="email" autocomplete="email">
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Password</mat-label>
-            <input matInput [type]="hide() ? 'password' : 'text'" formControlName="password" autocomplete="new-password">
-            <button type="button" mat-icon-button matSuffix (click)="clickEvent($event)">
+            <input matInput [type]="hide() ? 'password' : 'text'"
+                   formControlName="password"
+                   autocomplete="new-password"
+                   matTooltip="Min. 8 characters with numbers and symbols">
+            <button type="button"
+                    mat-icon-button
+                    matSuffix
+                    (click)="clickEvent($event)"
+                    [matTooltip]="hide() ? 'Show password' : 'Hide password'">
               <mat-icon>{{ hide() ? 'visibility_off' : 'visibility' }}</mat-icon>
             </button>
           </mat-form-field>
 
-          <button mat-flat-button class="main-action-btn full-width" type="submit" [disabled]="!registerForm.valid">
+          <button mat-flat-button
+                  class="main-action-btn full-width"
+                  type="submit"
+                  [disabled]="!registerForm.valid"
+                  [matTooltip]="registerForm.valid ? 'Join the community!' : 'Complete the form to register'">
             Create Account
           </button>
         </form>
@@ -91,8 +121,10 @@
     </mat-card-content>
 
     <div class="auth-footer">
-      <span>Don't have an account? </span>
-      <a [routerLink]="isLogin ? '/register' : '/login'" class="footer-link">
+      <span class="h-text-secondary">Don't have an account? </span>
+      <a [routerLink]="isLogin ? '/register' : '/login'"
+         class="footer-link"
+         [matTooltip]="isLogin ? 'Join as a new member' : 'Return to login'">
         {{ isLogin ? 'Create an account' : 'Login instead' }} →
       </a>
     </div>

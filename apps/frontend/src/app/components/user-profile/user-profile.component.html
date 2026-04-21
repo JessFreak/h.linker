@@ -3,7 +3,7 @@
     <mat-spinner diameter="50"></mat-spinner>
     <p class="h-text-secondary">Loading profile insights...</p>
   </div>
-} @else if (user();) {
+} @else if (user()) {
   @if (user(); as userData) {
     <div class="h-page-layout profile-layout">
       <aside class="sidebar">
@@ -14,12 +14,13 @@
                  width="180"
                  height="180"
                  class="h-avatar"
-                 priority>
+                 priority
+                 matTooltip="Profile picture">
           </div>
 
           <div class="user-info">
             <h1>{{ userData.firstName }} {{ userData.lastName }}</h1>
-            <span class="username">&#64;{{ userData.username }}</span>
+            <span class="username" [matTooltip]="'Unique handle: @' + userData.username">&#64;{{ userData.username }}</span>
             <p class="bio">{{ userData.bio || 'No bio provided' }}</p>
           </div>
 
@@ -28,39 +29,45 @@
               <a mat-stroked-button
                  class="github-btn"
                  [href]="'https://github.com/' + userData.githubUsername"
-                 target="_blank">
+                 target="_blank"
+                 matTooltip="View GitHub profile in a new tab">
                 <mat-icon>code</mat-icon> GitHub Profile
               </a>
             </div>
           } @else {
             <div class="social-links">
-              <span class="h-text-secondary" style="font-size: 12px;">GitHub not connected</span>
+              <span class="h-text-secondary" style="font-size: 12px;" matTooltip="This user hasn't linked a GitHub account yet">
+                GitHub not connected
+              </span>
             </div>
           }
 
           @if (currentUser()?.id === userData.id) {
             <div class="profile-actions">
-              <button mat-flat-button color="primary" routerLink="/profile/settings" class="edit-btn">
+              <button mat-flat-button color="primary"
+                      routerLink="/profile/settings"
+                      class="edit-btn"
+                      matTooltip="Edit your bio, skills and integrations">
                 <mat-icon>settings</mat-icon> Manage Profile
               </button>
             </div>
           }
 
           <div class="skills">
-            <h3>SKILLS</h3>
+            <h3 matTooltip="Verified technical stack">SKILLS</h3>
             <mat-chip-set>
               @for (skill of userData.skills; track skill) {
-                <mat-chip class="tech-data">{{ skill }}</mat-chip>
+                <mat-chip class="tech-data" [matTooltip]="'Expertise in ' + skill">{{ skill }}</mat-chip>
               }
             </mat-chip-set>
           </div>
 
           <div class="stats-grid">
-            <div class="stat-box">
+            <div class="stat-box" matTooltip="Total number of projects submitted to hackathons">
               <span class="count">{{ userData.projects.length || 0 }}</span>
               <span class="label h-text-secondary">Projects</span>
             </div>
-            <div class="stat-box">
+            <div class="stat-box" matTooltip="Hackathons where this user's team took a prize place">
               <span class="count">3</span>
               <span class="label h-text-secondary">Wins</span>
             </div>
@@ -72,25 +79,27 @@
         @if (userData.githubInsights; as insights) {
           <mat-card class="h-card insights-card">
             <div class="card-header">
-              <div class="header-title">
+              <div class="header-title" matTooltip="Real-time metrics from linked GitHub account">
                 <mat-icon>analytics</mat-icon> <span>GitHub Insights</span>
               </div>
             </div>
 
             <div class="insights-grid">
-              <div class="insight-item">
+              <div class="insight-item" matTooltip="Total commits, PRs, and issues across all repositories">
                 <span class="insight-label h-text-secondary">TOTAL CONTRIBUTIONS</span>
                 <span class="insight-value">{{ insights.totalContributions }}</span>
-                <span class="insight-trend">{{ insights.contributionTrend }}</span>
+                <span class="insight-trend" [matTooltip]="'Change compared to previous month'">
+                  {{ insights.contributionTrend }}
+                </span>
               </div>
 
-              <div class="insight-item">
+              <div class="insight-item" matTooltip="Community appreciation across projects">
                 <span class="insight-label h-text-secondary">STARS RECEIVED</span>
                 <span class="insight-value">{{ insights.totalStars }}</span>
                 <span class="insight-sub h-text-secondary">across {{ insights.starredReposCount }} repos</span>
               </div>
 
-              <div class="insight-item">
+              <div class="insight-item" matTooltip="Public code availability">
                 <span class="insight-label h-text-secondary">PUBLIC REPOS</span>
                 <span class="insight-value">{{ insights.publicReposCount }}</span>
                 <span class="insight-sub h-text-secondary">{{ insights.activeReposThisMonth }} active this month</span>
@@ -99,7 +108,7 @@
               <div class="insight-item languages">
                 <span class="insight-label h-text-secondary">TOP LANGUAGES</span>
                 @for (lang of insights.topLanguages; track lang.name) {
-                  <div class="lang-row">
+                  <div class="lang-row" [matTooltip]="lang.name + ' makes up ' + lang.percent + '% of recent code'">
                     <div class="lang-info" style="display: flex; justify-content: space-between; margin-bottom: 4px;">
                       <span class="lang-name" style="font-size: 12px;">{{ lang.name }}</span>
                       <span class="lang-percent" style="font-size: 11px; opacity: 0.7;">{{ lang.percent }}%</span>
@@ -122,9 +131,12 @@
         <div class="tabs-container">
           <mat-tab-group class="h-tabs">
             <mat-tab label="Created Hackathons">
+              <ng-template mat-tab-label>
+                <span matTooltip="Events organized by this user">Created Hackathons</span>
+              </ng-template>
               <div class="tab-content">
                 @for (hackathon of userData.createdHackathons; track hackathon.id) {
-                  <mat-card class="h-card event-card">
+                  <mat-card class="h-card event-card" [matTooltip]="'Hackathon Status: ' + hackathon.status">
                     <div class="event-content">
                       <h3>{{ hackathon.title }}</h3>
                       <p class="h-text-secondary">{{ hackathon.status }}</p>
@@ -140,13 +152,18 @@
             </mat-tab>
 
             <mat-tab label="Teams">
+              <ng-template mat-tab-label>
+                <span matTooltip="Current team memberships">Teams</span>
+              </ng-template>
               <div class="tab-content">
                 @for (team of userData.teams; track team.id) {
-                  <mat-card class="h-card discovery-card clickable-card" [routerLink]="['/teams', team.id]">
+                  <mat-card class="h-card discovery-card clickable-card"
+                            [routerLink]="['/teams', team.id]"
+                            matTooltip="Click to view team details and members">
                     <div class="team-content">
                       <h3>{{ team.name }}</h3>
                       <div class="team-footer">
-                        <span class="role-badge">{{ team.userRole }}</span>
+                        <span class="role-badge" [matTooltip]="'User position in team'">{{ team.userRole }}</span>
                         <mat-icon class="arrow-icon">chevron_right</mat-icon>
                       </div>
                     </div>
@@ -161,14 +178,20 @@
             </mat-tab>
 
             <mat-tab label="Projects">
+              <ng-template mat-tab-label>
+                <span matTooltip="Completed hackathon submissions">Projects</span>
+              </ng-template>
               <div class="tab-content">
                 @for (project of userData.projects; track project.hackathonTitle) {
                   <mat-card class="h-card event-card">
                     <div class="event-content">
                       <div class="event-header">
-                        <h2>{{ project.hackathonTitle }}</h2>
+                        <h2 [matTooltip]="'Hackathon: ' + project.hackathonTitle">{{ project.hackathonTitle }}</h2>
                         @if (project.repoUrl) {
-                          <a [href]="project.repoUrl" target="_blank" class="view-link">
+                          <a [href]="project.repoUrl"
+                             target="_blank"
+                             class="view-link"
+                             matTooltip="Open source code on GitHub">
                             Repo <mat-icon>open_in_new</mat-icon>
                           </a>
                         }
@@ -191,11 +214,11 @@
           <h3>Badges & Awards</h3>
           <p class="sub h-text-secondary">Digital tokens earned across competitions</p>
           <div class="badge-grid">
-            <div class="badge-circle winner" title="Winner">🏆</div>
-            <div class="badge-circle ai" title="AI Explorer">🤖</div>
-            <div class="badge-circle oss" title="Open Source">☁️</div>
-            <div class="badge-circle top" title="Top 10">⭐</div>
-            <div class="badge-circle locked">🔒</div>
+            <div class="badge-circle winner" matTooltip="First Place Winner">🏆</div>
+            <div class="badge-circle ai" matTooltip="AI Explorer: Participated in 3+ AI hackathons">🤖</div>
+            <div class="badge-circle oss" matTooltip="Open Source Advocate: Contributed to project repo">☁️</div>
+            <div class="badge-circle top" matTooltip="Top 10 Finalist">⭐</div>
+            <div class="badge-circle locked" matTooltip="Complete more hackathons to unlock this badge">🔒</div>
           </div>
         </section>
       </main>
@@ -208,4 +231,3 @@
     <button mat-button color="primary" routerLink="/">Back to Home</button>
   </div>
 }
-

@@ -13,6 +13,7 @@ import { Router, RouterLink } from '@angular/router';
 import { NotificationService } from '../../utils/notification.service';
 import { TeamUtils } from '../../utils/team.utils';
 import { TeamActionsService } from '../../utils/team-actions.service';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-teams',
@@ -24,6 +25,7 @@ import { TeamActionsService } from '../../utils/team-actions.service';
     MatCheckboxModule,
     MatIconModule,
     RouterLink,
+    MatTooltip,
   ],
   templateUrl: './teams.component.html',
   styleUrls: ['./discovery-shared.scss', './.rejected.scss'],

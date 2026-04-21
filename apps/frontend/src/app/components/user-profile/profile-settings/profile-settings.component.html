@@ -2,51 +2,68 @@
   <aside class="settings-sidebar">
     <div class="h-card mini-card">
       <div class="avatar-container">
-        <img [ngSrc]="user()?.avatarUrl || 'https://ui-avatars.com/api/?name=' + user()?.username"
+        <img [ngSrc]="user()?.avatarUrl || '/default-avatar.png'"
              width="100" height="100"
              class="h-avatar"
-             alt="User Avatar">
+             alt="User Avatar"
+             matTooltip="Your current profile picture">
       </div>
-      <h3>{{ user()?.firstName }} {{ user()?.lastName?.charAt(0) }}.</h3>
+      <h3>{{ user()?.firstName }} {{ user()?.lastName?.charAt(0) }}</h3>
       <p class="h-text-secondary">{{ bioPreview() }}</p>
     </div>
 
     <nav class="settings-nav">
       <a mat-button class="active" tabindex="0"
          (click)="scrollToSection('profile')"
-         (keydown.enter)="scrollToSection('profile')">
+         (keydown.enter)="scrollToSection('profile')"
+         matTooltip="Update your name, username, and bio"
+         matTooltipPosition="right">
         <mat-icon>person</mat-icon> Account & Bio
       </a>
 
       <a mat-button tabindex="0"
          (click)="scrollToSection('integrations')"
-         (keydown.enter)="scrollToSection('integrations')">
+         (keydown.enter)="scrollToSection('integrations')"
+         matTooltip="Manage connected GitHub and Google accounts"
+         matTooltipPosition="right">
         <mat-icon>extension</mat-icon> Integrations
-        <span class="h-badge">{{ connectedCount() }} connected</span>
+        <span class="h-badge" [matTooltip]="connectedCount() + ' active integrations'">
+          {{ connectedCount() }} connected
+        </span>
       </a>
 
       <a mat-button tabindex="0"
          (click)="scrollToSection('skills')"
-         (keydown.enter)="scrollToSection('skills')">
+         (keydown.enter)="scrollToSection('skills')"
+         matTooltip="Showcase your tech stack to team leaders"
+         matTooltipPosition="right">
         <mat-icon>terminal</mat-icon> Skills & Tech Stack
       </a>
 
       <a mat-button tabindex="0"
          (click)="scrollToSection('invitations')"
-         (keydown.enter)="scrollToSection('invitations')">
+         (keydown.enter)="scrollToSection('invitations')"
+         matTooltip="View and manage team join requests"
+         matTooltipPosition="right">
         <mat-icon>mail</mat-icon> Team Invitations
         @if (invitations().length > 0) {
-          <span class="h-badge warn">{{ invitations().length }}</span>
+          <span class="h-badge warn" [matTooltip]="invitations().length + ' pending invitations'">
+            {{ invitations().length }}
+          </span>
         }
       </a>
 
       <a mat-button tabindex="0"
          (click)="scrollToSection('security')"
-         (keydown.enter)="scrollToSection('security')">
+         (keydown.enter)="scrollToSection('security')"
+         matTooltip="Change your password and manage account security"
+         matTooltipPosition="right">
         <mat-icon>security</mat-icon> Security
       </a>
 
-      <button mat-button color="warn" class="delete-btn" (click)="onDeleteAccount()">
+      <button mat-button color="warn" class="delete-btn"
+              (click)="onDeleteAccount()"
+              matTooltip="Permanently delete your account and data">
         <mat-icon>delete_forever</mat-icon> Delete Account
       </button>
     </nav>
@@ -56,7 +73,7 @@
     <h1>Profile Settings <small class="h-text-secondary">&#64;{{ user()?.username }}</small></h1>
 
     <form [formGroup]="profileForm">
-      <app-settings-section id="profile" title="Public Profile">
+      <app-settings-section id="profile" label="Public Profile">
         <div class="profile-row">
           <input type="file" #avatarInput (change)="onFileSelected($event)" accept="image/*" style="display: none">
 
@@ -65,36 +82,42 @@
               <img [ngSrc]="user()?.avatarUrl || 'https://ui-avatars.com/api/?name=' + user()?.username"
                    width="140" height="140"
                    class="h-avatar"
-                   alt="Avatar Preview">
-              <button mat-icon-button class="edit-photo" type="button" (click)="triggerFileInput(avatarInput)">
+                   alt="Avatar Preview"
+                   matTooltip="This photo is visible to everyone">
+              <button mat-icon-button class="edit-photo" type="button"
+                      (click)="triggerFileInput(avatarInput)"
+                      matTooltip="Change profile picture">
                 <mat-icon>photo_camera</mat-icon>
               </button>
             </div>
-            <button mat-stroked-button type="button" (click)="triggerFileInput(avatarInput)" [disabled]="isSaving()">
+            <button mat-stroked-button type="button"
+                    (click)="triggerFileInput(avatarInput)"
+                    [disabled]="isSaving()"
+                    matTooltip="Select an image file from your device">
               {{ isSaving() ? 'Uploading...' : 'Upload photo' }}
             </button>
           </div>
 
           <div class="fields-column">
             <div class="row">
-              <mat-form-field appearance="outline">
+              <mat-form-field appearance="outline" matTooltip="Your legal or preferred first name">
                 <mat-label>First Name</mat-label>
                 <input matInput formControlName="firstName">
               </mat-form-field>
 
-              <mat-form-field appearance="outline">
+              <mat-form-field appearance="outline" matTooltip="Your family name (optional)">
                 <mat-label>Last Name</mat-label>
                 <input matInput formControlName="lastName">
               </mat-form-field>
             </div>
 
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline" matTooltip="Unique handle used for mentions and profile link">
               <mat-label>Username</mat-label>
               <input matInput formControlName="username">
               <mat-icon matSuffix>edit</mat-icon>
             </mat-form-field>
 
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline" matTooltip="Briefly describe your role, interests or goals (max 300 chars)">
               <mat-label>Bio</mat-label>
               <textarea matInput formControlName="bio" rows="3"></textarea>
               <mat-hint align="end" class="h-text-secondary">
@@ -105,9 +128,10 @@
         </div>
       </app-settings-section>
 
-      <app-settings-section id="integrations" title="Integrations">
+      <app-settings-section id="integrations" label="Integrations">
         <div class="integration-grid">
-          <div class="integration-item" [class.connected]="!!user()?.githubId">
+          <div class="integration-item" [class.connected]="!!user()?.githubId"
+               [matTooltip]="user()?.githubId ? 'GitHub sync is active' : 'Link GitHub to showcase your repositories'">
             <div class="info">
               <div class="service-title">
                 <mat-icon class="service-icon">code</mat-icon>
@@ -123,12 +147,14 @@
                 <span class="status-text">Linked</span>
               </div>
             } @else {
-              <button mat-stroked-button class="connect-btn" (click)="authService.connectGitHub()">
+              <button mat-stroked-button class="connect-btn" (click)="authService.connectGitHub()"
+                      matTooltip="Authorize via GitHub">
                 <mat-icon>link</mat-icon> Connect
               </button>
             }
           </div>
-          <div class="integration-item connected">
+
+          <div class="integration-item connected" matTooltip="Used for authentication and notifications">
             <div class="info">
               <div class="service-title">
                 <mat-icon class="service-icon">account_circle</mat-icon>
@@ -144,36 +170,45 @@
         </div>
       </app-settings-section>
 
-      <app-settings-section id="skills" title="Your Skills">
+      <app-settings-section id="skills" label="Your Skills">
         <mat-chip-grid>
           @for (skill of skills(); track skill) {
-            <mat-chip-row (removed)="removeSkill(skill)" class="tech-data">
+            <mat-chip-row (removed)="removeSkill(skill)"
+                          class="tech-data"
+                          matTooltip="Click 'x' to remove this skill">
               {{ skill }}
               <button matChipRemove><mat-icon>cancel</mat-icon></button>
             </mat-chip-row>
           }
         </mat-chip-grid>
         <div class="add-skill-box">
-          <input placeholder="Add new skill..." #skillInput (keyup.enter)="addSkill(skillInput)">
-          <button mat-flat-button type="button" (click)="addSkill(skillInput)">+ Add</button>
+          <input placeholder="Add new skill..." #skillInput
+                 (keyup.enter)="addSkill(skillInput)"
+                 matTooltip="Press Enter to add skill">
+          <button mat-flat-button type="button" (click)="addSkill(skillInput)" matTooltip="Add to your tech stack">
+            + Add
+          </button>
         </div>
       </app-settings-section>
 
-      <app-settings-section id="invitations" title="Team Invitations">
+      <app-settings-section id="invitations" label="Team Invitations">
         <div class="invitations-list">
           @for (inv of invitations(); track inv.teamId) {
             <div class="h-connection-item h-stacked">
               <div class="h-item-header">
                 <div class="h-item-body">
-                  <div class="h-avatar-sm" style="display: flex; align-items: center; justify-content: center; background: var(--h-bg-deep-navy); border: 1px solid var(--h-primary-blue);">
+                  <div class="h-avatar-sm" style="display: flex; align-items: center; justify-content: center; background: var(--h-bg-deep-navy); border: 1px solid var(--h-primary-blue);"
+                       matTooltip="Team Invitation">
                     <mat-icon style="font-size: 18px; width: 18px; height: 18px; color: var(--h-primary-blue);">groups</mat-icon>
                   </div>
 
                   <div class="h-info-group">
                     <div class="h-title-row">
-                <span class="h-item-link" [routerLink]="['/teams', inv.teamId]">
-                  {{ inv.teamName }}
-                </span>
+                      <span class="h-item-link"
+                            [routerLink]="['/teams', inv.teamId]"
+                            matTooltip="View team details before joining">
+                        {{ inv.teamName }}
+                      </span>
                       <small class="h-meta-text">
                         {{ inv.createdAt | date:'shortTime' }} • {{ inv.createdAt | date:'MMM d' }}
                       </small>
@@ -183,18 +218,22 @@
                 </div>
 
                 <div class="h-item-actions">
-                  <button mat-icon-button color="primary" (click)="acceptInvitation(inv.teamId)">
+                  <button mat-icon-button color="primary"
+                          (click)="acceptInvitation(inv.teamId)"
+                          matTooltip="Accept invitation and join the team">
                     <mat-icon>check_circle</mat-icon>
                   </button>
 
-                  <button mat-icon-button color="warn" (click)="rejectInvitation(inv.teamId)">
+                  <button mat-icon-button color="warn"
+                          (click)="rejectInvitation(inv.teamId)"
+                          matTooltip="Decline this invitation">
                     <mat-icon>cancel</mat-icon>
                   </button>
                 </div>
               </div>
 
               @if (inv.message) {
-                <div class="h-item-note">
+                <div class="h-item-note" matTooltip="Message from the team leader">
                   <mat-icon>format_quote</mat-icon>
                   <p>{{ inv.message }}</p>
                 </div>
@@ -206,24 +245,26 @@
         </div>
       </app-settings-section>
 
-      <app-settings-section id="security" title="Security & Password">
+      <app-settings-section id="security" label="Security & Password">
         <form [formGroup]="passwordForm" (ngSubmit)="onUpdatePassword()">
           <div class="password-grid">
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline" matTooltip="Enter your current password to authorize changes">
               <mat-label>Current Password</mat-label>
               <input matInput type="current-password" formControlName="oldPassword">
             </mat-form-field>
             <div class="new-passwords-row">
-              <mat-form-field appearance="outline">
+              <mat-form-field appearance="outline" matTooltip="Must be at least 8 characters long">
                 <mat-label>New Password</mat-label>
                 <input matInput type="password" formControlName="newPassword">
               </mat-form-field>
-              <mat-form-field appearance="outline">
+              <mat-form-field appearance="outline" matTooltip="Repeat your new password">
                 <mat-label>Confirm Password</mat-label>
                 <input matInput type="password" formControlName="confirmPassword">
               </mat-form-field>
             </div>
-            <button mat-flat-button color="primary" type="submit" [disabled]="passwordForm.invalid || isChangingPassword()">
+            <button mat-flat-button color="primary" type="submit"
+                    [disabled]="passwordForm.invalid || isChangingPassword()"
+                    matTooltip="Save your new password">
               {{ isChangingPassword() ? 'Updating...' : 'Update Password' }}
             </button>
           </div>

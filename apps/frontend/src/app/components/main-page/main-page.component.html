@@ -3,7 +3,12 @@
 
   <section class="hero-section">
     <div class="hero-content">
-      <span class="badge">v1.0 Beta — exclusive for KPI</span>
+      <span class="badge"
+            matTooltip="Initial release phase specifically for KPI students and faculty"
+            matTooltipPosition="below">
+        v1.0 Beta — exclusive for KPI
+      </span>
+
       <h1>Build your dream team for <span>Hackathons</span></h1>
       <p class="h-text-secondary">
         ServiceStation helps KPI students find teammates, showcase their
@@ -11,31 +16,42 @@
       </p>
 
       <div class="cta-group">
-        <button mat-flat-button color="primary" routerLink="/register">
+        <button mat-flat-button
+                color="primary"
+                routerLink="/register"
+                matTooltip="Create your developer profile and start coding">
           <mat-icon>rocket_launch</mat-icon>
           Get Started
         </button>
-        <button mat-stroked-button routerLink="/login">
-          Sign In
+        <button mat-stroked-button
+                routerLink="/login"
+                matTooltip="Access your projects and team dashboard">
+          <mat-icon>login</mat-icon> Sign In
         </button>
       </div>
     </div>
   </section>
 
   <section class="features-grid">
-    <div class="feature-card h-card">
+    <div class="feature-card h-card"
+         matTooltip="Full lifecycle: from team formation to final submission"
+         matTooltipPosition="above">
       <mat-icon>groups</mat-icon>
       <h3>Team Management</h3>
       <p class="h-text-secondary">Create teams, manage requests, and find the perfect role for every member.</p>
     </div>
 
-    <div class="feature-card h-card">
+    <div class="feature-card h-card"
+         matTooltip="Direct integration with GitHub API to verify your technical stack"
+         matTooltipPosition="above">
       <mat-icon>code</mat-icon>
       <h3>GitHub Sync</h3>
       <p class="h-text-secondary">Automatically showcase your skills and repositories to potential leaders.</p>
     </div>
 
-    <div class="feature-card h-card">
+    <div class="feature-card h-card"
+         matTooltip="A centralized hub for all internal university and external tech events"
+         matTooltipPosition="above">
       <mat-icon>emoji_events</mat-icon>
       <h3>Hackathons</h3>
       <p class="h-text-secondary">Browse active competitions, register your team, and track your progress.</p>
@@ -43,15 +59,15 @@
   </section>
 
   <footer class="mini-stats">
-    <div class="stat-item">
+    <div class="stat-item" matTooltip="Active developers in the h.linker ecosystem">
       <strong>{{ studentsCount() }}+</strong> Students
     </div>
     <div class="divider"></div>
-    <div class="stat-item">
+    <div class="stat-item" matTooltip="Groups formed and ready for competitions">
       <strong>{{ teamsCount() }}</strong> Teams
     </div>
     <div class="divider"></div>
-    <div class="stat-item">
+    <div class="stat-item" matTooltip="Current opportunities to build and win">
       <strong>{{ hackathonsCount() }}</strong> Active Hackathons
     </div>
   </footer>

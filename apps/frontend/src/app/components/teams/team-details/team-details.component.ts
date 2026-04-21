@@ -14,6 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../utils/confirm-dialog.component';
 import { TeamUtils } from '../../../utils/team.utils';
 import { TeamActionsService } from '../../../utils/team-actions.service';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-team-details',
@@ -26,6 +27,7 @@ import { TeamActionsService } from '../../../utils/team-actions.service';
     MatDividerModule,
     NgOptimizedImage,
     RouterLink,
+    MatTooltip,
   ],
   templateUrl: './team-details.component.html',
   styleUrls: ['./team-details.component.scss', '../.rejected.scss'],
