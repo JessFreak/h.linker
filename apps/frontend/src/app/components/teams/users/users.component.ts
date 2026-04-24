@@ -102,7 +102,7 @@ export class UsersComponent implements OnInit {
     if (!currentUser) return;
 
     const dialogRef = this.dialog.open(InviteUserDialogComponent, {
-      width: '450px',
+      width: '550px',
       data: {
         username: user.username,
         userId: user.id,

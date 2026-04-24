@@ -21,7 +21,7 @@
   height: 500px;
   background: radial-gradient(
                   circle,
-                  rgba(65, 105, 165, 0.15) 0%, /* Використовуємо відтінок твого primary-blue */
+                  rgba(65, 105, 165, 0.15) 0%,
                   rgba(13, 17, 23, 0) 70%
   );
   filter: blur(60px);
@@ -58,7 +58,6 @@
     color: #FFFFFF;
 
     span {
-      /* Мікс твого синього та безпечного помаранчевого для градієнту */
       background: linear-gradient(90deg, var(--h-primary-blue), #bc8cff);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;

@@ -134,7 +134,7 @@ export class TeamSettingsComponent implements OnInit {
     if (!currentTeam) return;
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '400px',
+      width: '500px',
       data: {
         title: 'Disband Team',
         message:
@@ -171,7 +171,7 @@ export class TeamSettingsComponent implements OnInit {
     }
 
     const dialogRef = this.dialog.open(TransferLeaderDialogComponent, {
-      width: '400px',
+      width: '500px',
       data: { members: eligibleMembers },
     });
 
@@ -194,7 +194,7 @@ export class TeamSettingsComponent implements OnInit {
     if (!currentTeam) return;
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '400px',
+      width: '500px',
       data: {
         title: 'Remove Member',
         message: `Are you sure you want to remove ${username} from the team?`,

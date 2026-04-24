@@ -153,3 +153,38 @@ html, body {
   letter-spacing: 0.5px;
   flex-shrink: 0;
 }
+
+.cdk-overlay-pane {
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    background-color: #1a1d23;
+    border-radius: 12px;
+    border: 1px solid #30363d;
+  }
+
+  .dialog-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    padding: 20px 24px 10px;
+  }
+
+  .header-icon {
+    color: var(--h-primary-blue);
+    width: 28px;
+    height: 28px;
+    font-size: 28px;
+  }
+
+  mat-dialog-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 420px;
+    padding-top: 10px;
+  }
+
+  mat-form-field mat-icon[matSuffix] {
+    margin-top: 2px;
+  }
+}
