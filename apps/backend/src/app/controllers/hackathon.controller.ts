@@ -7,19 +7,33 @@ import {
   Delete,
   Put,
   Body,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { Access } from '../../config/security/decorators/access';
+import {
+  AddJuryDTO,
+  CreateHackathonDTO,
+  HackathonStatus,
+  SetCriteriaDTO,
+  UpdateHackathonDTO,
+  UpdateHackathonStatusDTO,
+  UserResponse,
+} from '@h.linker/libs';
+import { HackathonService } from '../services/hackathon.service';
+import { UserRequest } from '../../config/security/decorators/user-request';
 
 @Controller('hackathons')
 export class HackathonController {
+  constructor(private readonly hackathonService: HackathonService) {}
+
   @Get()
   async getAll() {
-    // Повертає список усіх хакатонів (фільтрація за статусом на сервісі)
+    return this.hackathonService.getAll();
   }
 
   @Get(':id')
-  async getById(@Param('id') id: string) {
-    // Детальна інфа про хакатон
+  async getById(@Param('id', ParseUUIDPipe) id: string) {
+    return this.hackathonService.getById(id);
   }
 
   @Get(':id/leaderboard')
@@ -27,43 +41,76 @@ export class HackathonController {
     // Таблиця результатів: Команда -> Сума балів
   }
 
-  // --- ADMIN API (Творець хакатону) ---
-
   @Post()
-  @Access('ADMIN') // Або твій варіант перевірки ролі
-  async create(@Body() dto: any) {
-    // CreateHackathonDto: title, description, startDate, endDate, prizeFund
+  @Access()
+  async create(
+    @UserRequest() user: UserResponse,
+    @Body() dto: CreateHackathonDTO,
+  ) {
+    return this.hackathonService.create(user.id, dto);
   }
 
   @Patch(':id')
   @Access('ADMIN')
-  async update(@Param('id') id: string, @Body() dto: any) {
-    // UpdateHackathonDto: будь-які поля з CreateHackathonDto (часткове оновлення)
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateHackathonDTO,
+  ) {
+    return this.hackathonService.update(id, dto);
   }
 
   @Patch(':id/status')
   @Access('ADMIN')
-  async updateStatus(@Param('id') id: string, @Body('status') status: string) {
-    // Зміна етапів: REGISTRATION -> ONGOING -> JUDGING -> CLOSED
+  async updateStatus(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateHackathonStatusDTO,
+  ) {
+    return this.hackathonService.updateStatus(id, dto.status);
   }
 
   @Put(':id/criteria')
   @Access('ADMIN')
-  async setCriteria(@Param('id') id: string, @Body() criteria: any[]) {
-    // Встановлення критеріїв оцінки (назва, вага/макс_бал)
+  async setCriteria(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: SetCriteriaDTO,
+  ) {
+    return this.hackathonService.setCriteria(id, dto.criteria);
   }
 
-  @Put(':id/jury')
+  @Delete(':id/categories/:name')
   @Access('ADMIN')
-  async setJury(@Param('id') id: string, @Body('userIds') userIds: string[]) {
-    // Призначення списку жюрі для хакатону
+  async removeCategory(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('name') name: string,
+  ) {
+    return this.hackathonService.removeCategory(id, name);
+  }
+
+  @Post(':id/jury')
+  @Access('ADMIN')
+  async addJury(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: AddJuryDTO,
+  ) {
+    return this.hackathonService.addJuryMember(id, dto.userId);
+  }
+
+  @Delete(':id/jury/:userId')
+  @Access('ADMIN')
+  async removeJury(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('userId', ParseUUIDPipe) userId: string,
+  ) {
+    return this.hackathonService.removeJuryMember(id, userId);
   }
 
   @Delete(':id')
   @Access('ADMIN')
-  async remove(@Param('id') id: string) {
-    // Видалення хакатону (Danger zone)
+  async remove(@Param('id') id: string): Promise<void> {
+    return this.hackathonService.deleteById(id);
   }
+
+  ///////////////////////////////////////////////////////////////////////////////
 
   @Post(':id/register')
   @Access() // Будь-який авторизований лідер команди
