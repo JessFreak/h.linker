@@ -13,7 +13,9 @@ import { Access } from '../../config/security/decorators/access';
 import {
   AddJuryDTO,
   CreateHackathonDTO,
-  HackathonStatus,
+  HackathonResponse,
+  HackathonsResponse,
+  SetCategoriesDTO,
   SetCriteriaDTO,
   UpdateHackathonDTO,
   UpdateHackathonStatusDTO,
@@ -21,19 +23,24 @@ import {
 } from '@h.linker/libs';
 import { HackathonService } from '../services/hackathon.service';
 import { UserRequest } from '../../config/security/decorators/user-request';
+import { HackathonMapper } from '../utils/mappers/hackathon.mapper';
 
 @Controller('hackathons')
 export class HackathonController {
   constructor(private readonly hackathonService: HackathonService) {}
 
   @Get()
-  async getAll() {
-    return this.hackathonService.getAll();
+  async getAll(): Promise<HackathonsResponse> {
+    const hackathons = await this.hackathonService.getAll();
+    return HackathonMapper.getHackathonsResponse(hackathons);
   }
 
   @Get(':id')
-  async getById(@Param('id', ParseUUIDPipe) id: string) {
-    return this.hackathonService.getById(id);
+  async getById(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<HackathonResponse> {
+    const hackathon = await this.hackathonService.getById(id);
+    return HackathonMapper.getHackathonResponse(hackathon);
   }
 
   @Get(':id/leaderboard')
@@ -46,8 +53,9 @@ export class HackathonController {
   async create(
     @UserRequest() user: UserResponse,
     @Body() dto: CreateHackathonDTO,
-  ) {
-    return this.hackathonService.create(user.id, dto);
+  ): Promise<HackathonResponse> {
+    const hackathon = await this.hackathonService.create(user.id, dto);
+    return HackathonMapper.getHackathonResponse(hackathon);
   }
 
   @Patch(':id')
@@ -55,8 +63,9 @@ export class HackathonController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateHackathonDTO,
-  ) {
-    return this.hackathonService.update(id, dto);
+  ): Promise<HackathonResponse> {
+    const hackathon = await this.hackathonService.update(id, dto);
+    return HackathonMapper.getHackathonResponse(hackathon);
   }
 
   @Patch(':id/status')
@@ -64,8 +73,9 @@ export class HackathonController {
   async updateStatus(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateHackathonStatusDTO,
-  ) {
-    return this.hackathonService.updateStatus(id, dto.status);
+  ): Promise<HackathonResponse> {
+    const hackathon = await this.hackathonService.updateStatus(id, dto.status);
+    return HackathonMapper.getHackathonResponse(hackathon);
   }
 
   @Put(':id/criteria')
@@ -73,8 +83,17 @@ export class HackathonController {
   async setCriteria(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: SetCriteriaDTO,
-  ) {
-    return this.hackathonService.setCriteria(id, dto.criteria);
+  ): Promise<void> {
+    await this.hackathonService.setCriteria(id, dto.criteria);
+  }
+
+  @Put(':id/categories')
+  @Access('ADMIN')
+  async setCategories(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: SetCategoriesDTO,
+  ): Promise<void> {
+    await this.hackathonService.setCategories(id, dto.categories);
   }
 
   @Post(':id/jury')
@@ -82,8 +101,8 @@ export class HackathonController {
   async addJury(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: AddJuryDTO,
-  ) {
-    return this.hackathonService.addJuryMember(id, dto.userId);
+  ): Promise<void> {
+    await this.hackathonService.addJuryMember(id, dto.userId);
   }
 
   @Delete(':id/jury/:userId')
@@ -91,14 +110,14 @@ export class HackathonController {
   async removeJury(
     @Param('id', ParseUUIDPipe) id: string,
     @Param('userId', ParseUUIDPipe) userId: string,
-  ) {
-    return this.hackathonService.removeJuryMember(id, userId);
+  ): Promise<void> {
+    await this.hackathonService.removeJuryMember(id, userId);
   }
 
   @Delete(':id')
   @Access('ADMIN')
-  async remove(@Param('id') id: string): Promise<void> {
-    return this.hackathonService.deleteById(id);
+  async remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
+    await this.hackathonService.deleteById(id);
   }
 
   ///////////////////////////////////////////////////////////////////////////////

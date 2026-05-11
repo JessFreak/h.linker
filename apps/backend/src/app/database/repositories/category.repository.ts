@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { Category } from '@prisma/client';
+import { Category, Prisma, UserCategory } from '@prisma/client';
+import { HackathonCategoryWithCat } from '../entities/hackathon.entity';
 
 @Injectable()
 export class CategoryRepository {
@@ -14,7 +15,10 @@ export class CategoryRepository {
     });
   }
 
-  async linkUserToCategory(userId: string, skill: string) {
+  async linkUserToCategory(
+    userId: string,
+    skill: string,
+  ): Promise<UserCategory> {
     return this.prisma.userCategory.upsert({
       where: {
         userId_category: {
@@ -30,11 +34,14 @@ export class CategoryRepository {
     });
   }
 
-  async deleteUserSkills(userId: string) {
-    return this.prisma.userCategory.deleteMany({ where: { userId: userId } });
+  async deleteUserSkills(userId: string): Promise<void> {
+    await this.prisma.userCategory.deleteMany({ where: { userId: userId } });
   }
 
-  async syncHackathonCategories(hackathonId: string, categoryNames: string[]) {
+  async syncHackathonCategories(
+    hackathonId: string,
+    categoryNames: string[],
+  ): Promise<Prisma.BatchPayload | []> {
     return this.prisma.$transaction(async (tx) => {
       await tx.hackathonCategory.deleteMany({
         where: { hackathonId },
@@ -52,7 +59,9 @@ export class CategoryRepository {
     });
   }
 
-  async getByHackathonId(hackathonId: string) {
+  async getByHackathonId(
+    hackathonId: string,
+  ): Promise<HackathonCategoryWithCat[]> {
     return this.prisma.hackathonCategory.findMany({
       where: { hackathonId },
       include: { cat: true },

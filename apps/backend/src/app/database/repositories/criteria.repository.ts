@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { CriterionDTO } from '@h.linker/libs';
-import { PrismaService } from '../database/prisma.service';
+import { PrismaService } from '../prisma.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class CriteriaRepository {
   constructor(private readonly prisma: PrismaService) {}
-  async syncCriteria(hackathonId: string, criteria: CriterionDTO[]) {
+  async syncCriteria(
+    hackathonId: string,
+    criteria: CriterionDTO[],
+  ): Promise<Prisma.BatchPayload> {
     return this.prisma.$transaction(async (tx) => {
       await tx.criterion.deleteMany({
         where: { hackathonId },

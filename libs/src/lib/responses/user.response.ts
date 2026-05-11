@@ -1,5 +1,5 @@
-import { Hackathon } from './hackathon.response';
 import { TeamResponse } from './team.response';
+import { HackathonResponse } from './hackathon.response';
 
 export interface UserResponse {
   id: string;
@@ -45,7 +45,7 @@ export interface GitHubInsights {
 }
 
 export interface FullUserResponse extends UserResponse {
-  createdHackathons: Hackathon[];
+  createdHackathons: HackathonResponse[];
   teams: UserTeamResponse[];
   projects: UserProjectResponse[];
   githubInsights?: GitHubInsights | null;

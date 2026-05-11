@@ -1,27 +1,59 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { Hackathon, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
+import { FullHackathon } from '../entities/hackathon.entity';
 
 @Injectable()
 export class HackathonRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: Prisma.HackathonUncheckedCreateInput): Promise<Hackathon> {
-    return this.prisma.hackathon.create({ data });
+  private readonly hackathonFullInclude = {
+    categories: {
+      include: {
+        cat: true,
+      },
+    },
+    criteria: true,
+    jury: {
+      include: {
+        user: true,
+      },
+    },
+    _count: {
+      select: { participations: true },
+    },
+  } satisfies Prisma.HackathonInclude;
+
+  async create(
+    data: Prisma.HackathonUncheckedCreateInput,
+  ): Promise<FullHackathon> {
+    return this.prisma.hackathon.create({
+      data,
+      include: this.hackathonFullInclude,
+    });
   }
 
-  async getAll() {
-    return this.prisma.hackathon.findMany();
+  async getAll(): Promise<FullHackathon[]> {
+    return this.prisma.hackathon.findMany({
+      include: this.hackathonFullInclude,
+    });
   }
 
-  async getById(id: string): Promise<Hackathon> {
-    return this.prisma.hackathon.findFirst({ where: { id } });
+  async getById(id: string): Promise<FullHackathon | null> {
+    return this.prisma.hackathon.findUnique({
+      where: { id },
+      include: this.hackathonFullInclude,
+    });
   }
 
-  async updateById(id: string, data: Prisma.HackathonUncheckedUpdateInput): Promise<Hackathon> {
+  async updateById(
+    id: string,
+    data: Prisma.HackathonUncheckedUpdateInput,
+  ): Promise<FullHackathon> {
     return this.prisma.hackathon.update({
       data,
       where: { id },
+      include: this.hackathonFullInclude,
     });
   }
 

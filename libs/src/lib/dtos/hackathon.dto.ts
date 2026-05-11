@@ -12,7 +12,7 @@ import {
   Max,
   IsUUID, IsEnum,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Type as TransformType } from 'class-transformer';
 import { HackathonStatus } from '../responses/hackathon.response';
 
 export class CreateHackathonDTO {
@@ -102,7 +102,7 @@ export class CriterionDTO {
 export class SetCriteriaDTO {
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CriterionDTO)
+  @TransformType(() => CriterionDTO)
     criteria: CriterionDTO[];
 }
 

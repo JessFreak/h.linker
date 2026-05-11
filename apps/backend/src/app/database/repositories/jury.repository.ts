@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
+import { Jury } from '@prisma/client';
 
 @Injectable()
 export class JuryRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async add(hackathonId: string, userId: string) {
+  async add(hackathonId: string, userId: string): Promise<Jury> {
     return this.prisma.jury.create({
       data: {
         hackathonId,
@@ -14,7 +15,7 @@ export class JuryRepository {
     });
   }
 
-  async remove(hackathonId: string, userId: string) {
+  async remove(hackathonId: string, userId: string): Promise<Jury> {
     return this.prisma.jury.delete({
       where: {
         hackathonId_userId: { hackathonId, userId },
