@@ -77,15 +77,6 @@ export class HackathonController {
     return this.hackathonService.setCriteria(id, dto.criteria);
   }
 
-  @Delete(':id/categories/:name')
-  @Access('ADMIN')
-  async removeCategory(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Param('name') name: string,
-  ) {
-    return this.hackathonService.removeCategory(id, name);
-  }
-
   @Post(':id/jury')
   @Access('ADMIN')
   async addJury(

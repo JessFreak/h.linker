@@ -118,3 +118,9 @@ export class UpdateHackathonStatusDTO {
   @IsNotEmpty()
     status: HackathonStatus;
 }
+
+export class SetCategoriesDTO {
+  @IsArray()
+  @IsString({ each: true })
+    categories: string[];
+}
