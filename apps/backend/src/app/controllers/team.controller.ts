@@ -22,7 +22,7 @@ import {
   UserInvitationsResponse,
 } from '@h.linker/libs';
 import { User, UserTeamStatus } from '@prisma/client';
-import { Access } from '../../config/security/decorators/acces';
+import { Access } from '../../config/security/decorators/access';
 import { UserRequest } from '../../config/security/decorators/user-request';
 
 @Controller('teams')

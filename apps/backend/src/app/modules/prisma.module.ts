@@ -5,6 +5,8 @@ import { CategoryRepository } from '../database/repositories/category.repository
 import { RoleRepository } from '../database/repositories/role.repository';
 import { TeamRepository } from '../database/repositories/team.repository';
 import { MemberRepository } from '../database/repositories/member.repository';
+import { HackathonRepository } from '../database/repositories/hackathon.repository';
+import { JuryRepository } from '../database/repositories/jury.repository';
 
 @Global()
 @Module({
@@ -15,6 +17,8 @@ import { MemberRepository } from '../database/repositories/member.repository';
     RoleRepository,
     TeamRepository,
     MemberRepository,
+    HackathonRepository,
+    JuryRepository,
   ],
   exports: [
     PrismaService,
@@ -23,6 +27,8 @@ import { MemberRepository } from '../database/repositories/member.repository';
     RoleRepository,
     TeamRepository,
     MemberRepository,
+    HackathonRepository,
+    JuryRepository,
   ],
 })
 export class PrismaModule {}

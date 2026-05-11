@@ -20,7 +20,7 @@ import {
 } from '@h.linker/libs';
 import { UserRequest } from '../../config/security/decorators/user-request';
 import { User } from '@prisma/client';
-import { Access } from '../../config/security/decorators/acces';
+import { Access } from '../../config/security/decorators/access';
 import { ConfigType } from '@nestjs/config';
 import config from '../../config/config';
 import { GithubOauthGuard } from '../../config/security/guards/github-oauth.guard';

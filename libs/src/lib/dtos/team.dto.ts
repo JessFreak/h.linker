@@ -13,18 +13,18 @@ export class CreateTeamDTO {
   @IsNotEmpty()
   @MinLength(3)
   @MaxLength(50)
-  name: string;
+    name: string;
 
   @IsString()
   @IsOptional()
   @MaxLength(500)
-  description?: string;
+    description?: string;
 
   @IsString()
   @IsOptional()
   @ValidateIf((o) => o.communicationLink && o.communicationLink !== '')
   @IsUrl()
-  communicationLink?: string;
+    communicationLink?: string;
 }
 
 export class UpdateTeamDTO {

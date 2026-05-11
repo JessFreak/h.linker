@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Inject, Param, Patch } from '@nestjs/common';
 import { UserService } from '../services/user.service';
-import { Access } from '../../config/security/decorators/acces';
+import { Access } from '../../config/security/decorators/access';
 import { UserRequest } from '../../config/security/decorators/user-request';
 import {
   FullUserResponse,

@@ -9,6 +9,7 @@ import config from '../config/config';
 import { join } from 'path';
 import { CacheModule } from '@nestjs/cache-manager';
 import { TeamModule } from './modules/team.module';
+import { HackathonModule } from './modules/hackathon.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { TeamModule } from './modules/team.module';
     UserModule,
     AuthModule,
     TeamModule,
+    HackathonModule,
   ],
   controllers: [AppController],
   providers: [AppService],
