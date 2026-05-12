@@ -80,6 +80,12 @@
 
         <app-settings-section id="criteria" label="Scoring Criteria">
           <div [formGroup]="detailsForm">
+
+            @if (criteriaArray.length > 0) {
+              <app-hackathon-weight-preview [criteria]="criteriaArray.value"></app-hackathon-weight-preview>
+              <div style="margin-bottom: 24px;"></div>
+            }
+
             <div formArrayName="criteria">
               @for (item of criteriaArray.controls; track item; let i = $index) {
                 <div [formGroup]="item" class="h-connection-item">
@@ -88,13 +94,15 @@
                       <input matInput formControlName="name" placeholder="Criteria Name">
                     </mat-form-field>
 
-                    <mat-form-field appearance="outline" style="width: 100px" subscriptSizing="dynamic">
+                    <mat-form-field style="width: 80px" appearance="outline" subscriptSizing="dynamic">
                       <input matInput type="number" formControlName="weight">
                       <span matSuffix>%</span>
                     </mat-form-field>
                   </div>
 
-                  <button mat-icon-button color="warn" type="button" (click)="removeCriterion(i)">
+                  <button mat-icon-button color="warn" type="button"
+                          (click)="removeCriterion(i)"
+                          matTooltip="Remove criteria">
                     <mat-icon>delete_outline</mat-icon>
                   </button>
                 </div>
@@ -104,11 +112,11 @@
             @if (totalWeight() !== 100) {
               <div class="h-item-note">
                 <mat-icon>warning</mat-icon>
-                <p>Total weight: {{ totalWeight() }}%. Target: 100%.</p>
+                <p>Total weight must be <strong>100%</strong>. Current: {{ totalWeight() }}%</p>
               </div>
             }
 
-            <button mat-stroked-button (click)="addCriterion()" style="margin-top: 16px">
+            <button mat-stroked-button (click)="addCriterion()" style="margin-top: 16px" [disabled]="totalWeight() >= 100">
               <mat-icon>add</mat-icon> Add Criterion
             </button>
           </div>

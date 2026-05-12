@@ -34,6 +34,8 @@ import {
 import { NotificationService } from '../../../utils/notification.service';
 import { HackathonTimelineComponent } from '../hackathon-timeline/hackathon-timeline.component';
 import { ImageUploadService } from '../../../services/image-upload.service';
+import { MatTooltip } from '@angular/material/tooltip';
+import { HackathonWeightPreviewComponent } from '../hackathon-weight-preview.component';
 
 @Component({
   selector: 'app-hackathon-constructor',
@@ -48,6 +50,8 @@ import { ImageUploadService } from '../../../services/image-upload.service';
     MatSelectModule,
     SettingsSectionComponent,
     HackathonTimelineComponent,
+    MatTooltip,
+    HackathonWeightPreviewComponent,
   ],
   templateUrl: './hackathon-constructor.component.html',
   styleUrls: ['./hackathon-constructor.component.scss'],
