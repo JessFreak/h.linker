@@ -155,20 +155,59 @@
       </div>
     </mat-step>
 
-    <mat-step label="Review & Publish">
+    <mat-step [stepControl]="statusForm" label="Status & Launch">
       <div class="h-step-content">
-        <app-settings-section id="publish" label="Finalize Hackathon">
-          <p class="h-text-secondary">Your hackathon is ready. Publishing it will make it visible to everyone.</p>
-          <div class="h-item-note">
-            <mat-icon>rocket_launch</mat-icon>
-            <p>Make sure the dates and criteria are final before launching.</p>
+        <app-settings-section id="status" label="Hackathon Lifecycle">
+          <p class="h-text-secondary">Current stage determines participant actions and visibility.</p>
+
+          <div [formGroup]="statusForm" class="h-status-manager">
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-select formControlName="status">
+                <mat-select-trigger>
+                  @let selected = getStatusDetail(statusForm.value.status);
+                  @if (selected) {
+                    <div class="h-selected-status-trigger">
+                      <mat-icon>{{selected.icon}}</mat-icon>
+                      <span>{{selected.label}}</span>
+                    </div>
+                  }
+                </mat-select-trigger>
+
+                @for (opt of statusOptions; track opt.value) {
+                  <mat-option [value]="opt.value">
+                    <div class="h-status-option">
+                      <mat-icon>{{opt.icon}}</mat-icon>
+                      <div class="h-status-text">
+                        <span class="h-status-label">{{opt.label}}</span>
+                        <small class="h-text-secondary">{{opt.desc}}</small>
+                      </div>
+                    </div>
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            @switch (statusForm.value.status) {
+              @case ('DRAFT') {
+                <div class="h-item-note">
+                  <mat-icon>info</mat-icon>
+                  <p>In <strong>Draft</strong> mode, only you can see this hackathon. Use this to finalize details.</p>
+                </div>
+              }
+              @case ('ACTIVE') {
+                <div class="h-item-note success-note">
+                  <mat-icon>rocket_launch</mat-icon>
+                  <p>Hackathon is <strong>Live</strong>! Participants can now submit their projects.</p>
+                </div>
+              }
+            }
           </div>
 
           <button mat-flat-button color="primary"
-                  (click)="publish()"
-                  [disabled]="!hackathonId() || isSaving()"
+                  (click)="updateStatus()"
+                  [disabled]="!hackathonId() || isSaving() || statusForm.pristine"
                   style="width: 100%; height: 50px; margin-top: 24px">
-            {{ isSaving() ? 'Launching...' : 'Publish Hackathon' }}
+            {{ isSaving() ? 'Saving...' : 'Apply Status Change' }}
           </button>
         </app-settings-section>
 

@@ -123,6 +123,37 @@ export class HackathonConstructorComponent implements OnInit {
     criteria: this.fb.array<FormGroup>([]),
   });
 
+  statusForm = this.fb.group({
+    status: [HackathonStatus.DRAFT, Validators.required],
+  });
+
+  readonly statusOptions = [
+    {
+      value: HackathonStatus.DRAFT,
+      label: 'Draft',
+      icon: 'edit_note',
+      desc: 'Visible only to organizers.',
+    },
+    {
+      value: HackathonStatus.REGISTRATION,
+      label: 'Registration',
+      icon: 'how_to_reg',
+      desc: 'Participants can join teams.',
+    },
+    {
+      value: HackathonStatus.ACTIVE,
+      label: 'Active',
+      icon: 'rocket_launch',
+      desc: 'Hackathon is ongoing. Submissions open.',
+    },
+    {
+      value: HackathonStatus.FINISHED,
+      label: 'Finished',
+      icon: 'emoji_events',
+      desc: 'Event ended. Judging phase.',
+    },
+  ];
+
   addCategory(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
     const currentCategories = this.detailsForm.controls.categories.value || [];
@@ -218,6 +249,10 @@ export class HackathonConstructorComponent implements OnInit {
     });
   }
 
+  getStatusDetail(value: HackathonStatus | null | undefined) {
+    return this.statusOptions.find((opt) => opt.value === value);
+  }
+
   private loadHackathonData(id: string): void {
     this.hackathonService.getById(id).subscribe({
       next: (h: FullHackathonResponse) => {
@@ -233,6 +268,7 @@ export class HackathonConstructorComponent implements OnInit {
           endDate: new Date(h.endDate),
         });
 
+        this.statusForm.patchValue({ status: h.status });
         this.detailsForm.patchValue({ categories: h.categories });
         this.criteriaArray.clear();
         h.criteria?.forEach((c) => {
@@ -363,19 +399,22 @@ export class HackathonConstructorComponent implements OnInit {
     });
   }
 
-  publish(): void {
+  updateStatus(): void {
     const id = this.hackathonId();
-    if (!id) return;
+    const newStatus = this.statusForm.value.status;
+
+    if (!id || !newStatus) return;
 
     this.isSaving.set(true);
-    this.hackathonService.updateStatus(id, HackathonStatus.ACTIVE).subscribe({
+    this.hackathonService.updateStatus(id, newStatus).subscribe({
       next: () => {
         this.isSaving.set(false);
-        this.notificationService.success('Hackathon is LIVE!');
+        this.statusForm.markAsPristine();
+        this.notificationService.success(`Status updated to ${newStatus}`);
       },
       error: () => {
         this.isSaving.set(false);
-        this.notificationService.error('Failed to publish hackathon');
+        this.notificationService.error('Failed to update status');
       },
     });
   }

@@ -149,3 +149,39 @@
     font-weight: 500;
   }
 }
+
+.h-status-option {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 0;
+
+  mat-icon {
+    color: var(--h-primary-blue);
+  }
+
+  .h-status-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+
+    .h-status-label {
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    small {
+      font-size: 11px;
+    }
+  }
+}
+
+.success-note {
+  background: rgba(16, 185, 129, 0.1) !important;
+  color: #10b981 !important;
+  border-left: 3px solid #10b981;
+}
+
+.w-full {
+  width: 100%;
+}
