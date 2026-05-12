@@ -32,6 +32,7 @@ export interface HackathonResponse {
   title: string;
   slug: string;
   description: string | null;
+  prize: string | null;
   status: HackathonStatus;
   imageUrl: string | null;
 }

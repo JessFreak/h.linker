@@ -37,6 +37,7 @@ export class HackathonMapper {
       title: hackathon.title,
       slug: hackathon.slug,
       description: hackathon.description,
+      prize: hackathon.prize,
       status: hackathon.status as HackathonStatus,
       imageUrl: hackathon.imageUrl,
     };

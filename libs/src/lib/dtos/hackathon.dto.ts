@@ -32,6 +32,10 @@ export class CreateHackathonDTO {
   @MaxLength(2000)
     description?: string;
 
+  @IsString()
+  @IsOptional()
+    prize?: string;
+
   @IsDateString()
     registrationStartDate: string;
 
@@ -62,6 +66,10 @@ export class UpdateHackathonDTO {
   @IsString()
   @IsOptional()
     description?: string;
+
+  @IsString()
+  @IsOptional()
+    prize?: string;
 
   @IsDateString()
   @IsOptional()
