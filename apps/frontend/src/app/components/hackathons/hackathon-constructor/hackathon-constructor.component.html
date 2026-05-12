@@ -4,6 +4,32 @@
     <mat-step [stepControl]="infoForm" label="Identity & Timeline">
       <div class="h-step-content">
         <app-settings-section id="identity" label="Identity">
+
+          <div class="banner-upload-container">
+            <input #bannerInput type="file" (change)="onFileSelected($event)" accept="image/*" style="display: none">
+
+            <div class="banner-preview" [class.no-image]="!infoForm.value.imageUrl">
+              @if (infoForm.value.imageUrl) {
+                <img [src]="infoForm.value.imageUrl" alt="Hackathon Banner">
+              } @else {
+                <div class="banner-placeholder">
+                  <mat-icon>rocket_launch</mat-icon>
+                  <span>No banner uploaded yet</span>
+                </div>
+              }
+
+              <div class="banner-overlay">
+                <button mat-flat-button color="primary" type="button" (click)="triggerFileInput(bannerInput)" [disabled]="isSaving()">
+                  <mat-icon>photo_camera</mat-icon>
+                  {{ infoForm.value.imageUrl ? 'Change Banner' : 'Upload Banner' }}
+                </button>
+              </div>
+            </div>
+            <p class="h-text-secondary h-caption" style="margin-top: 8px">
+              Recommended ratio 21:9. Max size 5MB.
+            </p>
+          </div>
+
           <form [formGroup]="infoForm" class="h-form-column">
             <div class="h-form-row">
               <mat-form-field appearance="outline">
@@ -15,14 +41,10 @@
                 <input matInput formControlName="slug" placeholder="global-ai-hack-2026">
               </mat-form-field>
             </div>
-            <mat-form-field appearance="outline">
-              <mat-label>Banner Image URL</mat-label>
-              <mat-icon matPrefix>image</mat-icon>
-              <input matInput formControlName="imageUrl" placeholder="https://...">
-            </mat-form-field>
+
             <mat-form-field appearance="outline">
               <mat-label>Short Description</mat-label>
-              <textarea matInput formControlName="description" rows="3"></textarea>
+              <textarea matInput formControlName="description" rows="3" placeholder="Tell participants what this event is about..."></textarea>
             </mat-form-field>
           </form>
         </app-settings-section>

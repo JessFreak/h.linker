@@ -26,6 +26,7 @@ import { SettingsSectionComponent } from '../../settings/settings-section.compon
 import { HackathonStatus, FullHackathonResponse } from '@h.linker/libs';
 import { NotificationService } from '../../../utils/notification.service';
 import { HackathonTimelineComponent } from '../hackathon-timeline/hackathon-timeline.component';
+import { ImageUploadService } from '../../../services/image-upload.service';
 
 @Component({
   selector: 'app-hackathon-constructor',
@@ -52,6 +53,7 @@ export class HackathonConstructorComponent implements OnInit {
   private notificationService = inject(NotificationService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private imageUploadService = inject(ImageUploadService);
 
   hackathonId = signal<string | null>(null);
   isSaving = signal(false);
@@ -91,13 +93,40 @@ export class HackathonConstructorComponent implements OnInit {
     );
   });
 
-  isDirty = computed(() => this.infoForm.dirty || this.detailsForm.dirty);
+  triggerFileInput(fileInput: HTMLInputElement) {
+    fileInput.click();
+  }
 
   ngOnInit() {
     const id = this.route.snapshot.queryParamMap.get('id');
     if (id) {
       this.loadHackathonData(id);
     }
+  }
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    this.isSaving.set(true);
+
+    this.imageUploadService.upload(file).subscribe({
+      next: (imageUrl) => {
+        this.infoForm.patchValue({ imageUrl });
+        this.infoForm.get('imageUrl')?.markAsDirty();
+
+        this.notificationService.success(
+          'Banner uploaded! Remember to save changes.',
+        );
+        this.isSaving.set(false);
+      },
+      error: (err) => {
+        console.error('Upload failed:', err);
+        this.notificationService.error('Failed to upload banner');
+        this.isSaving.set(false);
+      },
+    });
   }
 
   private loadHackathonData(id: string) {
