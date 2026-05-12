@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Inject, Param, Patch } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Patch,
+  Query,
+} from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { Access } from '../../config/security/decorators/access';
 import { UserRequest } from '../../config/security/decorators/user-request';
@@ -23,8 +31,8 @@ export class UserController {
   ) {}
 
   @Get()
-  async getAllUsers(): Promise<UsersResponse> {
-    const users = await this.userService.getAll();
+  async getAllUsers(@Query('q') query?: string): Promise<UsersResponse> {
+    const users = await this.userService.getAll(query);
     return UserMapper.getUsersResponse(users);
   }
 
@@ -41,7 +49,10 @@ export class UserController {
 
     if (user.githubUsername) {
       const systemToken = this.configService.github.systemToken;
-      const { insights } = await this.githubService.getProfileData(systemToken, user.githubUsername);
+      const { insights } = await this.githubService.getProfileData(
+        systemToken,
+        user.githubUsername,
+      );
       response.githubInsights = insights;
     }
 

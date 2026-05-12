@@ -5,7 +5,7 @@ import { ExternalUser } from '../utils/external-users';
 import * as bcrypt from 'bcryptjs';
 import { UserRepository } from '../database/repositories/user.repository';
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { CategoryService } from './category.service';
 import { FullUser, UserWithSkills } from '../database/entities/user.entity';
 
@@ -40,8 +40,21 @@ export class UserService {
     return user;
   }
 
-  async getAll(): Promise<User[]> {
-    return this.userRepository.find({});
+  async getAll(searchQuery?: string) {
+    let where: Prisma.UserWhereInput = {};
+
+    if (searchQuery && searchQuery.trim().length > 0) {
+      const q = searchQuery.trim();
+      where = {
+        OR: [
+          { username: { contains: q, mode: 'insensitive' } },
+          { firstName: { contains: q, mode: 'insensitive' } },
+          { lastName: { contains: q, mode: 'insensitive' } },
+        ],
+      };
+    }
+
+    return this.userRepository.find(where);
   }
 
   async findByGithubId(githubId: string): Promise<User> {
