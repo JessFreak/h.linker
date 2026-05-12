@@ -77,4 +77,17 @@ export class CategoryRepository {
       include: { cat: true },
     });
   }
+
+  async search(query: string): Promise<Category[]> {
+    return this.prisma.category.findMany({
+      where: {
+        name: {
+          contains: query,
+          mode: 'insensitive',
+        },
+      },
+      take: 10,
+      select: { name: true },
+    });
+  }
 }
