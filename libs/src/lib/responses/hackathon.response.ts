@@ -19,6 +19,14 @@ export interface JuryResponse {
   avatarUrl?: string;
 }
 
+export interface JuryDisplay {
+  id: string;
+  username: string;
+  avatarUrl?: string;
+  firstName?: string;
+  lastName?: string;
+}
+
 export interface HackathonResponse {
   id: string;
   title: string;

@@ -185,3 +185,71 @@
 .w-full {
   width: 100%;
 }
+
+.h-user-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 0;
+
+  .h-avatar-xs {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  span {
+    font-weight: 500;
+  }
+
+  small {
+    font-size: 11px;
+    opacity: 0.6;
+  }
+}
+
+.h-jury-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.h-avatar-sm {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.h-info-group {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+
+  .h-item-link {
+    font-weight: 600;
+    font-size: 14px;
+    color: #fff;
+  }
+}
+
+.h-selected-status-trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  mat-icon { color: var(--h-primary-blue); }
+  span { font-weight: 500; }
+}
+
+mat-form-field[style*="width: 90px"] {
+  ::ng-deep {
+    input { text-align: right; font-family: 'JetBrains Mono', monospace; }
+    .mat-mdc-form-field-suffix { padding-left: 2px !important; opacity: 0.6; }
+  }
+}

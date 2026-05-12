@@ -30,10 +30,12 @@ import {
   distinctUntilChanged,
   filter,
   map,
+  of,
   switchMap,
 } from 'rxjs';
 
 import { HackathonService } from '../../../services/hackathon.service';
+import { UserService } from '../../../services/user.service';
 import { SettingsSectionComponent } from '../../settings/settings-section.component';
 import {
   HackathonStatus,
@@ -41,6 +43,8 @@ import {
   CreateHackathonDTO,
   UpdateHackathonDTO,
   CriterionDTO,
+  UserResponse,
+  JuryDisplay,
 } from '@h.linker/libs';
 import { NotificationService } from '../../../utils/notification.service';
 import { HackathonTimelineComponent } from '../hackathon-timeline/hackathon-timeline.component';
@@ -82,14 +86,15 @@ export class HackathonConstructorComponent implements OnInit {
   private fb = inject(FormBuilder);
   private hackathonService = inject(HackathonService);
   private categoryService = inject(CategoryService);
+  private userService = inject(UserService);
   private notificationService = inject(NotificationService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private imageUploadService = inject(ImageUploadService);
 
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
-  categoryCtrl = new FormControl('');
 
+  categoryCtrl = new FormControl('');
   filteredCategories = toSignal(
     this.categoryCtrl.valueChanges.pipe(
       debounceTime(300),
@@ -99,6 +104,21 @@ export class HackathonConstructorComponent implements OnInit {
       map((res) => res.categories),
     ),
     { initialValue: [] as string[] },
+  );
+
+  jurySearchCtrl = new FormControl('');
+  selectedJury = signal<JuryDisplay[]>([]);
+  filteredUsers = toSignal(
+    this.jurySearchCtrl.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap((val) =>
+        val && val.length >= 2
+          ? this.userService.getAll(val).pipe(map((res) => res.users))
+          : of([]),
+      ),
+    ),
+    { initialValue: [] as UserResponse[] },
   );
 
   hackathonId = signal<string | null>(null);
@@ -156,46 +176,86 @@ export class HackathonConstructorComponent implements OnInit {
 
   addCategory(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
-    const currentCategories = this.detailsForm.controls.categories.value || [];
-
-    if (value && !currentCategories.includes(value)) {
-      this.detailsForm.controls.categories.setValue([
-        ...currentCategories,
-        value,
-      ]);
+    const current = this.detailsForm.controls.categories.value || [];
+    if (value && !current.includes(value)) {
+      this.detailsForm.controls.categories.setValue([...current, value]);
       this.detailsForm.markAsDirty();
     }
-
     event.chipInput?.clear();
     this.categoryCtrl.setValue(null);
   }
 
   removeCategory(category: string): void {
-    const currentCategories = this.detailsForm.controls.categories.value || [];
-    const index = currentCategories.indexOf(category);
-
-    if (index >= 0) {
-      const updated = [...currentCategories];
-      updated.splice(index, 1);
-      this.detailsForm.controls.categories.setValue(updated);
-      this.detailsForm.markAsDirty();
-    }
+    const current = this.detailsForm.controls.categories.value || [];
+    this.detailsForm.controls.categories.setValue(
+      current.filter((c) => c !== category),
+    );
+    this.detailsForm.markAsDirty();
   }
 
   selectedCategory(event: MatAutocompleteSelectedEvent): void {
     const value = event.option.viewValue;
-    const currentCategories = this.detailsForm.controls.categories.value || [];
-
-    if (!currentCategories.includes(value)) {
-      this.detailsForm.controls.categories.setValue([
-        ...currentCategories,
-        value,
-      ]);
+    const current = this.detailsForm.controls.categories.value || [];
+    if (!current.includes(value)) {
+      this.detailsForm.controls.categories.setValue([...current, value]);
       this.detailsForm.markAsDirty();
     }
-
     this.categoryInput.nativeElement.value = '';
     this.categoryCtrl.setValue(null);
+  }
+
+  addJury(event: MatAutocompleteSelectedEvent): void {
+    const user = event.option.value as UserResponse;
+    const id = this.hackathonId();
+
+    if (!id) {
+      this.notificationService.error('Save identity first!');
+      return;
+    }
+
+    if (this.selectedJury().some((u) => u.id === user.id)) return;
+
+    this.isSaving.set(true);
+    this.hackathonService.addJury(id, { userId: user.id }).subscribe({
+      next: () => {
+        this.selectedJury.update((prev) => [
+          ...prev,
+          {
+            id: user.id,
+            username: user.username,
+            avatarUrl: user.avatarUrl ?? undefined,
+            firstName: user.firstName,
+            lastName: user.lastName ?? undefined,
+          },
+        ]);
+        this.isSaving.set(false);
+        this.notificationService.success(`${user.username} added to jury`);
+      },
+      error: () => {
+        this.isSaving.set(false);
+        this.notificationService.error('Failed to add jury member');
+      },
+    });
+
+    this.jurySearchCtrl.setValue('');
+  }
+
+  removeJury(userId: string): void {
+    const id = this.hackathonId();
+    if (!id) return;
+
+    this.isSaving.set(true);
+    this.hackathonService.removeJury(id, userId).subscribe({
+      next: () => {
+        this.selectedJury.update((prev) => prev.filter((u) => u.id !== userId));
+        this.isSaving.set(false);
+        this.notificationService.success('Jury member removed');
+      },
+      error: () => {
+        this.isSaving.set(false);
+        this.notificationService.error('Failed to remove jury member');
+      },
+    });
   }
 
   private detailsValue = toSignal(this.detailsForm.valueChanges, {
@@ -236,14 +296,11 @@ export class HackathonConstructorComponent implements OnInit {
       next: (imageUrl: string) => {
         this.infoForm.patchValue({ imageUrl });
         this.infoForm.get('imageUrl')?.markAsDirty();
-        this.notificationService.success(
-          'Banner uploaded! Remember to save changes.',
-        );
+        this.notificationService.success('Banner uploaded!');
         this.isSaving.set(false);
       },
-      error: (err: unknown) => {
-        console.error('Upload failed:', err);
-        this.notificationService.error('Failed to upload banner');
+      error: () => {
+        this.notificationService.error('Upload failed');
         this.isSaving.set(false);
       },
     });
@@ -270,6 +327,14 @@ export class HackathonConstructorComponent implements OnInit {
 
         this.statusForm.patchValue({ status: h.status });
         this.detailsForm.patchValue({ categories: h.categories });
+
+        const juryData: JuryDisplay[] = (h.jury || []).map((j) => ({
+          id: j.userId,
+          username: j.username,
+          avatarUrl: j.avatarUrl ?? undefined,
+        }));
+        this.selectedJury.set(juryData);
+
         this.criteriaArray.clear();
         h.criteria?.forEach((c) => {
           this.criteriaArray.push(
@@ -284,8 +349,7 @@ export class HackathonConstructorComponent implements OnInit {
           );
         });
       },
-      error: () =>
-        this.notificationService.error('Failed to load hackathon data'),
+      error: () => this.notificationService.error('Failed to load data'),
     });
   }
 
@@ -309,7 +373,6 @@ export class HackathonConstructorComponent implements OnInit {
 
   saveIdentity(stepper: MatStepper): void {
     if (this.infoForm.invalid) return;
-
     const raw = this.infoForm.getRawValue();
     const {
       title,
@@ -327,12 +390,10 @@ export class HackathonConstructorComponent implements OnInit {
       !startDate ||
       !submissionDeadline ||
       !endDate
-    ) {
+    )
       return;
-    }
 
     this.isSaving.set(true);
-
     const payload: CreateHackathonDTO = {
       title,
       slug,
@@ -355,23 +416,24 @@ export class HackathonConstructorComponent implements OnInit {
         this.hackathonId.set(res.id);
         this.isSaving.set(false);
         this.infoForm.markAsPristine();
-
-        if (isNew) {
+        if (isNew)
           this.router.navigate([], {
             relativeTo: this.route,
             queryParams: { id: res.id },
             queryParamsHandling: 'merge',
           });
-        }
-
-        this.notificationService.success('Identity and Timeline updated');
+        this.notificationService.success('Identity saved');
         stepper.next();
       },
       error: () => {
         this.isSaving.set(false);
-        this.notificationService.error('Failed to save identity');
+        this.notificationService.error('Save failed');
       },
     });
+  }
+
+  displayFn(): string {
+    return '';
   }
 
   saveDetails(stepper: MatStepper): void {
@@ -381,28 +443,28 @@ export class HackathonConstructorComponent implements OnInit {
     this.isSaving.set(true);
     const raw = this.detailsForm.getRawValue();
 
-    const categories = raw.categories || [];
-    const criteria = raw.criteria as CriterionDTO[];
-
-    this.hackathonService.setCategories(id, { categories }).subscribe();
-    this.hackathonService.setCriteria(id, { criteria }).subscribe({
-      next: () => {
-        this.isSaving.set(false);
-        this.detailsForm.markAsPristine();
-        this.notificationService.success('Scoring and Categories saved');
-        stepper.next();
-      },
-      error: () => {
-        this.isSaving.set(false);
-        this.notificationService.error('Failed to save details');
-      },
-    });
+    this.hackathonService
+      .setCategories(id, { categories: raw.categories || [] })
+      .subscribe();
+    this.hackathonService
+      .setCriteria(id, { criteria: raw.criteria as CriterionDTO[] })
+      .subscribe({
+        next: () => {
+          this.isSaving.set(false);
+          this.detailsForm.markAsPristine();
+          this.notificationService.success('Details saved');
+          stepper.next();
+        },
+        error: () => {
+          this.isSaving.set(false);
+          this.notificationService.error('Save failed');
+        },
+      });
   }
 
   updateStatus(): void {
     const id = this.hackathonId();
     const newStatus = this.statusForm.value.status;
-
     if (!id || !newStatus) return;
 
     this.isSaving.set(true);
@@ -410,11 +472,11 @@ export class HackathonConstructorComponent implements OnInit {
       next: () => {
         this.isSaving.set(false);
         this.statusForm.markAsPristine();
-        this.notificationService.success(`Status updated to ${newStatus}`);
+        this.notificationService.success(`Status: ${newStatus}`);
       },
       error: () => {
         this.isSaving.set(false);
-        this.notificationService.error('Failed to update status');
+        this.notificationService.error('Update failed');
       },
     });
   }

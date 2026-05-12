@@ -85,17 +85,62 @@
                 #categoryInput
                 [formControl]="categoryCtrl"
                 [matChipInputFor]="chipGrid"
-                [matAutocomplete]="auto"
+                [matAutocomplete]="categoryAuto"
                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                 (matChipInputTokenEnd)="addCategory($event)"
               />
-              <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectedCategory($event)">
+              <mat-autocomplete #categoryAuto="matAutocomplete" (optionSelected)="selectedCategory($event)">
                 @for (category of filteredCategories(); track category) {
                   <mat-option [value]="category">{{category}}</mat-option>
                 }
               </mat-autocomplete>
               <mat-hint>Type to search or press Enter to add a custom tag</mat-hint>
             </mat-form-field>
+          </div>
+        </app-settings-section>
+
+        <app-settings-section id="jury" label="Jury Members">
+          <div class="h-form-column">
+            <mat-form-field appearance="outline">
+              <mat-label>Search jury by name or &#64;username</mat-label>
+              <mat-icon matPrefix>person_search</mat-icon>
+              <input matInput
+                     [formControl]="jurySearchCtrl"
+                     [matAutocomplete]="userAuto"
+                     placeholder="e.g. @alex_malyy">
+              <mat-autocomplete #userAuto="matAutocomplete"
+                                [displayWith]="displayFn"
+                                (optionSelected)="addJury($event)">
+                @for (user of filteredUsers(); track user.id) {
+                  <mat-option [value]="user">
+                    <div class="h-user-option">
+                      <img [src]="user.avatarUrl || 'https://ui-avatars.com/api/?name=' + user.username" class="h-avatar-xs" alt="">
+                      <span>{{user.firstName}} {{user.lastName}}</span>
+                      <small class="h-text-secondary">&#64;{{user.username}}</small>
+                    </div>
+                  </mat-option>
+                }
+              </mat-autocomplete>
+            </mat-form-field>
+
+            <div class="h-jury-list">
+              @for (member of selectedJury(); track member.id) {
+                <div class="h-connection-item">
+                  <div class="h-item-body">
+                    <img [src]="member.avatarUrl || 'https://ui-avatars.com/api/?name=' + member.username" class="h-avatar-sm" alt="">
+                    <div class="h-info-group">
+                      <span class="h-item-link">{{member.firstName || member.username}} {{member.lastName || ''}}</span>
+                      <small class="h-text-secondary">&#64;{{member.username}}</small>
+                    </div>
+                  </div>
+                  <button mat-icon-button color="warn" (click)="removeJury(member.id)" matTooltip="Remove Jury">
+                    <mat-icon>person_remove</mat-icon>
+                  </button>
+                </div>
+              } @empty {
+                <p class="h-text-secondary">No jury members added yet. Search above to invite professionals.</p>
+              }
+            </div>
           </div>
         </app-settings-section>
 
@@ -115,7 +160,7 @@
                       <input matInput formControlName="name" placeholder="Criteria Name">
                     </mat-form-field>
 
-                    <mat-form-field style="width: 80px" appearance="outline" subscriptSizing="dynamic">
+                    <mat-form-field style="width: 90px" appearance="outline" subscriptSizing="dynamic">
                       <input matInput type="number" formControlName="weight">
                       <span matSuffix>%</span>
                     </mat-form-field>

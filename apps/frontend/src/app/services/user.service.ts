@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   FullUserResponse,
@@ -23,7 +23,11 @@ export class UserService {
     return this.http.get<FullUserResponse>(`${this.baseUrl}/${username}`);
   }
 
-  getAll(): Observable<UsersResponse> {
-    return this.http.get<UsersResponse>(this.baseUrl);
+  getAll(q?: string): Observable<UsersResponse> {
+    let params = new HttpParams();
+    if (q) {
+      params = params.set('q', q);
+    }
+    return this.http.get<UsersResponse>(this.baseUrl, { params });
   }
 }
