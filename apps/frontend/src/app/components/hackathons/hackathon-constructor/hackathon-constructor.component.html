@@ -54,6 +54,13 @@
             </div>
 
             <mat-form-field appearance="outline">
+              <mat-label>Prize Pool / Awards</mat-label>
+              <mat-icon matPrefix>emoji_events</mat-icon>
+              <input matInput formControlName="prize" placeholder="e.g. $10,000, MacBooks, or Internship opportunities">
+              <mat-hint>Tell participants what they are fighting for</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
               <mat-label>Short Description</mat-label>
               <textarea matInput formControlName="description" rows="3"
                         placeholder="Tell participants what this event is about..."></textarea>

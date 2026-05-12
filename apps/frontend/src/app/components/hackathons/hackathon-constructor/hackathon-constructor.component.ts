@@ -29,6 +29,7 @@ import {
   debounceTime,
   distinctUntilChanged,
   filter,
+  forkJoin,
   map,
   of,
   switchMap,
@@ -133,6 +134,7 @@ export class HackathonConstructorComponent implements OnInit {
       [Validators.required, Validators.minLength(5), Validators.maxLength(100)],
     ],
     slug: ['', [Validators.required, Validators.maxLength(120)]],
+    prize: ['', [Validators.maxLength(200)]],
     description: ['', [Validators.maxLength(2000)]],
     imageUrl: [''],
     registrationStartDate: [null as Date | null, Validators.required],
@@ -297,7 +299,10 @@ export class HackathonConstructorComponent implements OnInit {
 
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { step: event.selectedIndex },
+      queryParams: {
+        step: event.selectedIndex,
+        id: this.hackathonId(),
+      },
       queryParamsHandling: 'merge',
     });
   }
@@ -338,6 +343,7 @@ export class HackathonConstructorComponent implements OnInit {
           title: h.title,
           slug: h.slug,
           description: h.description,
+          prize: h.prize || '',
           imageUrl: h.imageUrl,
           registrationStartDate: new Date(h.registrationStartDate),
           startDate: new Date(h.startDate),
@@ -418,6 +424,7 @@ export class HackathonConstructorComponent implements OnInit {
       title,
       slug,
       description: raw.description ?? undefined,
+      prize: raw.prize || undefined,
       imageUrl: raw.imageUrl ?? undefined,
       registrationStartDate: registrationStartDate.toISOString(),
       startDate: startDate.toISOString(),
@@ -432,17 +439,11 @@ export class HackathonConstructorComponent implements OnInit {
 
     request.subscribe({
       next: (res: FullHackathonResponse) => {
-        const isNew = !this.hackathonId();
         this.hackathonId.set(res.id);
+
         this.isSaving.set(false);
         this.infoForm.markAsPristine();
-        if (isNew) {
-          this.router.navigate([], {
-            relativeTo: this.route,
-            queryParams: { id: res.id, step: 1 },
-            queryParamsHandling: 'merge',
-          });
-        }
+
         this.notificationService.success('Identity saved');
         stepper.next();
       },
@@ -464,23 +465,26 @@ export class HackathonConstructorComponent implements OnInit {
     this.isSaving.set(true);
     const raw = this.detailsForm.getRawValue();
 
-    this.hackathonService
-      .setCategories(id, { categories: raw.categories || [] })
-      .subscribe();
-    this.hackathonService
-      .setCriteria(id, { criteria: raw.criteria as CriterionDTO[] })
-      .subscribe({
-        next: () => {
-          this.isSaving.set(false);
-          this.detailsForm.markAsPristine();
-          this.notificationService.success('Details saved');
-          stepper.next();
-        },
-        error: () => {
-          this.isSaving.set(false);
-          this.notificationService.error('Save failed');
-        },
-      });
+    forkJoin({
+      categories: this.hackathonService.setCategories(id, {
+        categories: raw.categories || [],
+      }),
+      criteria: this.hackathonService.setCriteria(id, {
+        criteria: raw.criteria as CriterionDTO[],
+      }),
+    }).subscribe({
+      next: () => {
+        this.isSaving.set(false);
+        this.detailsForm.markAsPristine();
+        this.notificationService.success('Details saved successfully');
+        stepper.next();
+      },
+      error: (err) => {
+        this.isSaving.set(false);
+        this.notificationService.error('Failed to save details');
+        console.error(err);
+      },
+    });
   }
 
   updateStatus(): void {
@@ -493,7 +497,14 @@ export class HackathonConstructorComponent implements OnInit {
       next: () => {
         this.isSaving.set(false);
         this.statusForm.markAsPristine();
-        this.notificationService.success(`Status: ${newStatus}`);
+
+        const option = this.statusOptions.find(
+          (opt) => opt.value === newStatus,
+        );
+        const label = option ? option.label : newStatus;
+        this.notificationService.success(
+          `Hackathon status updated to: ${label}`,
+        );
       },
       error: () => {
         this.isSaving.set(false);
