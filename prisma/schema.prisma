@@ -99,6 +99,7 @@ model Hackathon {
   title       String
   slug        String          @unique
   description String?
+  prize       String?
   status      HackathonStatus @default(DRAFT)
 
   registrationStartDate DateTime @map("reg_start_date")
