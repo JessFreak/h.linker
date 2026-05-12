@@ -1,0 +1,66 @@
+<div class="h-timeline-container">
+  @if (!readonly && _formGroup) {
+    <div [formGroup]="_formGroup" class="h-timeline-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Registration Opens</mat-label>
+        <input matInput [matDatepicker]="rp" formControlName="registrationStartDate">
+        <mat-datepicker-toggle matSuffix [for]="rp"></mat-datepicker-toggle>
+        <mat-datepicker #rp></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Hackathon Starts</mat-label>
+        <input matInput [matDatepicker]="sp" formControlName="startDate">
+        <mat-datepicker-toggle matSuffix [for]="sp"></mat-datepicker-toggle>
+        <mat-datepicker #sp></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Submission Deadline</mat-label>
+        <input matInput [matDatepicker]="sd" formControlName="submissionDeadline">
+        <mat-datepicker-toggle matSuffix [for]="sd"></mat-datepicker-toggle>
+        <mat-datepicker #sd></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Hackathon Ends</mat-label>
+        <input matInput [matDatepicker]="ep" formControlName="endDate">
+        <mat-datepicker-toggle matSuffix [for]="ep"></mat-datepicker-toggle>
+        <mat-datepicker #ep></mat-datepicker>
+      </mat-form-field>
+    </div>
+  }
+
+  @if (timelinePercentages(); as pct) {
+    <div class="h-timeline-viz tech-data">
+      <div class="h-timeline-days-labels h-text-secondary">
+        <div class="h-day-segment" [style.width.%]="pct.pctA">{{ pct.daysA }}d</div>
+        <div class="h-day-segment" [style.width.%]="pct.pctB">{{ pct.daysB }}d</div>
+        <div class="h-day-segment" [style.width.%]="pct.pctC">{{ pct.daysC }}d</div>
+      </div>
+
+      <div class="h-timeline-track h-card">
+        <div class="h-timeline-segment h-segment-a" [style.width.%]="pct.pctA"></div>
+        <div class="h-timeline-segment h-segment-b" [style.width.%]="pct.pctB"></div>
+        <div class="h-timeline-segment h-segment-c" [style.width.%]="pct.pctC"></div>
+
+        <div class="h-timeline-point h-point-0" matTooltip="Registration Opens"></div>
+        <div class="h-timeline-point h-point-1" [style.left.%]="pct.pctA" matTooltip="Hackathon Starts"></div>
+        <div class="h-timeline-point h-point-2" [style.left.%]="pct.pctA + pct.pctB" matTooltip="Submission Deadline"></div>
+        <div class="h-timeline-point h-point-3" matTooltip="Hackathon Ends"></div>
+      </div>
+
+      <div class="h-timeline-labels h-text-secondary">
+        <span class="h-label h-point-0">{{ dates()?.regStart | date:'MMM dd' }}</span>
+        <span class="h-label h-point-1" [style.left.%]="pct.pctA">{{ dates()?.start | date:'MMM dd' }}</span>
+        <span class="h-label h-point-2" [style.left.%]="pct.pctA + pct.pctB">{{ dates()?.subEnd | date:'MMM dd' }}</span>
+        <span class="h-label h-point-3">{{ dates()?.end | date:'MMM dd' }}</span>
+      </div>
+    </div>
+  } @else if (timelineError()) {
+    <div class="h-item-note h-error-note">
+      <mat-icon>warning</mat-icon>
+      <p>{{ timelineError() }}</p>
+    </div>
+  }
+</div>

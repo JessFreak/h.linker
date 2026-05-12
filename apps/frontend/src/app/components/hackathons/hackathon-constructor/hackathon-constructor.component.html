@@ -1,0 +1,129 @@
+<div class="h-constructor-layout">
+  <mat-stepper #stepper linear class="h-main-stepper">
+
+    <mat-step [stepControl]="infoForm" label="Identity & Timeline">
+      <div class="h-step-content">
+        <app-settings-section id="identity" label="Identity">
+          <form [formGroup]="infoForm" class="h-form-column">
+            <div class="h-form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Hackathon Title</mat-label>
+                <input matInput formControlName="title" placeholder="Global AI Hack 2026">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>URL Slug</mat-label>
+                <input matInput formControlName="slug" placeholder="global-ai-hack-2026">
+              </mat-form-field>
+            </div>
+            <mat-form-field appearance="outline">
+              <mat-label>Banner Image URL</mat-label>
+              <mat-icon matPrefix>image</mat-icon>
+              <input matInput formControlName="imageUrl" placeholder="https://...">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Short Description</mat-label>
+              <textarea matInput formControlName="description" rows="3"></textarea>
+            </mat-form-field>
+          </form>
+        </app-settings-section>
+
+        <app-settings-section id="timeline" label="Timeline & Deadlines">
+          <app-hackathon-timeline [formGroup]="infoForm"></app-hackathon-timeline>
+        </app-settings-section>
+
+        <div class="h-actions">
+          <button mat-flat-button color="primary"
+                  (click)="saveIdentity(stepper)"
+                  [disabled]="infoForm.invalid || isSaving()">
+            {{ isSaving() ? 'Saving...' : (hackathonId() ? 'Save and Continue' : 'Initialize Hackathon') }}
+          </button>
+        </div>
+      </div>
+    </mat-step>
+
+    <mat-step [stepControl]="detailsForm" label="Details & Scoring">
+      <div class="h-step-content">
+
+        <app-settings-section id="categories" label="Focus Areas">
+          <mat-form-field appearance="outline" [formGroup]="detailsForm">
+            <mat-label>Categories</mat-label>
+            <mat-select formControlName="categories" multiple>
+              <mat-option value="AI">AI/ML</mat-option>
+              <mat-option value="Web">Web Development</mat-option>
+              <mat-option value="Mobile">Mobile Apps</mat-option>
+              <mat-option value="Cybersec">Cybersecurity</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </app-settings-section>
+
+        <app-settings-section id="criteria" label="Scoring Criteria">
+          <div [formGroup]="detailsForm">
+            <div formArrayName="criteria">
+              @for (item of criteriaArray.controls; track item; let i = $index) {
+                <div [formGroupName]="i" class="h-connection-item">
+                  <div class="h-item-body">
+                    <mat-form-field appearance="outline" style="flex: 3">
+                      <input matInput formControlName="name" placeholder="Criteria Name">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" style="width: 100px">
+                      <input matInput type="number" formControlName="weight">
+                      <span matSuffix>%</span>
+                    </mat-form-field>
+                  </div>
+                  <button mat-icon-button color="warn" (click)="removeCriterion(i)">
+                    <mat-icon>delete_outline</mat-icon>
+                  </button>
+                </div>
+              }
+            </div>
+
+            @if (totalWeight() !== 100) {
+              <div class="h-item-note">
+                <mat-icon>warning</mat-icon>
+                <p>Total weight: {{ totalWeight() }}%. Target: 100%.</p>
+              </div>
+            }
+
+            <button mat-stroked-button (click)="addCriterion()" style="margin-top: 16px">
+              <mat-icon>add</mat-icon> Add Criterion
+            </button>
+          </div>
+        </app-settings-section>
+
+        <div class="h-actions">
+          <button mat-button matStepperPrevious [disabled]="isSaving()">Back</button>
+
+          <button mat-flat-button color="primary"
+                  (click)="saveDetails(stepper)"
+                  [disabled]="totalWeight() !== 100 || isSaving()">
+            {{ isSaving() ? 'Saving...' : 'Save and Continue' }}
+          </button>
+        </div>
+      </div>
+    </mat-step>
+
+    <mat-step label="Review & Publish">
+      <div class="h-step-content">
+        <app-settings-section id="publish" label="Finalize Hackathon">
+          <p class="h-text-secondary">Your hackathon is ready. Publishing it will make it visible to everyone.</p>
+          <div class="h-item-note">
+            <mat-icon>rocket_launch</mat-icon>
+            <p>Make sure the dates and criteria are final before launching.</p>
+          </div>
+
+          <button mat-flat-button color="primary"
+                  (click)="publish()"
+                  [disabled]="!hackathonId() || isSaving()"
+                  style="width: 100%; height: 50px; margin-top: 24px">
+            {{ isSaving() ? 'Launching...' : 'Publish Hackathon' }}
+          </button>
+        </app-settings-section>
+
+        <div class="h-actions">
+          <button mat-button matStepperPrevious [disabled]="isSaving()">Back</button>
+        </div>
+      </div>
+    </mat-step>
+
+  </mat-stepper>
+</div>

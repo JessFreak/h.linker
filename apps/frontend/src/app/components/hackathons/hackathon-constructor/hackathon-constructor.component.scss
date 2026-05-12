@@ -1,0 +1,49 @@
+.h-constructor-layout {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px 120px;
+
+  .h-main-stepper {
+    background: transparent !important;
+
+    ::ng-deep .mat-horizontal-stepper-header-container {
+      margin-bottom: 32px;
+    }
+  }
+}
+
+.h-step-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.h-form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.h-form-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+}
+
+.h-timeline-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.h-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
+
+  button {
+    height: 44px;
+    padding: 0 24px;
+  }
+}

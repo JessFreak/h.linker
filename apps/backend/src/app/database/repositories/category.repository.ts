@@ -49,6 +49,16 @@ export class CategoryRepository {
 
       if (!categoryNames || categoryNames.length === 0) return [];
 
+      await Promise.all(
+        categoryNames.map((name) =>
+          tx.category.upsert({
+            create: { name },
+            update: {},
+            where: { name },
+          }),
+        ),
+      );
+
       return tx.hackathonCategory.createMany({
         data: categoryNames.map((name) => ({
           hackathonId,

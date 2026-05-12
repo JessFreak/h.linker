@@ -9,6 +9,9 @@ import { TeamsComponent } from './components/teams/teams.component';
 import TeamDetailsComponent from './components/teams/team-details/team-details.component';
 import { TeamSettingsComponent } from './components/teams/team-details/team-setttings/team-settings.component';
 import { UsersComponent } from './components/teams/users/users.component';
+import {
+  HackathonConstructorComponent
+} from './components/hackathons/hackathon-constructor/hackathon-constructor.component';
 
 export const appRoutes: Route[] = [
   { path: '', component: MainPageComponent, pathMatch: 'full' },
@@ -24,5 +27,6 @@ export const appRoutes: Route[] = [
   { path: 'teams', component: TeamsComponent },
   { path: 'teams/:id', component: TeamDetailsComponent },
   { path: 'teams/:id/settings', component: TeamSettingsComponent },
+  { path: 'events/constructor', component: HackathonConstructorComponent },
   { path: '**', redirectTo: '' },
 ];
