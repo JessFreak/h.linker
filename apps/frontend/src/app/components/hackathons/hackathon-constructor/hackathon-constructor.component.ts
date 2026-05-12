@@ -12,6 +12,7 @@ import {
   Validators,
   ReactiveFormsModule,
   FormArray,
+  FormGroup,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
@@ -23,7 +24,13 @@ import { toSignal } from '@angular/core/rxjs-interop';
 
 import { HackathonService } from '../../../services/hackathon.service';
 import { SettingsSectionComponent } from '../../settings/settings-section.component';
-import { HackathonStatus, FullHackathonResponse } from '@h.linker/libs';
+import {
+  HackathonStatus,
+  FullHackathonResponse,
+  CreateHackathonDTO,
+  UpdateHackathonDTO,
+  CriterionDTO,
+} from '@h.linker/libs';
 import { NotificationService } from '../../../utils/notification.service';
 import { HackathonTimelineComponent } from '../hackathon-timeline/hackathon-timeline.component';
 import { ImageUploadService } from '../../../services/image-upload.service';
@@ -74,54 +81,53 @@ export class HackathonConstructorComponent implements OnInit {
 
   detailsForm = this.fb.group({
     categories: [[] as string[]],
-    criteria: this.fb.array([]),
+    criteria: this.fb.array<FormGroup>([]),
   });
 
   private detailsValue = toSignal(this.detailsForm.valueChanges, {
-    initialValue: this.detailsForm.value,
+    initialValue: this.detailsForm.getRawValue(),
   });
 
-  get criteriaArray() {
-    return this.detailsForm.get('criteria') as FormArray;
+  get criteriaArray(): FormArray<FormGroup> {
+    return this.detailsForm.get('criteria') as FormArray<FormGroup>;
   }
 
   totalWeight = computed(() => {
-    const criteria = this.detailsValue()?.criteria || [];
+    const criteria = this.detailsValue().criteria || [];
     return criteria.reduce(
-      (acc: number, curr: any) => acc + (Number(curr?.weight) || 0),
+      (acc: number, curr: Partial<{ weight: number | null }>) =>
+        acc + (Number(curr?.weight) || 0),
       0,
     );
   });
 
-  triggerFileInput(fileInput: HTMLInputElement) {
-    fileInput.click();
-  }
-
-  ngOnInit() {
+  ngOnInit(): void {
     const id = this.route.snapshot.queryParamMap.get('id');
     if (id) {
       this.loadHackathonData(id);
     }
   }
 
-  onFileSelected(event: Event) {
+  triggerFileInput(fileInput: HTMLInputElement): void {
+    fileInput.click();
+  }
+
+  onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
 
     this.isSaving.set(true);
-
     this.imageUploadService.upload(file).subscribe({
-      next: (imageUrl) => {
+      next: (imageUrl: string) => {
         this.infoForm.patchValue({ imageUrl });
         this.infoForm.get('imageUrl')?.markAsDirty();
-
         this.notificationService.success(
           'Banner uploaded! Remember to save changes.',
         );
         this.isSaving.set(false);
       },
-      error: (err) => {
+      error: (err: unknown) => {
         console.error('Upload failed:', err);
         this.notificationService.error('Failed to upload banner');
         this.isSaving.set(false);
@@ -129,7 +135,7 @@ export class HackathonConstructorComponent implements OnInit {
     });
   }
 
-  private loadHackathonData(id: string) {
+  private loadHackathonData(id: string): void {
     this.hackathonService.getById(id).subscribe({
       next: (h: FullHackathonResponse) => {
         this.hackathonId.set(h.id);
@@ -143,6 +149,7 @@ export class HackathonConstructorComponent implements OnInit {
           submissionDeadline: new Date(h.submissionDeadline),
           endDate: new Date(h.endDate),
         });
+
         this.detailsForm.patchValue({ categories: h.categories });
         this.criteriaArray.clear();
         h.criteria?.forEach((c) => {
@@ -163,7 +170,7 @@ export class HackathonConstructorComponent implements OnInit {
     });
   }
 
-  addCriterion() {
+  addCriterion(): void {
     this.criteriaArray.push(
       this.fb.group({
         name: ['', Validators.required],
@@ -176,37 +183,68 @@ export class HackathonConstructorComponent implements OnInit {
     );
   }
 
-  removeCriterion(index: number) {
+  removeCriterion(index: number): void {
     this.criteriaArray.removeAt(index);
     this.detailsForm.markAsDirty();
   }
 
-  saveIdentity(stepper: MatStepper) {
+  saveIdentity(stepper: MatStepper): void {
     if (this.infoForm.invalid) return;
+
+    const raw = this.infoForm.getRawValue();
+    const {
+      title,
+      slug,
+      registrationStartDate,
+      startDate,
+      submissionDeadline,
+      endDate,
+    } = raw;
+
+    if (
+      !title ||
+      !slug ||
+      !registrationStartDate ||
+      !startDate ||
+      !submissionDeadline ||
+      !endDate
+    ) {
+      return;
+    }
+
     this.isSaving.set(true);
-    const dto = this.infoForm.getRawValue() as any;
-    const payload = {
-      ...dto,
-      registrationStartDate: new Date(dto.registrationStartDate).toISOString(),
-      startDate: new Date(dto.startDate).toISOString(),
-      submissionDeadline: new Date(dto.submissionDeadline).toISOString(),
-      endDate: new Date(dto.endDate).toISOString(),
+
+    const payload: CreateHackathonDTO = {
+      title,
+      slug,
+      description: raw.description ?? undefined,
+      imageUrl: raw.imageUrl ?? undefined,
+      registrationStartDate: registrationStartDate.toISOString(),
+      startDate: startDate.toISOString(),
+      submissionDeadline: submissionDeadline.toISOString(),
+      endDate: endDate.toISOString(),
     };
-    const request = this.hackathonId()
-      ? this.hackathonService.update(this.hackathonId()!, payload)
+
+    const id = this.hackathonId();
+    const request = id
+      ? this.hackathonService.update(id, payload as UpdateHackathonDTO)
       : this.hackathonService.create(payload);
+
     request.subscribe({
-      next: (res) => {
+      next: (res: FullHackathonResponse) => {
         const isNew = !this.hackathonId();
         this.hackathonId.set(res.id);
         this.isSaving.set(false);
         this.infoForm.markAsPristine();
-        if (isNew)
+
+        if (isNew) {
           this.router.navigate([], {
             relativeTo: this.route,
             queryParams: { id: res.id },
             queryParamsHandling: 'merge',
           });
+        }
+
         this.notificationService.success('Identity and Timeline updated');
         stepper.next();
       },
@@ -217,44 +255,45 @@ export class HackathonConstructorComponent implements OnInit {
     });
   }
 
-  saveDetails(stepper: MatStepper) {
-    if (!this.hackathonId() || this.totalWeight() !== 100) return;
+  saveDetails(stepper: MatStepper): void {
+    const id = this.hackathonId();
+    if (!id || this.totalWeight() !== 100) return;
+
     this.isSaving.set(true);
-    const categories = this.detailsForm.value.categories || [];
-    const criteria = this.criteriaArray.value;
-    this.hackathonService
-      .setCategories(this.hackathonId()!, { categories })
-      .subscribe();
-    this.hackathonService
-      .setCriteria(this.hackathonId()!, { criteria })
-      .subscribe({
-        next: () => {
-          this.isSaving.set(false);
-          this.detailsForm.markAsPristine();
-          this.notificationService.success('Scoring and Categories saved');
-          stepper.next();
-        },
-        error: () => {
-          this.isSaving.set(false);
-          this.notificationService.error('Failed to save details');
-        },
-      });
+    const raw = this.detailsForm.getRawValue();
+
+    const categories = raw.categories || [];
+    const criteria = raw.criteria as CriterionDTO[];
+
+    this.hackathonService.setCategories(id, { categories }).subscribe();
+    this.hackathonService.setCriteria(id, { criteria }).subscribe({
+      next: () => {
+        this.isSaving.set(false);
+        this.detailsForm.markAsPristine();
+        this.notificationService.success('Scoring and Categories saved');
+        stepper.next();
+      },
+      error: () => {
+        this.isSaving.set(false);
+        this.notificationService.error('Failed to save details');
+      },
+    });
   }
 
-  publish() {
-    if (!this.hackathonId()) return;
+  publish(): void {
+    const id = this.hackathonId();
+    if (!id) return;
+
     this.isSaving.set(true);
-    this.hackathonService
-      .updateStatus(this.hackathonId()!, HackathonStatus.ACTIVE)
-      .subscribe({
-        next: () => {
-          this.isSaving.set(false);
-          this.notificationService.success('Hackathon is LIVE!');
-        },
-        error: () => {
-          this.isSaving.set(false);
-          this.notificationService.error('Failed to publish hackathon');
-        },
-      });
+    this.hackathonService.updateStatus(id, HackathonStatus.ACTIVE).subscribe({
+      next: () => {
+        this.isSaving.set(false);
+        this.notificationService.success('Hackathon is LIVE!');
+      },
+      error: () => {
+        this.isSaving.set(false);
+        this.notificationService.error('Failed to publish hackathon');
+      },
+    });
   }
 }

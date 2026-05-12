@@ -82,17 +82,19 @@
           <div [formGroup]="detailsForm">
             <div formArrayName="criteria">
               @for (item of criteriaArray.controls; track item; let i = $index) {
-                <div [formGroupName]="i" class="h-connection-item">
+                <div [formGroup]="item" class="h-connection-item">
                   <div class="h-item-body">
-                    <mat-form-field appearance="outline" style="flex: 3">
+                    <mat-form-field appearance="outline" style="flex: 3" subscriptSizing="dynamic">
                       <input matInput formControlName="name" placeholder="Criteria Name">
                     </mat-form-field>
-                    <mat-form-field appearance="outline" style="width: 100px">
+
+                    <mat-form-field appearance="outline" style="width: 100px" subscriptSizing="dynamic">
                       <input matInput type="number" formControlName="weight">
                       <span matSuffix>%</span>
                     </mat-form-field>
                   </div>
-                  <button mat-icon-button color="warn" (click)="removeCriterion(i)">
+
+                  <button mat-icon-button color="warn" type="button" (click)="removeCriterion(i)">
                     <mat-icon>delete_outline</mat-icon>
                   </button>
                 </div>
