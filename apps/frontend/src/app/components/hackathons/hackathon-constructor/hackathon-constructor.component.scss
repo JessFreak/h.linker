@@ -253,3 +253,38 @@ mat-form-field[style*="width: 90px"] {
     .mat-mdc-form-field-suffix { padding-left: 2px !important; opacity: 0.6; }
   }
 }
+
+.h-info-group {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+
+  .h-item-link {
+    font-weight: 600;
+    font-size: 14px;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--h-primary-blue, #6366f1);
+      text-decoration: underline;
+    }
+  }
+
+  small.h-text-secondary {
+    transition: opacity 0.2s ease;
+  }
+}
+
+.h-avatar-sm.clickable {
+  cursor: pointer;
+  transition: transform 0.2s ease, ring 0.2s ease;
+
+  &:hover {
+    transform: scale(1.05);
+    outline: 2px solid var(--h-primary-blue, #6366f1);
+    outline-offset: 2px;
+  }
+}

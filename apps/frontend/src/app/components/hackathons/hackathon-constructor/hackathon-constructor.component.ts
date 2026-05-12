@@ -16,7 +16,7 @@ import {
   FormGroup,
   FormControl,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -57,6 +57,7 @@ import {
   MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
 
 @Component({
   selector: 'app-hackathon-constructor',
@@ -75,11 +76,13 @@ import {
     MatChipsModule,
     MatAutocompleteModule,
     HackathonWeightPreviewComponent,
+    RouterLink,
   ],
   templateUrl: './hackathon-constructor.component.html',
   styleUrls: ['./hackathon-constructor.component.scss'],
 })
 export class HackathonConstructorComponent implements OnInit {
+  currentStep = signal(0);
   @ViewChild('stepper') stepper!: MatStepper;
   @ViewChild('categoryInput') categoryInput!: ElementRef<HTMLInputElement>;
 
@@ -276,10 +279,27 @@ export class HackathonConstructorComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    const id = this.route.snapshot.queryParamMap.get('id');
+    const params = this.route.snapshot.queryParamMap;
+    const id = params.get('id');
+    const step = params.get('step');
+
     if (id) {
       this.loadHackathonData(id);
     }
+
+    if (step) {
+      this.currentStep.set(Number(step));
+    }
+  }
+
+  onStepChange(event: StepperSelectionEvent): void {
+    this.currentStep.set(event.selectedIndex);
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { step: event.selectedIndex },
+      queryParamsHandling: 'merge',
+    });
   }
 
   triggerFileInput(fileInput: HTMLInputElement): void {
@@ -416,12 +436,13 @@ export class HackathonConstructorComponent implements OnInit {
         this.hackathonId.set(res.id);
         this.isSaving.set(false);
         this.infoForm.markAsPristine();
-        if (isNew)
+        if (isNew) {
           this.router.navigate([], {
             relativeTo: this.route,
-            queryParams: { id: res.id },
+            queryParams: { id: res.id, step: 1 },
             queryParamsHandling: 'merge',
           });
+        }
         this.notificationService.success('Identity saved');
         stepper.next();
       },

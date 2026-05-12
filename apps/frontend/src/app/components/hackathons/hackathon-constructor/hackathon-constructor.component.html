@@ -1,5 +1,9 @@
 <div class="h-constructor-layout">
-  <mat-stepper #stepper linear class="h-main-stepper">
+  <mat-stepper #stepper
+               linear
+               class="h-main-stepper"
+               [selectedIndex]="currentStep()"
+               (selectionChange)="onStepChange($event)">
 
     <mat-step [stepControl]="infoForm" label="Identity & Timeline">
       <div class="h-step-content">
@@ -8,7 +12,8 @@
           <div class="banner-upload-container">
             <input #bannerInput type="file" (change)="onFileSelected($event)" accept="image/*" style="display: none">
 
-            <div class="banner-preview" [class.no-image]="!infoForm.value.imageUrl">
+            <div class="banner-preview" [class.no-image]="!infoForm.value.imageUrl"
+                 matTooltip="This banner will be the first thing participants see">
               @if (infoForm.value.imageUrl) {
                 <img [src]="infoForm.value.imageUrl" alt="Hackathon Banner">
               } @else {
@@ -19,7 +24,10 @@
               }
 
               <div class="banner-overlay">
-                <button mat-flat-button color="primary" type="button" (click)="triggerFileInput(bannerInput)" [disabled]="isSaving()">
+                <button mat-flat-button color="primary" type="button"
+                        (click)="triggerFileInput(bannerInput)"
+                        [disabled]="isSaving()"
+                        matTooltip="Upload a high-quality image (21:9)">
                   <mat-icon>photo_camera</mat-icon>
                   {{ infoForm.value.imageUrl ? 'Change Banner' : 'Upload Banner' }}
                 </button>
@@ -35,16 +43,21 @@
               <mat-form-field appearance="outline">
                 <mat-label>Hackathon Title</mat-label>
                 <input matInput formControlName="title" placeholder="Global AI Hack 2026">
+                <mat-hint>Give your event a catchy and clear name</mat-hint>
               </mat-form-field>
+
               <mat-form-field appearance="outline">
                 <mat-label>URL Slug</mat-label>
                 <input matInput formControlName="slug" placeholder="global-ai-hack-2026">
+                <mat-hint>Custom part of the URL (letters, numbers, hyphens)</mat-hint>
               </mat-form-field>
             </div>
 
             <mat-form-field appearance="outline">
               <mat-label>Short Description</mat-label>
-              <textarea matInput formControlName="description" rows="3" placeholder="Tell participants what this event is about..."></textarea>
+              <textarea matInput formControlName="description" rows="3"
+                        placeholder="Tell participants what this event is about..."></textarea>
+              <mat-hint align="end">{{ infoForm.get('description')?.value?.length || 0 }} / 2000</mat-hint>
             </mat-form-field>
           </form>
         </app-settings-section>
@@ -56,7 +69,8 @@
         <div class="h-actions">
           <button mat-flat-button color="primary"
                   (click)="saveIdentity(stepper)"
-                  [disabled]="infoForm.invalid || isSaving()">
+                  [disabled]="infoForm.invalid || isSaving()"
+                  matTooltip="Initialize or update general hackathon info">
             {{ isSaving() ? 'Saving...' : (hackathonId() ? 'Save and Continue' : 'Initialize Hackathon') }}
           </button>
         </div>
@@ -72,7 +86,8 @@
               <mat-label>Categories / Topics</mat-label>
               <mat-chip-grid #chipGrid aria-label="Category selection">
                 @for (cat of detailsForm.controls.categories.value; track cat) {
-                  <mat-chip-row (removed)="removeCategory(cat)">
+                  <mat-chip-row (removed)="removeCategory(cat)"
+                                matTooltip="Click 'x' to remove this category">
                     {{cat}}
                     <button matChipRemove [attr.aria-label]="'remove ' + cat">
                       <mat-icon>cancel</mat-icon>
@@ -88,13 +103,16 @@
                 [matAutocomplete]="categoryAuto"
                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                 (matChipInputTokenEnd)="addCategory($event)"
+                matTooltip="Type to search or add your own tags"
               />
               <mat-autocomplete #categoryAuto="matAutocomplete" (optionSelected)="selectedCategory($event)">
                 @for (category of filteredCategories(); track category) {
-                  <mat-option [value]="category">{{category}}</mat-option>
+                  <mat-option [value]="category" [matTooltip]="'Select ' + category">
+                    {{category}}
+                  </mat-option>
                 }
               </mat-autocomplete>
-              <mat-hint>Type to search or press Enter to add a custom tag</mat-hint>
+              <mat-hint>Helps participants find your event based on their stack</mat-hint>
             </mat-form-field>
           </div>
         </app-settings-section>
@@ -103,16 +121,17 @@
           <div class="h-form-column">
             <mat-form-field appearance="outline">
               <mat-label>Search jury by name or &#64;username</mat-label>
-              <mat-icon matPrefix>person_search</mat-icon>
+              <mat-icon matPrefix matTooltip="Search for verified professionals">person_search</mat-icon>
               <input matInput
                      [formControl]="jurySearchCtrl"
                      [matAutocomplete]="userAuto"
-                     placeholder="e.g. @alex_malyy">
+                     placeholder="e.g. @alex_malyy"
+                     matTooltip="Start typing to see user suggestions">
               <mat-autocomplete #userAuto="matAutocomplete"
                                 [displayWith]="displayFn"
                                 (optionSelected)="addJury($event)">
                 @for (user of filteredUsers(); track user.id) {
-                  <mat-option [value]="user">
+                  <mat-option [value]="user" [matTooltip]="'Add ' + user.firstName + ' to jury'">
                     <div class="h-user-option">
                       <img [src]="user.avatarUrl || 'https://ui-avatars.com/api/?name=' + user.username" class="h-avatar-xs" alt="">
                       <span>{{user.firstName}} {{user.lastName}}</span>
@@ -121,19 +140,30 @@
                   </mat-option>
                 }
               </mat-autocomplete>
+              <mat-hint>Jury members can view and score projects</mat-hint>
             </mat-form-field>
 
             <div class="h-jury-list">
               @for (member of selectedJury(); track member.id) {
                 <div class="h-connection-item">
                   <div class="h-item-body">
-                    <img [src]="member.avatarUrl || 'https://ui-avatars.com/api/?name=' + member.username" class="h-avatar-sm" alt="">
+                    <img [src]="member.avatarUrl || 'https://ui-avatars.com/api/?name=' + member.username"
+                         class="h-avatar-sm clickable"
+                         [routerLink]="['/users', member.username]"
+                         matTooltip="View profile"
+                         alt="Jury member avatar">
+
                     <div class="h-info-group">
-                      <span class="h-item-link">{{member.firstName || member.username}} {{member.lastName || ''}}</span>
+              <span class="h-item-link"
+                    [routerLink]="['/users', member.username]"
+                    matTooltip="View profile">
+                {{member.firstName || member.username}} {{member.lastName || ''}}
+              </span>
                       <small class="h-text-secondary">&#64;{{member.username}}</small>
                     </div>
                   </div>
-                  <button mat-icon-button color="warn" (click)="removeJury(member.id)" matTooltip="Remove Jury">
+
+                  <button mat-icon-button color="warn" (click)="removeJury(member.id)" matTooltip="Revoke jury permissions">
                     <mat-icon>person_remove</mat-icon>
                   </button>
                 </div>
@@ -148,7 +178,9 @@
           <div [formGroup]="detailsForm">
 
             @if (criteriaArray.length > 0) {
-              <app-hackathon-weight-preview [criteria]="criteriaArray.value"></app-hackathon-weight-preview>
+              <app-hackathon-weight-preview [criteria]="criteriaArray.value"
+                                            matTooltip="Visual distribution of criteria weights">
+              </app-hackathon-weight-preview>
               <div style="margin-bottom: 24px;"></div>
             }
 
@@ -157,10 +189,12 @@
                 <div [formGroup]="item" class="h-connection-item">
                   <div class="h-item-body">
                     <mat-form-field appearance="outline" style="flex: 3" subscriptSizing="dynamic">
-                      <input matInput formControlName="name" placeholder="Criteria Name">
+                      <input matInput formControlName="name" placeholder="Criteria Name (e.g. Innovation)"
+                             matTooltip="Name of the evaluation parameter">
                     </mat-form-field>
 
-                    <mat-form-field style="width: 90px" appearance="outline" subscriptSizing="dynamic">
+                    <mat-form-field style="width: 90px" appearance="outline" subscriptSizing="dynamic"
+                                    matTooltip="Percentage weight (importance) of this criterion">
                       <input matInput type="number" formControlName="weight">
                       <span matSuffix>%</span>
                     </mat-form-field>
@@ -168,7 +202,7 @@
 
                   <button mat-icon-button color="warn" type="button"
                           (click)="removeCriterion(i)"
-                          matTooltip="Remove criteria">
+                          matTooltip="Delete this criterion">
                     <mat-icon>delete_outline</mat-icon>
                   </button>
                 </div>
@@ -176,24 +210,30 @@
             </div>
 
             @if (totalWeight() !== 100) {
-              <div class="h-item-note">
+              <div class="h-item-note" matTooltip="The sum of all weights must be exactly 100%">
                 <mat-icon>warning</mat-icon>
-                <p>Total weight must be <strong>100%</strong>. Current: {{ totalWeight() }}%</p>
+                <p>Total weight must be exactly <strong>100%</strong>. Current: {{ totalWeight() }}%</p>
               </div>
             }
 
-            <button mat-stroked-button (click)="addCriterion()" style="margin-top: 16px" [disabled]="totalWeight() >= 100">
+            <button mat-stroked-button (click)="addCriterion()" style="margin-top: 16px"
+                    [disabled]="totalWeight() >= 100"
+                    matTooltip="Define a new parameter for jury scoring">
               <mat-icon>add</mat-icon> Add Criterion
             </button>
           </div>
         </app-settings-section>
 
         <div class="h-actions">
-          <button mat-button matStepperPrevious [disabled]="isSaving()">Back</button>
+          <button mat-button matStepperPrevious [disabled]="isSaving()"
+                  matTooltip="Go back to Identity & Timeline">
+            Back
+          </button>
 
           <button mat-flat-button color="primary"
                   (click)="saveDetails(stepper)"
-                  [disabled]="totalWeight() !== 100 || isSaving()">
+                  [disabled]="totalWeight() !== 100 || isSaving()"
+                  matTooltip="Verify all fields and proceed to status management">
             {{ isSaving() ? 'Saving...' : 'Save and Continue' }}
           </button>
         </div>
@@ -230,6 +270,7 @@
                   </mat-option>
                 }
               </mat-select>
+              <mat-hint>Change status to move through hackathon phases</mat-hint>
             </mat-form-field>
 
             @switch (statusForm.value.status) {
@@ -251,7 +292,8 @@
           <button mat-flat-button color="primary"
                   (click)="updateStatus()"
                   [disabled]="!hackathonId() || isSaving() || statusForm.pristine"
-                  style="width: 100%; height: 50px; margin-top: 24px">
+                  style="width: 100%; height: 50px; margin-top: 24px"
+                  matTooltip="Apply the selected lifecycle status">
             {{ isSaving() ? 'Saving...' : 'Apply Status Change' }}
           </button>
         </app-settings-section>
