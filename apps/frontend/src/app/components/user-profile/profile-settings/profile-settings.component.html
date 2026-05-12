@@ -170,24 +170,39 @@
         </div>
       </app-settings-section>
 
-      <app-settings-section id="skills" label="Your Skills">
-        <mat-chip-grid>
-          @for (skill of skills(); track skill) {
-            <mat-chip-row (removed)="removeSkill(skill)"
-                          class="tech-data"
-                          matTooltip="Click 'x' to remove this skill">
-              {{ skill }}
-              <button matChipRemove><mat-icon>cancel</mat-icon></button>
-            </mat-chip-row>
-          }
-        </mat-chip-grid>
-        <div class="add-skill-box">
-          <input placeholder="Add new skill..." #skillInput
-                 (keyup.enter)="addSkill(skillInput)"
-                 matTooltip="Press Enter to add skill">
-          <button mat-flat-button type="button" (click)="addSkill(skillInput)" matTooltip="Add to your tech stack">
-            + Add
-          </button>
+      <app-settings-section id="skills" label="Your Skills & Tech Stack">
+        <div class="h-form-column">
+          <mat-form-field appearance="outline" class="h-tag-field">
+            <mat-label>Tech Stack</mat-label>
+            <mat-chip-grid #chipGrid aria-label="Skill selection">
+              @for (skill of skills(); track skill) {
+                <mat-chip-row (removed)="removeSkill(skill)" class="tech-data">
+                  {{ skill }}
+                  <button matChipRemove [attr.aria-label]="'remove ' + skill">
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                </mat-chip-row>
+              }
+            </mat-chip-grid>
+
+            <input
+              placeholder="Add skill (e.g. Angular, Python, AWS)..."
+              #skillInput
+              [formControl]="skillCtrl"
+              [matChipInputFor]="chipGrid"
+              [matAutocomplete]="auto"
+              [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+              (matChipInputTokenEnd)="addSkill($event)"
+            />
+
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectedSkill($event)">
+              @for (sk of filteredSkills(); track sk) {
+                <mat-option [value]="sk">{{ sk }}</mat-option>
+              }
+            </mat-autocomplete>
+
+            <mat-hint>Search for technologies or type your own and press Enter</mat-hint>
+          </mat-form-field>
         </div>
       </app-settings-section>
 

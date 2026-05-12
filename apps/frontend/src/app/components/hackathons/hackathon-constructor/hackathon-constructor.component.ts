@@ -5,6 +5,7 @@ import {
   computed,
   ViewChild,
   OnInit,
+  ElementRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -13,6 +14,7 @@ import {
   ReactiveFormsModule,
   FormArray,
   FormGroup,
+  FormControl,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
@@ -20,7 +22,16 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+
 import { toSignal } from '@angular/core/rxjs-interop';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  map,
+  switchMap,
+} from 'rxjs';
 
 import { HackathonService } from '../../../services/hackathon.service';
 import { SettingsSectionComponent } from '../../settings/settings-section.component';
@@ -36,6 +47,12 @@ import { HackathonTimelineComponent } from '../hackathon-timeline/hackathon-time
 import { ImageUploadService } from '../../../services/image-upload.service';
 import { MatTooltip } from '@angular/material/tooltip';
 import { HackathonWeightPreviewComponent } from '../hackathon-weight-preview.component';
+import { CategoryService } from '../../../services/category.service';
+import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import {
+  MatAutocompleteModule,
+  MatAutocompleteSelectedEvent,
+} from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-hackathon-constructor',
@@ -51,6 +68,8 @@ import { HackathonWeightPreviewComponent } from '../hackathon-weight-preview.com
     SettingsSectionComponent,
     HackathonTimelineComponent,
     MatTooltip,
+    MatChipsModule,
+    MatAutocompleteModule,
     HackathonWeightPreviewComponent,
   ],
   templateUrl: './hackathon-constructor.component.html',
@@ -58,13 +77,29 @@ import { HackathonWeightPreviewComponent } from '../hackathon-weight-preview.com
 })
 export class HackathonConstructorComponent implements OnInit {
   @ViewChild('stepper') stepper!: MatStepper;
+  @ViewChild('categoryInput') categoryInput!: ElementRef<HTMLInputElement>;
 
   private fb = inject(FormBuilder);
   private hackathonService = inject(HackathonService);
+  private categoryService = inject(CategoryService);
   private notificationService = inject(NotificationService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private imageUploadService = inject(ImageUploadService);
+
+  readonly separatorKeysCodes = [ENTER, COMMA] as const;
+  categoryCtrl = new FormControl('');
+
+  filteredCategories = toSignal(
+    this.categoryCtrl.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      filter((value) => !!value && value.length >= 2),
+      switchMap((query) => this.categoryService.searchCategories(query || '')),
+      map((res) => res.categories),
+    ),
+    { initialValue: [] as string[] },
+  );
 
   hackathonId = signal<string | null>(null);
   isSaving = signal(false);
@@ -87,6 +122,50 @@ export class HackathonConstructorComponent implements OnInit {
     categories: [[] as string[]],
     criteria: this.fb.array<FormGroup>([]),
   });
+
+  addCategory(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+    const currentCategories = this.detailsForm.controls.categories.value || [];
+
+    if (value && !currentCategories.includes(value)) {
+      this.detailsForm.controls.categories.setValue([
+        ...currentCategories,
+        value,
+      ]);
+      this.detailsForm.markAsDirty();
+    }
+
+    event.chipInput?.clear();
+    this.categoryCtrl.setValue(null);
+  }
+
+  removeCategory(category: string): void {
+    const currentCategories = this.detailsForm.controls.categories.value || [];
+    const index = currentCategories.indexOf(category);
+
+    if (index >= 0) {
+      const updated = [...currentCategories];
+      updated.splice(index, 1);
+      this.detailsForm.controls.categories.setValue(updated);
+      this.detailsForm.markAsDirty();
+    }
+  }
+
+  selectedCategory(event: MatAutocompleteSelectedEvent): void {
+    const value = event.option.viewValue;
+    const currentCategories = this.detailsForm.controls.categories.value || [];
+
+    if (!currentCategories.includes(value)) {
+      this.detailsForm.controls.categories.setValue([
+        ...currentCategories,
+        value,
+      ]);
+      this.detailsForm.markAsDirty();
+    }
+
+    this.categoryInput.nativeElement.value = '';
+    this.categoryCtrl.setValue(null);
+  }
 
   private detailsValue = toSignal(this.detailsForm.valueChanges, {
     initialValue: this.detailsForm.getRawValue(),

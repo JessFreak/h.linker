@@ -67,15 +67,36 @@
       <div class="h-step-content">
 
         <app-settings-section id="categories" label="Focus Areas">
-          <mat-form-field appearance="outline" [formGroup]="detailsForm">
-            <mat-label>Categories</mat-label>
-            <mat-select formControlName="categories" multiple>
-              <mat-option value="AI">AI/ML</mat-option>
-              <mat-option value="Web">Web Development</mat-option>
-              <mat-option value="Mobile">Mobile Apps</mat-option>
-              <mat-option value="Cybersec">Cybersecurity</mat-option>
-            </mat-select>
-          </mat-form-field>
+          <div class="h-form-column">
+            <mat-form-field appearance="outline" class="h-tag-field">
+              <mat-label>Categories / Topics</mat-label>
+              <mat-chip-grid #chipGrid aria-label="Category selection">
+                @for (cat of detailsForm.controls.categories.value; track cat) {
+                  <mat-chip-row (removed)="removeCategory(cat)">
+                    {{cat}}
+                    <button matChipRemove [attr.aria-label]="'remove ' + cat">
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </mat-chip-row>
+                }
+              </mat-chip-grid>
+              <input
+                placeholder="Add category (e.g. Nodejs)..."
+                #categoryInput
+                [formControl]="categoryCtrl"
+                [matChipInputFor]="chipGrid"
+                [matAutocomplete]="auto"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                (matChipInputTokenEnd)="addCategory($event)"
+              />
+              <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectedCategory($event)">
+                @for (category of filteredCategories(); track category) {
+                  <mat-option [value]="category">{{category}}</mat-option>
+                }
+              </mat-autocomplete>
+              <mat-hint>Type to search or press Enter to add a custom tag</mat-hint>
+            </mat-form-field>
+          </div>
         </app-settings-section>
 
         <app-settings-section id="criteria" label="Scoring Criteria">

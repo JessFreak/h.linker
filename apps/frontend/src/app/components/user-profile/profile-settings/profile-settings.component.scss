@@ -79,17 +79,46 @@
   }
 }
 
-.add-skill-box {
-  margin-top: 16px; display: flex; gap: 12px;
-  input {
-    flex: 1; background: var(--h-bg-deep-navy);
-    border: 1px solid var(--h-surface-gray); color: white;
-    padding: 8px 16px; border-radius: 6px; outline: none;
-    &:focus { border-color: var(--h-primary-blue); }
-  }
-}
-
 .password-grid {
   display: flex; flex-direction: column; gap: 16px; max-width: 600px;
   .new-passwords-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+}
+
+.h-tag-field {
+  width: 100%;
+  margin-top: 8px;
+
+  ::ng-deep {
+    .mat-mdc-standard-chip {
+      background-color: rgba(99, 102, 241, 0.1) !important;
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      color: var(--h-primary-blue, #6366f1) !important;
+      border-radius: 4px !important;
+      font-weight: 500;
+
+      .mat-mdc-chip-remove {
+        color: var(--h-primary-blue) !important;
+        opacity: 0.7;
+        &:hover { opacity: 1; }
+      }
+    }
+
+    .mat-mdc-form-field-subscript-wrapper {
+      margin-bottom: 8px;
+    }
+
+    .mat-mdc-form-field-hint {
+      font-size: 11px;
+      opacity: 0.5;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .h-tag-field {
+    ::ng-deep .mat-mdc-chip-grid {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
 }

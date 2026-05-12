@@ -1,4 +1,12 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  OnInit,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -7,6 +15,7 @@ import {
   ValidatorFn,
   AbstractControl,
   ValidationErrors,
+  FormControl,
 } from '@angular/forms';
 import { UserService } from '../../../services/user.service';
 import {
@@ -16,7 +25,7 @@ import {
   UserResponse,
 } from '@h.linker/libs';
 import {
-  MatChipGrid,
+  MatChipGrid, MatChipInput,
   MatChipRemove,
   MatChipRow,
 } from '@angular/material/chips';
@@ -34,6 +43,21 @@ import { DatePipe, NgOptimizedImage } from '@angular/common';
 import { ConfirmDialogComponent } from '../../../utils/confirm-dialog.component';
 import { TeamService } from '../../../services/team.service';
 import { MatTooltip } from '@angular/material/tooltip';
+import {
+  MatAutocomplete,
+  MatAutocompleteSelectedEvent, MatAutocompleteTrigger, MatOption,
+} from '@angular/material/autocomplete';
+import { MatChipInputEvent } from '@angular/material/chips';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { CategoryService } from '../../../services/category.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  map,
+  switchMap,
+} from 'rxjs';
 
 @Component({
   selector: 'app-profile-settings',
@@ -60,9 +84,14 @@ import { MatTooltip } from '@angular/material/tooltip';
     RouterLink,
     DatePipe,
     MatTooltip,
+    MatChipInput,
+    MatAutocomplete,
+    MatOption,
+    MatAutocompleteTrigger,
   ],
 })
 export class ProfileSettingsComponent implements OnInit {
+  @ViewChild('skillInput') skillInput!: ElementRef<HTMLInputElement>;
   profileForm: FormGroup;
   passwordForm: FormGroup;
   isChangingPassword = signal(false);
@@ -79,6 +108,10 @@ export class ProfileSettingsComponent implements OnInit {
     return count;
   });
 
+  readonly separatorKeysCodes = [ENTER, COMMA] as const;
+  skillCtrl = new FormControl('');
+
+  protected readonly categoryService = inject(CategoryService);
   isSaving = signal(false);
   protected readonly authService = inject(AuthService);
   protected readonly userService = inject(UserService);
@@ -131,6 +164,17 @@ export class ProfileSettingsComponent implements OnInit {
     this.loadInvitations();
     this.checkExternalErrors();
   }
+
+  filteredSkills = toSignal(
+    this.skillCtrl.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      filter((value) => !!value && value.length >= 2),
+      switchMap((query) => this.categoryService.searchCategories(query || '')),
+      map((res) => res.categories),
+    ),
+    { initialValue: [] as string[] },
+  );
 
   checkExternalErrors() {
     this.route.queryParams.subscribe((params) => {
@@ -262,18 +306,35 @@ export class ProfileSettingsComponent implements OnInit {
     });
   }
 
-  addSkill(input: HTMLInputElement) {
-    const value = input.value.trim();
-    if (value) {
+  addSkill(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+    const currentSkills = this.skills();
+
+    if (value && !currentSkills.includes(value)) {
       this.skills.update((s) => [...s, value]);
-      input.value = '';
       this.profileForm.markAsDirty();
     }
+
+    event.chipInput?.clear();
+    this.skillCtrl.setValue(null);
   }
 
-  removeSkill(skill: string) {
+  removeSkill(skill: string): void {
     this.skills.update((s) => s.filter((item) => item !== skill));
     this.profileForm.markAsDirty();
+  }
+
+  selectedSkill(event: MatAutocompleteSelectedEvent): void {
+    const value = event.option.viewValue;
+    const currentSkills = this.skills();
+
+    if (!currentSkills.includes(value)) {
+      this.skills.update((s) => [...s, value]);
+      this.profileForm.markAsDirty();
+    }
+
+    this.skillInput.nativeElement.value = '';
+    this.skillCtrl.setValue(null);
   }
 
   onSave() {
