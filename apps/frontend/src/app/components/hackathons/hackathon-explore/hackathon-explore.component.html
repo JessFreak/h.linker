@@ -1,0 +1,89 @@
+<div class="h-page-layout">
+  <aside class="h-sidebar">
+    <div class="filter-header">
+      <h2>Filters</h2>
+      <button mat-button color="primary" class="reset-link">Reset</button>
+    </div>
+
+    <div class="filter-section">
+      <h3>Status</h3>
+      <div class="filter-group">
+        <mat-checkbox color="primary" checked>Ongoing</mat-checkbox>
+        <mat-checkbox color="primary">Upcoming</mat-checkbox>
+        <mat-checkbox color="primary">Past</mat-checkbox>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <h3>Categories & Tech</h3>
+
+      <mat-form-field appearance="outline" class="h-filter-search" subscriptSizing="dynamic">
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput [formControl]="categorySearchCtrl" placeholder="Search tech...">
+      </mat-form-field>
+
+      <div class="filter-group scrollable-filters">
+        @for (cat of allCategories(); track cat) {
+          <mat-checkbox color="primary">{{ cat }}</mat-checkbox>
+        } @empty {
+          <div class="h-empty-search">
+            <small class="h-text-secondary">No matching categories found.</small>
+          </div>
+        }
+      </div>
+    </div>
+
+    <button mat-flat-button color="primary" class="apply-btn">Apply Filters</button>
+  </aside>
+
+  <main class="h-main">
+    @if (hackathons()[0]; as hero) {
+      <div class="h-card h-featured-hero" [routerLink]="['/events', hero.slug]">
+        <div class="hero-image" [style.background-image]="hero.imageUrl ? 'url(' + hero.imageUrl + ')' : 'none'">
+          <div class="hero-overlay">
+            <span class="h-badge hero-status">FEATURED</span>
+            <div class="hero-content">
+              <h1>{{ hero.title }}</h1>
+              <p class="h-text-secondary">{{ hero.startDate | date:'MMM d' }} – {{ hero.endDate | date:'MMM d' }} • {{ hero.prize || 'TBA' }}</p>
+              <button mat-flat-button class="hero-btn">View Details <mat-icon>arrow_forward</mat-icon></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="h-results-header">
+      <div class="results-count">
+        Available Events <span class="count-pill">{{ hackathons().length }}</span>
+      </div>
+      <div class="results-sort">
+        <span class="h-text-secondary">Sort:</span>
+        <button mat-button>Newest <mat-icon>expand_more</mat-icon></button>
+      </div>
+    </div>
+
+    <div class="h-hack-grid">
+      @for (h of hackathons(); track h.id) {
+        <div class="h-card h-hack-card" [routerLink]="['/events', h.slug]">
+          <div class="card-banner" [style.background-image]="h.imageUrl ? 'url(' + h.imageUrl + ')' : 'none'">
+            <span class="h-status-tag" [class]="h.status.toLowerCase()">{{ h.status }}</span>
+          </div>
+
+          <div class="card-body">
+            <h3>{{ h.title }}</h3>
+            <div class="card-meta h-text-secondary">
+              <div class="meta-item"><mat-icon>calendar_today</mat-icon> {{ h.startDate | date:'MMM d' }}</div>
+              <div class="meta-item"><mat-icon>emoji_events</mat-icon> {{ h.prize || 'TBA' }}</div>
+            </div>
+
+            <div class="card-tags">
+              @for (tag of h.categories.slice(0, 3); track tag) {
+                <span class="mini-tag">{{ tag }}</span>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </main>
+</div>
