@@ -27,6 +27,10 @@ export class HackathonService {
     return this.http.get<FullHackathonResponse>(`${this.baseUrl}/${id}`);
   }
 
+  getBySlug(slug: string): Observable<FullHackathonResponse> {
+    return this.http.get<FullHackathonResponse>(`${this.baseUrl}/s/${slug}`);
+  }
+
   create(dto: CreateHackathonDTO): Observable<FullHackathonResponse> {
     return this.http.post<FullHackathonResponse>(this.baseUrl, dto);
   }

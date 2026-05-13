@@ -31,6 +31,42 @@
     </div>
   }
 
+  @if (readonly && dates(); as d) {
+    <div class="h-readonly-grid">
+      <div class="h-date-card h-card">
+        <div class="h-card-icon"><mat-icon>how_to_reg</mat-icon></div>
+        <div class="h-card-content">
+          <span class="h-label">Registration Opens</span>
+          <span class="h-value tech-data">{{ d.regStart | date:'EEEE, MMM dd, yyyy' }}</span>
+        </div>
+      </div>
+
+      <div class="h-date-card h-card">
+        <div class="h-card-icon active"><mat-icon>rocket_launch</mat-icon></div>
+        <div class="h-card-content">
+          <span class="h-label">Hackathon Starts</span>
+          <span class="h-value tech-data">{{ d.start | date:'EEEE, MMM dd, yyyy' }}</span>
+        </div>
+      </div>
+
+      <div class="h-date-card h-card">
+        <div class="h-card-icon warn"><mat-icon>history_edu</mat-icon></div>
+        <div class="h-card-content">
+          <span class="h-label">Submission Deadline</span>
+          <span class="h-value tech-data">{{ d.subEnd | date:'EEEE, MMM dd, yyyy' }}</span>
+        </div>
+      </div>
+
+      <div class="h-date-card h-card">
+        <div class="h-card-icon"><mat-icon>emoji_events</mat-icon></div>
+        <div class="h-card-content">
+          <span class="h-label">Hackathon Ends</span>
+          <span class="h-value tech-data">{{ d.end | date:'EEEE, MMM dd, yyyy' }}</span>
+        </div>
+      </div>
+    </div>
+  }
+
   @if (timelinePercentages(); as pct) {
     <div class="h-timeline-viz tech-data">
       <div class="h-timeline-days-labels h-text-secondary">

@@ -1,0 +1,75 @@
+import { Component, OnInit, inject, signal, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { HackathonService } from '../../../services/hackathon.service';
+import { FullHackathonResponse, HackathonStatus } from '@h.linker/libs';
+import { Subscription, timer } from 'rxjs';
+import { HackathonWeightPreviewComponent } from '../hackathon-weight-preview.component';
+import { HackathonTimelineComponent } from '../hackathon-timeline/hackathon-timeline.component';
+
+@Component({
+  selector: 'app-hackathon-view',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatTabsModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    RouterLink,
+    HackathonWeightPreviewComponent,
+    HackathonTimelineComponent,
+  ],
+  templateUrl: './hackathon-view.component.html',
+  styleUrls: ['./hackathon-view.component.scss'],
+})
+export class HackathonViewComponent implements OnInit, OnDestroy {
+  private route = inject(ActivatedRoute);
+  private hackathonService = inject(HackathonService);
+
+  hackathon = signal<FullHackathonResponse | null>(null);
+  timeLeft = signal({ days: 0, hrs: 0, min: 0 });
+  private timerSub?: Subscription;
+
+  readonly Status = HackathonStatus;
+
+  ngOnInit() {
+    const slug = this.route.snapshot.paramMap.get('slug');
+    if (slug) {
+      this.hackathonService.getBySlug(slug).subscribe((res) => {
+        this.hackathon.set(res);
+        if (
+          res.status === HackathonStatus.REGISTRATION ||
+          res.status === HackathonStatus.DRAFT
+        ) {
+          this.startCountdown(new Date(res.startDate));
+        }
+      });
+    }
+  }
+
+  private startCountdown(target: Date) {
+    this.timerSub = timer(0, 60000).subscribe(() => {
+      const now = new Date().getTime();
+      const diff = target.getTime() - now;
+
+      if (diff > 0) {
+        this.timeLeft.set({
+          days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+          hrs: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+          min: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
+        });
+      } else {
+        this.timeLeft.set({ days: 0, hrs: 0, min: 0 });
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.timerSub?.unsubscribe();
+  }
+}

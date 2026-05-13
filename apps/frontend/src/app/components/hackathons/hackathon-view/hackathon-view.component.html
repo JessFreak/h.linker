@@ -1,0 +1,147 @@
+@if (hackathon(); as h) {
+  <div class="h-view-wrapper">
+    <header class="h-banner" [class.no-image]="!h.imageUrl" [style.background-image]="h.imageUrl ? 'url(' + h.imageUrl + ')' : null">
+      <div class="h-banner-overlay">
+        <div class="h-container">
+          <div class="h-header-content">
+            <div class="h-badges">
+              <span class="h-status-badge" [class]="h.status.toLowerCase()">{{ h.status }}</span>
+              @for (cat of h.categories; track cat) {
+                <span class="h-category-tag">Category: {{ cat }}</span>
+              }
+            </div>
+
+            <h1 class="h-title">{{ h.title }}</h1>
+
+            <div class="h-quick-stats tech-data">
+              <div class="stat-item">
+                <mat-icon>calendar_today</mat-icon>
+                <span>{{ h.startDate | date:'MMM d' }} – {{ h.endDate | date:'MMM d, y' }}</span>
+              </div>
+              <div class="stat-item">
+                <mat-icon>groups</mat-icon>
+                <span>{{ h.stats?.participations || 0 }} Registered</span>
+              </div>
+              <div class="stat-item">
+                <mat-icon>emoji_events</mat-icon>
+                <span>{{ h.prize || 'Pride & Glory' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      @if (!h.imageUrl) {
+        <div class="h-banner-placeholder">
+          <mat-icon>image_not_supported</mat-icon>
+          <span>No event banner provided</span>
+        </div>
+      }
+    </header>
+
+    <div class="h-page-body">
+      <div class="h-container h-content-grid">
+
+        <main class="h-main-content h-card">
+          <mat-tab-group class="h-tabs">
+            <mat-tab label="About">
+              <div class="tab-padding">
+                <section class="info-block">
+                  <h3>About this Hackathon</h3>
+                  <p class="h-description">{{ h.description || 'No description provided.' }}</p>
+                </section>
+
+                @if (h.prize) {
+                  <section class="info-block">
+                    <h3>Awards & Prizes</h3>
+                    <div class="prize-card">
+                      <mat-icon>workspace_premium</mat-icon>
+                      <p>{{ h.prize }}</p>
+                    </div>
+                  </section>
+                }
+
+                @if (h.criteria && h.criteria.length > 0) {
+                  <section class="info-block">
+                    <h3>Judging Criteria</h3>
+                    <app-hackathon-weight-preview [criteria]="h.criteria"></app-hackathon-weight-preview>
+                  </section>
+                }
+              </div>
+            </mat-tab>
+
+            <mat-tab label="Timeline">
+              <div class="tab-padding">
+                <h3>Event Schedule</h3>
+                <div class="timeline-wrapper">
+                  <app-hackathon-timeline [readonly]="true" [data]="h"></app-hackathon-timeline>
+                </div>
+              </div>
+            </mat-tab>
+
+            <mat-tab label="Jury">
+              <div class="tab-padding">
+                <h3>Meet the Jury</h3>
+                <div class="h-jury-grid">
+                  @for (j of h.jury; track j.id) {
+                    <div class="h-jury-card" [routerLink]="['/users', j.username]">
+                      <img [src]="j.avatarUrl || 'https://ui-avatars.com/api/?name=' + j.username"
+                           class="h-avatar"
+                           alt="Jury avatar">
+                      <div class="jury-info">
+                        <span class="name">{{ j.username }}</span>
+                        <small class="h-text-secondary">&#64;{{ j.username }}</small>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            </mat-tab>
+          </mat-tab-group>
+        </main>
+
+        <aside class="h-sidebar">
+          <div class="h-card sidebar-widget sticky-widget">
+            <div class="timer-display tech-data">
+              <div class="time-box"><span class="val">{{ timeLeft().days }}</span><span class="lab">DAYS</span></div>
+              <span class="sep">:</span>
+              <div class="time-box"><span class="val">{{ timeLeft().hrs }}</span><span class="lab">HRS</span></div>
+              <span class="sep">:</span>
+              <div class="time-box"><span class="val">{{ timeLeft().min }}</span><span class="lab">MIN</span></div>
+            </div>
+
+            <button mat-flat-button color="primary" class="w-full h-12" [disabled]="h.status !== Status.REGISTRATION">
+              Register for Event
+            </button>
+            <button mat-stroked-button class="w-full h-12 mt-3">
+              Find a Team
+            </button>
+
+            <div class="organizer-section">
+              <span class="h-text-secondary">Organized by</span>
+              <div class="org-profile" [routerLink]="['/users', h.creator.username]">
+                <img [src]="h.creator.avatarUrl || 'https://ui-avatars.com/api/?name=' + h.creator.username"
+                     class="h-avatar"
+                     alt="Organizer avatar">
+                <div class="org-name">
+                  <span>{{ h.creator.firstName }} {{ h.creator.lastName }}</span>
+                  <mat-icon class="verified-icon" matTooltip="Verified Organizer">verified</mat-icon>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="h-card sidebar-widget mt-6">
+            <h3>Tech Stack</h3>
+            <div class="h-tag-cloud">
+              @for (cat of h.categories; track cat) {
+                <span class="tech-tag tech-data">{{ cat }}</span>
+              }
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </div>
+}

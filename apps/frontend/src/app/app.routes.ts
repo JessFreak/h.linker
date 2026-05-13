@@ -12,6 +12,7 @@ import { UsersComponent } from './components/teams/users/users.component';
 import {
   HackathonConstructorComponent
 } from './components/hackathons/hackathon-constructor/hackathon-constructor.component';
+import { HackathonViewComponent } from './components/hackathons/hackathon-view/hackathon-view.component';
 
 export const appRoutes: Route[] = [
   { path: '', component: MainPageComponent, pathMatch: 'full' },
@@ -28,5 +29,6 @@ export const appRoutes: Route[] = [
   { path: 'teams/:id', component: TeamDetailsComponent },
   { path: 'teams/:id/settings', component: TeamSettingsComponent },
   { path: 'events/constructor', component: HackathonConstructorComponent },
+  { path: 'events/:slug', component: HackathonViewComponent },
   { path: '**', redirectTo: '' },
 ];
