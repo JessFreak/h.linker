@@ -8,6 +8,7 @@ export class HackathonRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   private readonly hackathonFullInclude = {
+    creator: true,
     categories: {
       include: {
         cat: true,
@@ -42,6 +43,13 @@ export class HackathonRepository {
   async getById(id: string): Promise<FullHackathon | null> {
     return this.prisma.hackathon.findUnique({
       where: { id },
+      include: this.hackathonFullInclude,
+    });
+  }
+
+  async getBySlug(slug: string): Promise<FullHackathon> {
+    return this.prisma.hackathon.findUnique({
+      where: { slug },
       include: this.hackathonFullInclude,
     });
   }

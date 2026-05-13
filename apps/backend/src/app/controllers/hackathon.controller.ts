@@ -13,7 +13,7 @@ import { Access } from '../../config/security/decorators/access';
 import {
   AddJuryDTO,
   CreateHackathonDTO,
-  HackathonResponse,
+  FullHackathonResponse,
   HackathonsResponse,
   SetCategoriesDTO,
   SetCriteriaDTO,
@@ -38,8 +38,14 @@ export class HackathonController {
   @Get(':id')
   async getById(
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<HackathonResponse> {
+  ): Promise<FullHackathonResponse> {
     const hackathon = await this.hackathonService.getById(id);
+    return HackathonMapper.getHackathonResponse(hackathon);
+  }
+
+  @Get('s/:slug')
+  async getBySlug(@Param('slug') slug: string): Promise<FullHackathonResponse> {
+    const hackathon = await this.hackathonService.getBySlug(slug);
     return HackathonMapper.getHackathonResponse(hackathon);
   }
 
@@ -53,7 +59,7 @@ export class HackathonController {
   async create(
     @UserRequest() user: UserResponse,
     @Body() dto: CreateHackathonDTO,
-  ): Promise<HackathonResponse> {
+  ): Promise<FullHackathonResponse> {
     const hackathon = await this.hackathonService.create(user.id, dto);
     return HackathonMapper.getHackathonResponse(hackathon);
   }
@@ -63,7 +69,7 @@ export class HackathonController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateHackathonDTO,
-  ): Promise<HackathonResponse> {
+  ): Promise<FullHackathonResponse> {
     const hackathon = await this.hackathonService.update(id, dto);
     return HackathonMapper.getHackathonResponse(hackathon);
   }
@@ -73,7 +79,7 @@ export class HackathonController {
   async updateStatus(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateHackathonStatusDTO,
-  ): Promise<HackathonResponse> {
+  ): Promise<FullHackathonResponse> {
     const hackathon = await this.hackathonService.updateStatus(id, dto.status);
     return HackathonMapper.getHackathonResponse(hackathon);
   }

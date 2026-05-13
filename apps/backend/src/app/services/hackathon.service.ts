@@ -35,6 +35,10 @@ export class HackathonService {
     return this.hackathonRepository.getById(id);
   }
 
+  async getBySlug(slug: string): Promise<FullHackathon> {
+    return this.hackathonRepository.getBySlug(slug);
+  }
+
   async update(id: string, dto: UpdateHackathonDTO): Promise<FullHackathon> {
     return this.hackathonRepository.updateById(id, dto);
   }

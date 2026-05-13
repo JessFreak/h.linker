@@ -8,12 +8,14 @@ import {
 } from '@h.linker/libs';
 import { FullHackathon } from '../../database/entities/hackathon.entity';
 import { Hackathon } from '@prisma/client';
+import { UserMapper } from './user.mapper';
 
 export class HackathonMapper {
   static getHackathonResponse(
     prismaHackathon: FullHackathon,
   ): FullHackathonResponse {
     return {
+      creator: UserMapper.getUserResponse(prismaHackathon.creator),
       ...this.mapBasicInfo(prismaHackathon),
       ...this.mapTimeline(prismaHackathon),
       categories: this.mapCategories(prismaHackathon.categories),

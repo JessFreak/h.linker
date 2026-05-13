@@ -1,3 +1,5 @@
+import { UserResponse } from './user.response';
+
 export enum HackathonStatus {
   DRAFT = 'DRAFT',
   REGISTRATION = 'REGISTRATION',
@@ -38,6 +40,7 @@ export interface HackathonResponse {
 }
 
 export interface FullHackathonResponse extends HackathonResponse {
+  creator: UserResponse;
   registrationStartDate: string;
   startDate: string;
   endDate: string;
