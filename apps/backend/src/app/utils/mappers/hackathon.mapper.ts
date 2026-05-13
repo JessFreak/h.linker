@@ -17,7 +17,6 @@ export class HackathonMapper {
     return {
       creator: UserMapper.getUserResponse(prismaHackathon.creator),
       ...this.mapBasicInfo(prismaHackathon),
-      ...this.mapTimeline(prismaHackathon),
       categories: this.mapCategories(prismaHackathon.categories),
       criteria: this.mapCriteria(prismaHackathon.criteria),
       jury: this.mapJury(prismaHackathon.jury),
@@ -42,11 +41,6 @@ export class HackathonMapper {
       prize: hackathon.prize,
       status: hackathon.status as HackathonStatus,
       imageUrl: hackathon.imageUrl,
-    };
-  }
-
-  private static mapTimeline(hackathon: FullHackathon) {
-    return {
       registrationStartDate: hackathon.registrationStartDate.toISOString(),
       startDate: hackathon.startDate.toISOString(),
       endDate: hackathon.endDate.toISOString(),

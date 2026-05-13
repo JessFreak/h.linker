@@ -37,15 +37,14 @@ export interface HackathonResponse {
   prize: string | null;
   status: HackathonStatus;
   imageUrl: string | null;
-}
-
-export interface FullHackathonResponse extends HackathonResponse {
-  creator: UserResponse;
   registrationStartDate: string;
   startDate: string;
   endDate: string;
   submissionDeadline: string;
+}
 
+export interface FullHackathonResponse extends HackathonResponse {
+  creator: UserResponse;
   categories: string[];
   criteria?: CriterionResponse[];
   jury?: JuryResponse[];
@@ -56,5 +55,5 @@ export interface FullHackathonResponse extends HackathonResponse {
 }
 
 export interface HackathonsResponse {
-  hackathons: HackathonResponse[];
+  hackathons: FullHackathonResponse[];
 }

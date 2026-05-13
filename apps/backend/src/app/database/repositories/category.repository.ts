@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Category, Prisma, UserCategory } from '@prisma/client';
-import { HackathonCategoryWithCat } from '../entities/hackathon.entity';
 
 @Injectable()
 export class CategoryRepository {
@@ -69,25 +68,21 @@ export class CategoryRepository {
     });
   }
 
-  async getByHackathonId(
-    hackathonId: string,
-  ): Promise<HackathonCategoryWithCat[]> {
-    return this.prisma.hackathonCategory.findMany({
-      where: { hackathonId },
-      include: { cat: true },
-    });
-  }
+  async search(query?: string): Promise<Category[]> {
+    const isSearch = !!query && query.trim().length > 0;
 
-  async search(query: string): Promise<Category[]> {
     return this.prisma.category.findMany({
-      where: {
-        name: {
-          contains: query,
-          mode: 'insensitive',
-        },
-      },
-      take: 10,
+      where: isSearch
+        ? {
+            name: {
+              contains: query,
+              mode: 'insensitive',
+            },
+          }
+        : {},
+      take: isSearch ? 10 : 100,
       select: { name: true },
+      orderBy: { name: 'asc' },
     });
   }
 }

@@ -20,8 +20,7 @@ export class CategoryService {
     await this.categoryRepository.deleteUserSkills(userId);
   }
 
-  async search(query: string): Promise<Category[]> {
-    if (!query) return [];
+  async search(query?: string): Promise<Category[]> {
     return this.categoryRepository.search(query);
   }
 }

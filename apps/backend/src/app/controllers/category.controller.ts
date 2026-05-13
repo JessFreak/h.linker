@@ -8,7 +8,7 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Get()
-  async search(@Query('q') query: string): Promise<CategorySearchResponse> {
+  async search(@Query('q') query?: string): Promise<CategorySearchResponse> {
     const categories = await this.categoryService.search(query);
     return CategoryMapper.getCategorySearchResponse(categories);
   }
