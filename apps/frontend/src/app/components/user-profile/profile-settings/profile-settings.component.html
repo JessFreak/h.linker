@@ -212,36 +212,36 @@
             <div class="h-connection-item h-stacked">
               <div class="h-item-header">
                 <div class="h-item-body">
-                  <div class="h-avatar-sm" style="display: flex; align-items: center; justify-content: center; background: var(--h-bg-deep-navy); border: 1px solid var(--h-primary-blue);"
-                       matTooltip="Team Invitation">
-                    <mat-icon style="font-size: 18px; width: 18px; height: 18px; color: var(--h-primary-blue);">groups</mat-icon>
-                  </div>
+                  <div class="h-user-redirect-group"
+                       [routerLink]="['/teams', inv.teamId]"
+                       matTooltip="View team details before joining">
 
-                  <div class="h-info-group">
-                    <div class="h-title-row">
-                      <span class="h-item-link"
-                            [routerLink]="['/teams', inv.teamId]"
-                            matTooltip="View team details before joining">
-                        {{ inv.teamName }}
-                      </span>
-                      <small class="h-meta-text">
-                        {{ inv.createdAt | date:'shortTime' }} • {{ inv.createdAt | date:'MMM d' }}
-                      </small>
+                    <div class="h-avatar-sm team-icon-placeholder">
+                      <mat-icon>groups</mat-icon>
                     </div>
-                    <span class="h-item-accent">Invites you as {{ inv.roleName }}</span>
+
+                    <div class="h-info-group">
+                      <div class="h-title-row">
+                        <span class="h-username-link">{{ inv.teamName }}</span>
+                        <small class="h-meta-text">
+                          {{ inv.createdAt | date:'shortTime' }} • {{ inv.createdAt | date:'MMM d' }}
+                        </small>
+                      </div>
+                      <span class="h-item-role">Invites you as <strong>{{ inv.roleName }}</strong></span>
+                    </div>
                   </div>
                 </div>
 
                 <div class="h-item-actions">
                   <button mat-icon-button color="primary"
                           (click)="acceptInvitation(inv.teamId)"
-                          matTooltip="Accept invitation and join the team">
+                          matTooltip="Accept invitation">
                     <mat-icon>check_circle</mat-icon>
                   </button>
 
                   <button mat-icon-button color="warn"
                           (click)="rejectInvitation(inv.teamId)"
-                          matTooltip="Decline this invitation">
+                          matTooltip="Decline invitation">
                     <mat-icon>cancel</mat-icon>
                   </button>
                 </div>
@@ -255,7 +255,7 @@
               }
             </div>
           } @empty {
-            <p class="h-text-secondary">You have no pending invitations at the moment.</p>
+            <p class="h-text-secondary empty-msg">You have no pending invitations at the moment.</p>
           }
         </div>
       </app-settings-section>

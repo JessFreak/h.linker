@@ -135,61 +135,20 @@
 .member-item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between;
   padding: 12px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 
-  .clickable-avatar {
-    cursor: pointer;
-    transition: transform 0.2s ease, border-color 0.2s ease;
-
-    &:hover {
-      transform: scale(1.1);
-      border-color: var(--h-primary-blue);
-      box-shadow: 0 0 8px rgba(var(--h-primary-blue-rgb), 0.3);
-    }
-  }
-
   &:last-child { border-bottom: none; }
-
-  .h-avatar-sm {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: 1px solid var(--h-primary-blue);
-    object-fit: cover;
-  }
 
   .member-info {
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
 
-    .username {
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: color 0.2s ease;
-      display: inline-block;
-
-      &:hover {
-        color: var(--h-primary-blue);
-        text-decoration: underline;
-      }
-    }
-
-    .role {
+    .role-text {
       font-size: 11px;
       color: rgba(255, 255, 255, 0.5);
     }
-  }
-
-  .h-badge {
-    font-size: 9px;
-    padding: 2px 6px;
-    border-radius: 4px;
-    background: var(--h-surface-gray);
-    &.leader { background: var(--h-safety-orange); color: #000; font-weight: 700; }
   }
 }
 

@@ -117,28 +117,25 @@
       <div class="members-list">
         @for (member of team()?.members; track member.id) {
           <div class="member-item">
-            <img
-              [ngSrc]="member.avatarUrl || 'default-avatar.png'"
-              [alt]="member.username + ' avatar'"
-              width="32"
-              height="32"
-              class="h-avatar-sm clickable-avatar"
-              [routerLink]="['/users', member.username]"
-              matTooltip="View profile"
-            >
-            <div class="member-info">
-              <span class="username"
-                    [routerLink]="['/users', member.username]"
-                    matTooltip="View profile">
-                {{ member.username }}
-              </span>
-              <span class="role">{{ member.roleName }}</span>
+            <div class="h-user-redirect-group" [routerLink]="['/users', member.username]" matTooltip="View profile">
+              <img
+                [ngSrc]="member.avatarUrl || 'default-avatar.png'"
+                [alt]="member.username + ' avatar'"
+                width="32"
+                height="32"
+                class="h-avatar-sm"
+              >
+              <div class="member-info">
+                <span class="h-username-link">{{ member.username }}</span>
+                <span class="role-text">{{ member.roleName }}</span>
+              </div>
             </div>
+
             <span class="h-badge"
-                  [class.leader]="member.id === team()?.leaderId"
+                  [class.h-badge-leader]="member.id === team()?.leaderId"
                   [matTooltip]="member.id === team()?.leaderId ? 'Team Owner' : 'Team Participant'">
-              {{ member.id === team()?.leaderId ? 'Leader' : 'Member' }}
-            </span>
+    {{ member.id === team()?.leaderId ? 'Leader' : 'Member' }}
+  </span>
           </div>
         }
       </div>

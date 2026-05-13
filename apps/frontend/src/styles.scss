@@ -142,18 +142,6 @@ html, body {
   padding: 40px 20px;
 }
 
-.leader-badge {
-  background: var(--h-safety-orange);
-  color: black !important;
-  padding: 4px 12px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  flex-shrink: 0;
-}
-
 .cdk-overlay-pane {
   .mat-mdc-dialog-container .mdc-dialog__surface {
     background-color: #1a1d23;
@@ -186,5 +174,62 @@ html, body {
 
   mat-form-field mat-icon[matSuffix] {
     margin-top: 2px;
+  }
+}
+
+.h-avatar-sm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--h-primary-blue);
+  object-fit: cover;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.h-user-redirect-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+
+  &:hover {
+    .h-avatar-sm, .h-avatar-md {
+      transform: scale(1.1);
+      border-color: var(--h-primary-blue);
+      box-shadow: 0 0 10px rgba(65, 105, 165, 0.3);
+    }
+
+    .h-username-link {
+      color: var(--h-primary-blue);
+      text-decoration: underline;
+    }
+  }
+}
+
+.h-username-link {
+  font-size: 14px;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.h-badge {
+  font-size: 14px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--h-surface-gray);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+
+  &.h-badge-leader {
+    background: var(--h-safety-orange);
+    font-weight: 700;
   }
 }

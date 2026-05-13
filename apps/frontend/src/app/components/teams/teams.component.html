@@ -47,7 +47,7 @@
             <h3 class="mat-headline-3">{{ team.name }}</h3>
 
             @if (team.leaderId === currentUser()?.id) {
-              <span class="h-badge leader-badge" matTooltip="You are the owner of this team">Leader</span>
+              <span class="h-badge h-badge-leader" matTooltip="You are the owner of this team">Leader</span>
             } @else if (isMember(team)) {
               <span class="h-badge member-badge" matTooltip="You are a verified member of this team">Member</span>
             }

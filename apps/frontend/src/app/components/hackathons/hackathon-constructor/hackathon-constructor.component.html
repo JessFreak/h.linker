@@ -132,7 +132,7 @@
               <input matInput
                      [formControl]="jurySearchCtrl"
                      [matAutocomplete]="userAuto"
-                     placeholder="e.g. @alex_malyy"
+                     placeholder="e.g. &#64;alex_malyy"
                      matTooltip="Start typing to see user suggestions">
               <mat-autocomplete #userAuto="matAutocomplete"
                                 [displayWith]="displayFn"
@@ -154,19 +154,20 @@
               @for (member of selectedJury(); track member.id) {
                 <div class="h-connection-item">
                   <div class="h-item-body">
-                    <img [src]="member.avatarUrl || 'https://ui-avatars.com/api/?name=' + member.username"
-                         class="h-avatar-sm clickable"
+                    <div class="h-user-redirect-group"
                          [routerLink]="['/users', member.username]"
-                         matTooltip="View profile"
-                         alt="Jury member avatar">
+                         matTooltip="View profile">
 
-                    <div class="h-info-group">
-                      <span class="h-item-link"
-                            [routerLink]="['/users', member.username]"
-                            matTooltip="View profile">
-                        {{member.firstName || member.username}} {{member.lastName || ''}}
-                      </span>
-                      <small class="h-text-secondary">&#64;{{member.username}}</small>
+                      <img [src]="member.avatarUrl || 'https://ui-avatars.com/api/?name=' + member.username"
+                           class="h-avatar-sm"
+                           alt="Jury member avatar">
+
+                      <div class="h-info-group">
+                <span class="h-username-link">
+                  {{member.firstName || member.username}} {{member.lastName || ''}}
+                </span>
+                        <small class="h-text-secondary">&#64;{{member.username}}</small>
+                      </div>
                     </div>
                   </div>
 
