@@ -10,7 +10,7 @@
         <mat-card class="h-card user-main-card">
           <div class="avatar-wrapper">
             <img [ngSrc]="userData.avatarUrl || '/default-avatar.png'"
-                 alt="Avatar"
+                 alt="User avatar"
                  width="180"
                  height="180"
                  class="h-avatar"
@@ -136,10 +136,29 @@
               </ng-template>
               <div class="tab-content">
                 @for (hackathon of userData.createdHackathons; track hackathon.id) {
-                  <mat-card class="h-card event-card" [matTooltip]="'Hackathon Status: ' + hackathon.status">
-                    <div class="event-content">
-                      <h3>{{ hackathon.title }}</h3>
-                      <p class="h-text-secondary">{{ hackathon.status }}</p>
+                  <mat-card class="h-card event-card-row clickable-card"
+                            [routerLink]="['/events', hackathon.slug]"
+                            [matTooltip]="'Click to view event: ' + hackathon.title">
+
+                    <div class="event-banner-mini" [class.no-img]="!hackathon.imageUrl">
+                      @if (hackathon.imageUrl) {
+                        <img [src]="hackathon.imageUrl" alt="Event banner">
+                      } @else {
+                        <mat-icon>rocket_launch</mat-icon>
+                      }
+                    </div>
+
+                    <div class="event-body">
+                      <div class="event-main-info">
+                        <h3>{{ hackathon.title }}</h3>
+                        <span class="h-status-tag" [class]="hackathon.status.toLowerCase()">
+              {{ hackathon.status }}
+            </span>
+                      </div>
+
+                      <div class="event-meta">
+                        <mat-icon class="arrow-icon">chevron_right</mat-icon>
+                      </div>
                     </div>
                   </mat-card>
                 } @empty {

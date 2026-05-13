@@ -15,7 +15,7 @@
             <div class="banner-preview" [class.no-image]="!infoForm.value.imageUrl"
                  matTooltip="This banner will be the first thing participants see">
               @if (infoForm.value.imageUrl) {
-                <img [src]="infoForm.value.imageUrl" alt="Hackathon Banner">
+                <img [src]="infoForm.value.imageUrl" alt="Hackathon Banner Preview">
               } @else {
                 <div class="banner-placeholder">
                   <mat-icon>rocket_launch</mat-icon>
@@ -140,7 +140,7 @@
                 @for (user of filteredUsers(); track user.id) {
                   <mat-option [value]="user" [matTooltip]="'Add ' + user.firstName + ' to jury'">
                     <div class="h-user-option">
-                      <img [src]="user.avatarUrl || 'https://ui-avatars.com/api/?name=' + user.username" class="h-avatar-xs" alt="">
+                      <img [src]="user.avatarUrl || 'https://ui-avatars.com/api/?name=' + user.username" class="h-avatar-xs" alt="User Avatar">
                       <span>{{user.firstName}} {{user.lastName}}</span>
                       <small class="h-text-secondary">&#64;{{user.username}}</small>
                     </div>
@@ -161,11 +161,11 @@
                          alt="Jury member avatar">
 
                     <div class="h-info-group">
-              <span class="h-item-link"
-                    [routerLink]="['/users', member.username]"
-                    matTooltip="View profile">
-                {{member.firstName || member.username}} {{member.lastName || ''}}
-              </span>
+                      <span class="h-item-link"
+                            [routerLink]="['/users', member.username]"
+                            matTooltip="View profile">
+                        {{member.firstName || member.username}} {{member.lastName || ''}}
+                      </span>
                       <small class="h-text-secondary">&#64;{{member.username}}</small>
                     </div>
                   </div>
@@ -307,6 +307,15 @@
 
         <div class="h-actions">
           <button mat-button matStepperPrevious [disabled]="isSaving()">Back</button>
+
+          @if (hackathonId()) {
+            <button mat-flat-button color="primary"
+                    (click)="goToView()"
+                    matTooltip="Exit constructor and view the public event page">
+              <mat-icon>visibility</mat-icon>
+              View Public Page
+            </button>
+          }
         </div>
       </div>
     </mat-step>

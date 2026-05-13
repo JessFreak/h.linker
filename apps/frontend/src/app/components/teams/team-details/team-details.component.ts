@@ -6,7 +6,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { TeamService } from '../../../services/team.service';
-import AuthService from '../../../services/auth.service';
+import { AuthService } from '../../../services/auth.service';
 import { TeamResponse } from '@h.linker/libs';
 import { Router, RouterLink } from '@angular/router';
 import { NotificationService } from '../../../utils/notification.service';

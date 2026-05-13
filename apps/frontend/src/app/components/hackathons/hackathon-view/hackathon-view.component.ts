@@ -1,4 +1,11 @@
-import { Component, OnInit, inject, signal, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  inject,
+  signal,
+  OnDestroy,
+  computed,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -10,6 +17,8 @@ import { FullHackathonResponse, HackathonStatus } from '@h.linker/libs';
 import { Subscription, timer } from 'rxjs';
 import { HackathonWeightPreviewComponent } from '../hackathon-weight-preview.component';
 import { HackathonTimelineComponent } from '../hackathon-timeline/hackathon-timeline.component';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-hackathon-view',
@@ -30,7 +39,9 @@ import { HackathonTimelineComponent } from '../hackathon-timeline/hackathon-time
 export class HackathonViewComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private hackathonService = inject(HackathonService);
+  private authService = inject(AuthService);
 
+  currentUser = toSignal(this.authService.user$);
   hackathon = signal<FullHackathonResponse | null>(null);
   timeLeft = signal({ days: 0, hrs: 0, min: 0 });
   private timerSub?: Subscription;
@@ -51,6 +62,12 @@ export class HackathonViewComponent implements OnInit, OnDestroy {
       });
     }
   }
+
+  isCreator = computed(() => {
+    const user = this.currentUser();
+    const h = this.hackathon();
+    return !!user && !!h && user.id === h.creator.id;
+  });
 
   private startCountdown(target: Date) {
     this.timerSub = timer(0, 60000).subscribe(() => {

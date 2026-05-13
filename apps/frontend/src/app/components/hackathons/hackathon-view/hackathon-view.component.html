@@ -11,6 +11,17 @@
               }
             </div>
 
+            @if (isCreator()) {
+              <button mat-flat-button
+                      color="accent"
+                      class="h-edit-btn"
+                      [routerLink]="['/events/constructor']"
+                      [queryParams]="{ id: h.id }">
+                <mat-icon>edit</mat-icon>
+                Edit Event
+              </button>
+            }
+
             <h1 class="h-title">{{ h.title }}</h1>
 
             <div class="h-quick-stats tech-data">

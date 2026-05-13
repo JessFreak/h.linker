@@ -8,7 +8,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { RouterLink } from '@angular/router';
 import { UserResponse } from '@h.linker/libs';
 import { UserService } from '../../../services/user.service';
-import AuthService from '../../../services/auth.service';
+import { AuthService } from '../../../services/auth.service';
 import { NotificationService } from '../../../utils/notification.service';
 import { MatDialog } from '@angular/material/dialog';
 import { InviteUserDialogComponent } from './invite-user-dialog/invite-user-dialog.component';

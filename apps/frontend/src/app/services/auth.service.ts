@@ -10,7 +10,7 @@ import {
 } from '@h.linker/libs';
 
 @Injectable({ providedIn: 'root' })
-class AuthService {
+export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
   private readonly baseUrl = '/api/auth';
@@ -106,5 +106,3 @@ class AuthService {
     );
   }
 }
-
-export default AuthService;

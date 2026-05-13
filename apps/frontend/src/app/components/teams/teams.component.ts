@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { TeamResponse } from '@h.linker/libs';
 import { CreateTeamDialogComponent } from './create-team-dialog.component';
 import { TeamService } from '../../services/team.service';
-import AuthService from '../../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { NotificationService } from '../../utils/notification.service';
 import { TeamUtils } from '../../utils/team.utils';

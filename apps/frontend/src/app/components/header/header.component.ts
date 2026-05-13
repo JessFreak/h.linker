@@ -10,7 +10,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { NotificationService } from '../../utils/notification.service';
-import AuthService from '../../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({

@@ -32,7 +32,7 @@ import {
 import { MatFormField, MatHint, MatInput, MatLabel } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import AuthService from '../../../services/auth.service';
+import { AuthService } from '../../../services/auth.service';
 import { NotificationService } from '../../../utils/notification.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ImageUploadService } from '../../../services/image-upload.service';

@@ -10,7 +10,7 @@ import { MatChip, MatChipSet } from '@angular/material/chips';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
 import { NgOptimizedImage } from '@angular/common';
-import AuthService from '../../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatTooltip } from '@angular/material/tooltip';
 

@@ -512,4 +512,15 @@ export class HackathonConstructorComponent implements OnInit {
       },
     });
   }
+
+  goToView(): void {
+    const slug = this.infoForm.get('slug')?.value;
+    if (slug) {
+      this.router.navigate(['/events', slug]);
+    } else {
+      this.notificationService.error(
+        'Slug is missing, cannot navigate to view',
+      );
+    }
+  }
 }
