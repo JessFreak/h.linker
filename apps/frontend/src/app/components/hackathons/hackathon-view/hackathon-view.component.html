@@ -107,8 +107,8 @@
                   <p>Your team <strong>{{ regStatus?.team?.name }}</strong> is registered!</p>
                 </div>
 
-                <button mat-flat-button color="accent" class="w-full h-12" [routerLink]="['/teams', regStatus?.team?.id]">
-                  <mat-icon>dashboard</mat-icon> Team Workspace
+                <button mat-flat-button color="accent" class="w-full h-12" [routerLink]="['/events', h.slug, 'dashboard']">
+                  <mat-icon>dashboard</mat-icon> Participation Dashboard
                 </button>
               </div>
             } @else {

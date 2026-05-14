@@ -46,7 +46,7 @@ export interface HackathonResponse {
 export interface FullHackathonResponse extends HackathonResponse {
   creator: UserResponse;
   categories: string[];
-  criteria?: CriterionResponse[];
+  criteria: CriterionResponse[];
   jury?: JuryResponse[];
 
   stats?: {

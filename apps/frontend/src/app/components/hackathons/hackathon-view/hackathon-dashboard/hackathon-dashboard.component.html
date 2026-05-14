@@ -1,0 +1,114 @@
+@if (hackathon(); as h) {
+  <div class="h-workspace-container">
+    <header class="h-workspace-header">
+      <div class="h-container">
+        <div class="header-center-layout">
+          <div class="deadline-info">
+            <span class="h-text-secondary">Project Submission Deadline</span>
+            <div class="h-timer tech-data">
+              <div class="t-unit"><span class="val">{{ timeLeft().days }}</span><span class="lab">DAYS</span></div>
+              <span class="t-sep">:</span>
+              <div class="t-unit"><span class="val">{{ timeLeft().hrs }}</span><span class="lab">HRS</span></div>
+              <span class="t-sep">:</span>
+              <div class="t-unit"><span class="val">{{ timeLeft().min }}</span><span class="lab">MIN</span></div>
+              <span class="t-sep">:</span>
+              <div class="t-unit"><span class="val">{{ timeLeft().sec }}</span><span class="lab">SEC</span></div>
+            </div>
+            <small class="h-text-secondary mt-2 block">Friday, March 27, 2026 • 23:59 UTC+2</small>
+          </div>
+
+          <div class="action-zone">
+            @if (isLeader()) {
+              <button mat-flat-button color="primary" class="h-submit-btn" [routerLink]="['submission']">
+                SUBMIT PROJECT
+              </button>
+            } @else {
+              <div class="h-badge h-badge-leader">VIEW ONLY</div>
+            }
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="h-container">
+      <div class="dashboard-grid">
+        <div class="dash-col">
+          <mat-card class="h-card widget-card">
+            <div class="widget-header">
+              <span class="h-text-secondary uppercase">Your Team</span>
+            </div>
+
+            @if (teamDetails(); as team) {
+              <div class="team-identity">
+                <h3>{{ team.name }}</h3>
+                <app-team-members-list
+                  [members]="teamDetails()?.members || []"
+                  [leaderId]="teamDetails()?.leaderId">
+                </app-team-members-list>
+                <button mat-stroked-button class="w-full mt-4" [routerLink]="['/teams', team.id]">
+                  Team Settings
+                </button>
+              </div>
+            }
+          </mat-card>
+
+          <mat-card class="h-card widget-card mt-6">
+            <div class="widget-header"><span class="h-text-secondary uppercase">Your Score</span></div>
+            <div class="score-row">
+              <span class="big-score">74.5<small>/100</small></span>
+              <div class="h-badge">Rank #12</div>
+            </div>
+            <div class="mini-chart mt-2">
+              <div class="chart-line"></div>
+              <div class="chart-dot"></div>
+            </div>
+          </mat-card>
+        </div>
+
+        <div class="dash-col main-col">
+          <mat-card class="h-card widget-card h-full">
+            <div class="widget-header"><span class="h-text-secondary uppercase">Submission Status</span></div>
+
+            @if (!registration()?.team?.id) {
+              <div class="submission-status-box empty">
+                <mat-icon>inventory_2</mat-icon>
+                <h4>No code submitted</h4>
+                <p class="h-text-secondary">Provide your repository link using the "Submit" button above before the deadline.</p>
+              </div>
+            }
+
+            <div class="checklist mt-6">
+              <div class="check-item"><mat-icon>check_circle</mat-icon> Team formed</div>
+              <div class="check-item"><mat-icon>check_circle</mat-icon> Identity verified</div>
+              <div class="check-item pending"><mat-icon>radio_button_unchecked</mat-icon> GitHub linked</div>
+            </div>
+          </mat-card>
+        </div>
+
+        <div class="dash-col">
+          <mat-card class="h-card widget-card">
+            <div class="widget-header">
+              <span class="h-text-secondary uppercase">Leaderboard</span>
+              <span class="live-dot">● LIVE</span>
+            </div>
+
+            <div class="l-list">
+              @for (item of leaderboard(); track item.rank) {
+                <div class="l-item" [class.is-me]="item.isCurrent">
+                  <span class="l-rank">#{{ item.rank }}</span>
+                  <span class="l-name">{{ item.name }}</span>
+                  <span class="l-val tech-data">{{ item.score }}</span>
+                </div>
+              }
+            </div>
+          </mat-card>
+
+          <mat-card class="h-card widget-card mt-6">
+            <div class="widget-header"><span class="h-text-secondary uppercase">Judging Criteria</span></div>
+            <app-hackathon-weight-preview [criteria]="h.criteria"></app-hackathon-weight-preview>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+  </div>
+}

@@ -70,19 +70,6 @@
   gap: 24px;
 }
 
-.section-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  color: rgba(255, 255, 255, 0.4);
-  margin-bottom: 16px;
-  text-transform: uppercase;
-}
-
-.h-card {
-  padding: 24px;
-}
-
 .repo-list {
   display: flex;
   flex-direction: column;
@@ -128,26 +115,6 @@
     .event-name {
       font-weight: 600;
       font-size: 16px;
-    }
-  }
-}
-
-.member-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-
-  &:last-child { border-bottom: none; }
-
-  .member-info {
-    display: flex;
-    flex-direction: column;
-
-    .role-text {
-      font-size: 11px;
-      color: rgba(255, 255, 255, 0.5);
     }
   }
 }

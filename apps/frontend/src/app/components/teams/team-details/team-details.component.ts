@@ -1,5 +1,5 @@
 import { Component, inject, Input, signal } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -15,6 +15,7 @@ import { ConfirmDialogComponent } from '../../../utils/confirm-dialog.component'
 import { TeamUtils } from '../../../utils/team.utils';
 import { TeamActionsService } from '../../../utils/team-actions.service';
 import { MatTooltip } from '@angular/material/tooltip';
+import { TeamMembersListComponent } from './team-members-list.component';
 
 @Component({
   selector: 'app-team-details',
@@ -25,9 +26,9 @@ import { MatTooltip } from '@angular/material/tooltip';
     MatChipsModule,
     MatIconModule,
     MatDividerModule,
-    NgOptimizedImage,
     RouterLink,
     MatTooltip,
+    TeamMembersListComponent,
   ],
   templateUrl: './team-details.component.html',
   styleUrls: ['./team-details.component.scss', '../.rejected.scss'],

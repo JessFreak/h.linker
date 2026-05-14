@@ -120,6 +120,7 @@ html, body {
   border: 1px solid rgba(255, 255, 255, 0.05) !important;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  padding: 24px;
 }
 
 .h-text-secondary {
@@ -316,4 +317,13 @@ html, body {
   height: 44px;
   margin-top: 8px;
   font-weight: 700;
+}
+
+.section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 16px;
+  text-transform: uppercase;
 }
