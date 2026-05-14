@@ -97,8 +97,14 @@
               <span class="sep">:</span>
               <div class="time-box"><span class="val">{{ timeLeft().min }}</span><span class="lab">MIN</span></div>
             </div>
-            <button mat-flat-button color="primary" class="w-full h-12" [disabled]="h.status !== Status.REGISTRATION">Register for Event</button>
-            <button mat-stroked-button class="w-full h-12 mt-3">Find a Team</button>
+            <button mat-flat-button
+                    color="primary"
+                    class="w-full h-12"
+                    [disabled]="h.status !== Status.REGISTRATION"
+                    (click)="onRegister()">
+              Register for Event
+            </button>
+            <button [routerLink]="['/teams']" mat-stroked-button class="w-full h-12 mt-3">Find a Team</button>
 
             <div class="organizer-section">
               <span class="h-text-secondary">Organized by</span>

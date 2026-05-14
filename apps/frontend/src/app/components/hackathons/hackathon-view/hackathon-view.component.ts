@@ -19,6 +19,9 @@ import { HackathonWeightPreviewComponent } from '../hackathon-weight-preview.com
 import { HackathonTimelineComponent } from '../hackathon-timeline/hackathon-timeline.component';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../../services/auth.service';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { NotificationService } from '../../../utils/notification.service';
+import { HackathonRegisterDialogComponent } from './hackathon-register-dialog/hackathon-register-dialog.component';
 
 @Component({
   selector: 'app-hackathon-view',
@@ -32,11 +35,14 @@ import { AuthService } from '../../../services/auth.service';
     RouterLink,
     HackathonWeightPreviewComponent,
     HackathonTimelineComponent,
+    MatDialogModule,
   ],
   templateUrl: './hackathon-view.component.html',
   styleUrls: ['./hackathon-view.component.scss'],
 })
 export class HackathonViewComponent implements OnInit, OnDestroy {
+  private dialog = inject(MatDialog);
+  private notificationService = inject(NotificationService);
   private route = inject(ActivatedRoute);
   private hackathonService = inject(HackathonService);
   private authService = inject(AuthService);
@@ -51,17 +57,21 @@ export class HackathonViewComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const slug = this.route.snapshot.paramMap.get('slug');
     if (slug) {
-      this.hackathonService.getBySlug(slug).subscribe((res) => {
-        this.hackathon.set(res);
-        if (
-          res.status === HackathonStatus.REGISTRATION ||
-          res.status === HackathonStatus.DRAFT
-        ) {
-          this.startCountdown(new Date(res.startDate));
-        }
-      });
+      this.loadHackathon(slug);
     }
   }
+
+  private loadHackathon(slug: string) {
+    this.hackathonService.getBySlug(slug).subscribe((res) => {
+      this.hackathon.set(res);
+      if (
+        res.status === HackathonStatus.REGISTRATION ||
+        res.status === HackathonStatus.DRAFT
+      ) {
+        this.startCountdown(new Date(res.startDate));
+      }
+    });
+  };
 
   isCreator = computed(() => {
     const user = this.currentUser();
@@ -82,6 +92,40 @@ export class HackathonViewComponent implements OnInit, OnDestroy {
         });
       } else {
         this.timeLeft.set({ days: 0, hrs: 0, min: 0 });
+      }
+    });
+  }
+
+  onRegister() {
+    const h = this.hackathon();
+    const user = this.currentUser();
+
+    if (!user) {
+      this.notificationService.info('Please sign in to register for the event');
+      return;
+    }
+
+    const dialogRef = this.dialog.open(HackathonRegisterDialogComponent, {
+      width: '450px',
+      data: {
+        hackathonName: h?.title,
+        currentUserId: user.id,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((teamId) => {
+      if (teamId && h) {
+        this.hackathonService.registerTeam(h.id, teamId).subscribe({
+          next: () => {
+            this.notificationService.success('Team registered successfully!');
+            this.loadHackathon(h.slug);
+          },
+          error: (err) => {
+            this.notificationService.error(
+              err.error?.message || 'Registration failed',
+            );
+          },
+        });
       }
     });
   }

@@ -73,4 +73,10 @@ export class HackathonService {
   removeJury(id: string, userId: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}/jury/${userId}`);
   }
+
+  registerTeam(hackathonId: string, teamId: string): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/${hackathonId}/register`, {
+      teamId,
+    });
+  }
 }

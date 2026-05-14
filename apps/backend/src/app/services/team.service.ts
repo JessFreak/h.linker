@@ -32,10 +32,6 @@ export class TeamService {
     return this.teamRepository.findById(id);
   }
 
-  async findByUserId(userId: string): Promise<TeamWithMembers[]> {
-    return this.teamRepository.find({ members: { some: { userId } } });
-  }
-
   async getAll(leaderId?: string): Promise<TeamWithMembers[]> {
     const where: Prisma.TeamWhereInput = {};
     if (leaderId) {

@@ -1,0 +1,58 @@
+<div mat-dialog-title class="dialog-header">
+  <mat-icon class="header-icon">app_registration</mat-icon>
+  <h2 style="margin: 0;">Register for {{ data.hackathonName }}</h2>
+</div>
+
+<mat-dialog-content>
+  @if (isLoading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p class="h-text-secondary">Fetching your teams...</p>
+    </div>
+  } @else if (myTeams().length === 0) {
+    <div class="empty-state">
+      <mat-icon class="h-text-secondary">group_off</mat-icon>
+      <p class="h-text-secondary">
+        You don't lead any teams yet.<br>
+        Create or join a team to participate in this event.
+      </p>
+      <button mat-stroked-button color="primary" [routerLink]="['/teams']" (click)="onClose()">
+        Go to Teams
+      </button>
+    </div>
+  } @else {
+    <form [formGroup]="registerForm" class="invite-form">
+      <p class="h-text-secondary" style="margin-bottom: 8px;">
+        Select the team you want to represent in this hackathon.
+      </p>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Select Team</mat-label>
+        <mat-select formControlName="teamId" placeholder="Choose your team">
+          @for (team of myTeams(); track team.id) {
+            <mat-option [value]="team.id">{{ team.name }}</mat-option>
+          }
+        </mat-select>
+        <mat-icon matSuffix style="opacity: 0.5">groups</mat-icon>
+      </mat-form-field>
+
+      <div class="h-item-note">
+        <mat-icon>info</mat-icon>
+        <p>By registering, your team agrees to follow the event rules and timeline.</p>
+      </div>
+    </form>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close type="button">Cancel</button>
+  <button mat-flat-button
+          color="primary"
+          type="button"
+          [disabled]="registerForm.invalid || isLoading()"
+          (click)="onSubmit()"
+          matTooltip="Confirm registration for this team">
+    <mat-icon>check_circle</mat-icon>
+    Register Team
+  </button>
+</mat-dialog-actions>

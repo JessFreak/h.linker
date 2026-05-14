@@ -60,12 +60,6 @@ export class TeamController {
     return TeamMapper.getTeamResponse(team);
   }
 
-  @Get('user/:userId')
-  async getByUserId(@Param('userId') userId: string): Promise<TeamsResponse> {
-    const teams = await this.teamService.findByUserId(userId);
-    return TeamMapper.getTeamsResponse(teams);
-  }
-
   @Access()
   @Patch(':id')
   async update(
