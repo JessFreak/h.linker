@@ -21,10 +21,14 @@ import {
   TeamResponse,
   UserRegistrationStatusResponse,
 } from '@h.linker/libs';
-import { Subscription, timer } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TeamMembersListComponent } from '../../../teams/team-details/team-members-list.component';
 import { HackathonWeightPreviewComponent } from '../../hackathon-weight-preview.component';
+import {
+  CountdownService,
+  TimeLeft,
+} from '../../../../services/countdown.service';
 
 @Component({
   selector: 'app-hackathon-dashboard',
@@ -49,13 +53,14 @@ export class HackathonDashboardComponent implements OnInit, OnDestroy {
   private hackathonService = inject(HackathonService);
   private teamService = inject(TeamService);
   private authService = inject(AuthService);
+  private countdownService = inject(CountdownService);
 
   currentUser = toSignal(this.authService.user$);
   hackathon = signal<FullHackathonResponse | null>(null);
   registration = signal<UserRegistrationStatusResponse | null>(null);
   teamDetails = signal<TeamResponse | null>(null);
 
-  timeLeft = signal({ days: 0, hrs: 0, min: 0, sec: 0 });
+  timeLeft = signal<TimeLeft>({ days: 0, hrs: 0, min: 0, sec: 0 });
   private timerSub?: Subscription;
 
   leaderboard = signal([
@@ -81,7 +86,11 @@ export class HackathonDashboardComponent implements OnInit, OnDestroy {
   private loadDashboardData(slug: string) {
     this.hackathonService.getBySlug(slug).subscribe((h) => {
       this.hackathon.set(h);
-      this.startCountdown(new Date(h.submissionDeadline));
+      const { timeLeft, sub } = this.countdownService.start(
+        new Date(h.submissionDeadline),
+      );
+      this.timeLeft = timeLeft;
+      this.timerSub = sub;
 
       this.hackathonService.getRegistrationStatus(h.id).subscribe((reg) => {
         if (!reg.isRegistered || !reg.team) {
@@ -94,21 +103,6 @@ export class HackathonDashboardComponent implements OnInit, OnDestroy {
           this.teamDetails.set(details);
         });
       });
-    });
-  }
-
-  private startCountdown(target: Date) {
-    this.timerSub = timer(0, 1000).subscribe(() => {
-      const now = new Date().getTime();
-      const diff = target.getTime() - now;
-      if (diff > 0) {
-        this.timeLeft.set({
-          days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-          hrs: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-          min: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
-          sec: Math.floor((diff % (1000 * 60)) / 1000),
-        });
-      }
     });
   }
 
