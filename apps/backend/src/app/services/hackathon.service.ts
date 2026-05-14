@@ -8,6 +8,7 @@ import {
   CreateHackathonDTO,
   CriterionDTO,
   HackathonStatus,
+  SubmitProjectDto,
   UpdateHackathonDTO,
 } from '@h.linker/libs';
 import { JuryRepository } from '../database/repositories/jury.repository';
@@ -134,5 +135,36 @@ export class HackathonService {
     }
 
     await this.participationRepository.create(hackathonId, teamId);
+  }
+
+  async submitProject(
+    hackathonId: string,
+    userId: string,
+    dto: SubmitProjectDto,
+  ): Promise<void> {
+    const hackathon = await this.hackathonRepository.getById(hackathonId);
+    if (!hackathon) throw new NotFoundException('Hackathon not found');
+
+    if (hackathon.status !== HackathonStatus.ACTIVE) {
+      throw new BadRequestException(
+        'Submissions are only allowed for active hackathons',
+      );
+    }
+
+    if (new Date() > new Date(hackathon.submissionDeadline)) {
+      throw new BadRequestException('The submission deadline has passed');
+    }
+
+    const participation =
+      await this.participationRepository.findUserParticipation(
+        hackathonId,
+        userId,
+      );
+
+    await this.participationRepository.updateSubmission(
+      hackathonId,
+      participation.teamId,
+      dto,
+    );
   }
 }

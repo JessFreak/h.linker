@@ -19,6 +19,7 @@ import {
   HackathonsResponse,
   SetCategoriesDTO,
   SetCriteriaDTO,
+  SubmitProjectDto,
   UpdateHackathonDTO,
   UpdateHackathonStatusDTO,
   UserRegistrationStatusResponse,
@@ -164,8 +165,13 @@ export class HackathonController {
 
   @Post(':id/submit')
   @Access()
-  async submitProject(@Param('id') id: string, @Body() dto: any) {
-    // SubmitProjectDto: teamId, repoUrl, projectDescription, demoUrl
+  @HttpCode(HttpStatus.OK)
+  async submitProject(
+    @Param('id') id: string,
+    @Body() dto: SubmitProjectDto,
+    @UserRequest() user: UserResponse,
+  ): Promise<void> {
+    await this.hackathonService.submitProject(id, user.id, dto);
   }
 
   @Get(':id/submissions')

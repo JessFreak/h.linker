@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { UserTeamStatus } from '@prisma/client';
+import { Prisma, UserTeamStatus } from '@prisma/client';
 import { ParticipationWithTeam } from '../entities/participation.entity';
 
 @Injectable()
@@ -43,6 +43,22 @@ export class ParticipationRepository {
       where: {
         teamId_hackathonId: { teamId, hackathonId },
       },
+    });
+  }
+
+  async updateSubmission(
+    hackathonId: string,
+    teamId: string,
+    data: Prisma.ParticipationUncheckedUpdateInput,
+  ): Promise<void> {
+    await this.prisma.participation.update({
+      where: {
+        teamId_hackathonId: {
+          teamId,
+          hackathonId,
+        },
+      },
+      data,
     });
   }
 }
