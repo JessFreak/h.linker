@@ -1,0 +1,78 @@
+.h-submission-layout {
+  background-color: var(--h-bg-deep-navy);
+  min-height: calc(100vh - 64px);
+  padding: 60px 20px;
+}
+
+.h-container-narrow {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.submission-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 40px;
+
+  h1 { margin: 0; font-size: 28px; font-weight: 700; }
+}
+
+.h-main-stepper {
+  ::ng-deep .mat-horizontal-stepper-header-container {
+    padding: 0 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  ::ng-deep .mat-step-header .mat-step-icon-selected {
+    background-color: var(--h-primary-blue);
+  }
+}
+
+.step-content {
+  padding: 32px 8px;
+  display: flex;
+  flex-direction: column;
+
+  .step-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+}
+
+.review-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 8px;
+  border-left: 4px solid var(--h-primary-blue);
+
+  .review-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 14px;
+  }
+}
+
+.mb-6 { margin-bottom: 24px; }
+.mt-8 { margin-top: 32px; }
+
+.info-note {
+  background: rgba(65, 105, 165, 0.1);
+  border-left: 3px solid var(--h-primary-blue);
+  padding: 16px;
+  border-radius: 8px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+
+  mat-icon { color: var(--h-primary-blue); }
+  p { margin: 0; font-size: 13px; }
+}

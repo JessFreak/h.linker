@@ -19,7 +19,7 @@
 
           <div class="action-zone">
             @if (isLeader()) {
-              <button mat-flat-button color="primary" class="h-submit-btn" [routerLink]="['submission']">
+              <button mat-flat-button color="primary" class="h-submit-btn" [routerLink]="[`/events/${h.slug}/dashboard/submission`]">
                 SUBMIT PROJECT
               </button>
             } @else {

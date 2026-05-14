@@ -1,0 +1,112 @@
+<div class="h-submission-layout">
+  <div class="h-container-narrow">
+
+    <header class="submission-header">
+      <button mat-icon-button [routerLink]="['../']" matTooltip="Back to Dashboard">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div>
+        <h1>Project Submission</h1>
+        <p class="h-text-secondary">{{ teamDetails()?.name }} • {{ hackathon()?.title }}</p>
+      </div>
+    </header>
+
+    <mat-stepper linear #stepper class="h-main-stepper h-card">
+
+      <mat-step [stepControl]="infoForm">
+        <ng-template matStepLabel>Project Info</ng-template>
+        <form [formGroup]="infoForm" class="step-content">
+          <div class="section-label">General Information</div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Project Title</mat-label>
+            <input matInput formControlName="title" placeholder="e.g. AI-powered Health Tracker">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="mt-4">
+            <mat-label>Short Description</mat-label>
+            <textarea matInput formControlName="description" rows="6"
+                      placeholder="What problem does it solve? How did you build it?"></textarea>
+            <mat-hint align="end">{{ infoForm.get('description')?.value?.length || 0 }} / 2000</mat-hint>
+          </mat-form-field>
+
+          <div class="step-actions">
+            <button mat-flat-button color="primary" matStepperNext [disabled]="infoForm.invalid">
+              Continue to Repository
+            </button>
+          </div>
+        </form>
+      </mat-step>
+
+      <mat-step [stepControl]="repoForm">
+        <ng-template matStepLabel>Repository</ng-template>
+        <form [formGroup]="repoForm" class="step-content">
+          <div class="section-label">Code Access</div>
+
+          <div class="h-item-note info-note mb-6">
+            <mat-icon>info</mat-icon>
+            <p>Ensure your GitHub repository is <strong>public</strong> so judges can review the code.</p>
+          </div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>GitHub Repository URL</mat-label>
+            <mat-icon matPrefix style="margin-right: 8px;">link</mat-icon>
+            <input matInput formControlName="repoUrl" placeholder="https://github.com/username/repo">
+            <mat-error>Please provide a valid GitHub link</mat-error>
+          </mat-form-field>
+
+          <div class="step-actions">
+            <button mat-button matStepperPrevious>Back</button>
+            <button mat-flat-button color="primary" matStepperNext [disabled]="repoForm.invalid">
+              Review & Finalize
+            </button>
+          </div>
+        </form>
+      </mat-step>
+
+      <mat-step [stepControl]="confirmForm">
+        <ng-template matStepLabel>Finalize</ng-template>
+        <div class="step-content">
+          <div class="section-label">Review Submission</div>
+
+          <div class="review-summary">
+            <div class="review-item">
+              <span class="h-text-secondary">Project:</span>
+              <strong>{{ infoForm.value.title }}</strong>
+            </div>
+            <div class="review-item">
+              <span class="h-text-secondary">Repository:</span>
+              <code class="code-tag">{{ repoForm.value.repoUrl }}</code>
+            </div>
+          </div>
+
+          <div class="mt-6 p-4" style="background: rgba(0,0,0,0.1); border-radius: 8px;">
+            <app-team-members-list
+              [members]="teamDetails()?.members || []"
+              [leaderId]="teamDetails()?.leaderId">
+            </app-team-members-list>
+          </div>
+
+          <form [formGroup]="confirmForm" class="mt-8">
+            <mat-checkbox formControlName="agreed" color="primary">
+              I confirm that the project is ready for evaluation and complies with the rules.
+            </mat-checkbox>
+            <p class="h-text-secondary mt-2" style="font-size: 11px;">
+              * Submissions cannot be edited after the hackathon deadline.
+            </p>
+          </form>
+
+          <div class="step-actions">
+            <button mat-button matStepperPrevious [disabled]="isSaving()">Back</button>
+            <button mat-flat-button color="accent"
+                    [disabled]="confirmForm.invalid || isSaving()"
+                    (click)="submitProject()">
+              {{ isSaving() ? 'Submitting...' : 'SUBMIT PROJECT' }}
+            </button>
+          </div>
+        </div>
+      </mat-step>
+
+    </mat-stepper>
+  </div>
+</div>
