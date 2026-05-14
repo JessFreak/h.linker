@@ -28,7 +28,7 @@ import {
 import { HackathonService } from '../services/hackathon.service';
 import { UserRequest } from '../../config/security/decorators/user-request';
 import { HackathonMapper } from '../utils/mappers/hackathon.mapper';
-import { TeamMapper } from '../utils/mappers/team.mapper';
+import { ParticipationMapper } from '../utils/mappers/participation.mapper';
 
 @Controller('hackathons')
 export class HackathonController {
@@ -144,12 +144,7 @@ export class HackathonController {
       user.id,
     );
 
-    return {
-      isRegistered: !!registration,
-      team: registration
-        ? TeamMapper.getDetailResponse(registration.team)
-        : null,
-    };
+    return ParticipationMapper.getRegistrationStatusResponse(registration);
   }
 
   @Post(':id/register')
