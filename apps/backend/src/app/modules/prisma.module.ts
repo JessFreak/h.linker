@@ -8,6 +8,7 @@ import { MemberRepository } from '../database/repositories/member.repository';
 import { HackathonRepository } from '../database/repositories/hackathon.repository';
 import { JuryRepository } from '../database/repositories/jury.repository';
 import { CriteriaRepository } from '../database/repositories/criteria.repository';
+import { ParticipationRepository } from '../database/repositories/participation.repository';
 
 @Global()
 @Module({
@@ -21,6 +22,7 @@ import { CriteriaRepository } from '../database/repositories/criteria.repository
     HackathonRepository,
     JuryRepository,
     CriteriaRepository,
+    ParticipationRepository,
   ],
   exports: [
     PrismaService,
@@ -32,6 +34,7 @@ import { CriteriaRepository } from '../database/repositories/criteria.repository
     HackathonRepository,
     JuryRepository,
     CriteriaRepository,
+    ParticipationRepository,
   ],
 })
 export class PrismaModule {}

@@ -8,6 +8,8 @@ import {
   Put,
   Body,
   ParseUUIDPipe,
+  HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
 import { Access } from '../../config/security/decorators/access';
 import {
@@ -19,11 +21,13 @@ import {
   SetCriteriaDTO,
   UpdateHackathonDTO,
   UpdateHackathonStatusDTO,
+  UserRegistrationStatusResponse,
   UserResponse,
 } from '@h.linker/libs';
 import { HackathonService } from '../services/hackathon.service';
 import { UserRequest } from '../../config/security/decorators/user-request';
 import { HackathonMapper } from '../utils/mappers/hackathon.mapper';
+import { TeamMapper } from '../utils/mappers/team.mapper';
 
 @Controller('hackathons')
 export class HackathonController {
@@ -128,10 +132,34 @@ export class HackathonController {
 
   ///////////////////////////////////////////////////////////////////////////////
 
+  @Get(':id/registration-status')
+  @Access()
+  async getRegistrationStatus(
+    @Param('id') id: string,
+    @UserRequest() user: UserResponse,
+  ): Promise<UserRegistrationStatusResponse> {
+    const registration = await this.hackathonService.findUserRegistration(
+      id,
+      user.id,
+    );
+
+    return {
+      isRegistered: !!registration,
+      team: registration
+        ? TeamMapper.getDetailResponse(registration.team)
+        : null,
+    };
+  }
+
   @Post(':id/register')
-  @Access() // Будь-який авторизований лідер команди
-  async registerTeam(@Param('id') id: string, @Body('teamId') teamId: string) {
-    // Реєстрація команди на івент
+  @Access()
+  @HttpCode(HttpStatus.OK)
+  async registerTeam(
+    @Param('id') id: string,
+    @Body('teamId') teamId: string,
+    @UserRequest() user: UserResponse,
+  ): Promise<void> {
+    await this.hackathonService.registerTeam(id, teamId, user.id);
   }
 
   @Post(':id/submit')

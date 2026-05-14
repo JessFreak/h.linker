@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { HackathonRepository } from '../database/repositories/hackathon.repository';
 import {
   CreateHackathonDTO,
@@ -10,6 +14,8 @@ import { JuryRepository } from '../database/repositories/jury.repository';
 import { CriteriaRepository } from '../database/repositories/criteria.repository';
 import { CategoryRepository } from '../database/repositories/category.repository';
 import { FullHackathon } from '../database/entities/hackathon.entity';
+import { ParticipationRepository } from '../database/repositories/participation.repository';
+import { ParticipationWithTeam } from '../database/entities/participation.entity';
 
 @Injectable()
 export class HackathonService {
@@ -18,6 +24,7 @@ export class HackathonService {
     private readonly juryRepository: JuryRepository,
     private readonly criteriaRepository: CriteriaRepository,
     private readonly categoryRepository: CategoryRepository,
+    private readonly participationRepository: ParticipationRepository,
   ) {}
 
   async create(
@@ -83,5 +90,49 @@ export class HackathonService {
       hackathonId,
       categories,
     );
+  }
+
+  async findUserRegistration(
+    hackathonId: string,
+    userId: string,
+  ): Promise<ParticipationWithTeam> {
+    return this.participationRepository.findUserParticipation(
+      hackathonId,
+      userId,
+    );
+  }
+
+  async registerTeam(
+    hackathonId: string,
+    teamId: string,
+    userId: string,
+  ): Promise<void> {
+    const hackathon = await this.hackathonRepository.getById(hackathonId);
+    if (!hackathon) throw new NotFoundException('Hackathon not found');
+    if (hackathon.status !== HackathonStatus.REGISTRATION) {
+      throw new BadRequestException('Registration is not open for this event');
+    }
+
+    const existingParticipation =
+      await this.participationRepository.findByTeamAndHackathon(
+        hackathonId,
+        teamId,
+      );
+    if (existingParticipation) {
+      throw new BadRequestException(
+        'This team is already registered for this hackathon',
+      );
+    }
+    const userReg = await this.participationRepository.findUserParticipation(
+      hackathonId,
+      userId,
+    );
+    if (userReg) {
+      throw new BadRequestException(
+        'You are already participating in this hackathon with another team',
+      );
+    }
+
+    await this.participationRepository.create(hackathonId, teamId);
   }
 }

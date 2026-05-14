@@ -12,8 +12,19 @@ import {
   MemberType,
 } from '@h.linker/libs';
 import { UserMapper } from './user.mapper';
+import { Team } from '@prisma/client';
 
 export class TeamMapper {
+  static getDetailResponse(team: Team): TeamResponse {
+    return {
+      id: team.id,
+      name: team.name,
+      leaderId: team.leaderId,
+      description: team.description || undefined,
+      communicationLink: team.communicationLink || undefined,
+    };
+  }
+
   static getTeamResponse(team: TeamWithMembers): TeamResponse {
     if (!team) return null;
 
@@ -45,11 +56,7 @@ export class TeamMapper {
     );
 
     return {
-      id: team.id,
-      name: team.name,
-      description: team.description,
-      communicationLink: team.communicationLink,
-      leaderId: team.leaderId,
+      ...this.getDetailResponse(team),
       members,
       requests,
     };
