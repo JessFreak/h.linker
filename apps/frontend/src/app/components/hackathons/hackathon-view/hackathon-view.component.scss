@@ -346,3 +346,18 @@
 .mt-6 {
   margin-top: 24px;
 }
+
+.registration-confirmed {
+  .success-note {
+    background: rgba(35, 134, 54, 0.1);
+    border-left: 3px solid #3fb950;
+    padding: 12px;
+    border-radius: 8px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+
+    mat-icon { color: #3fb950; font-size: 20px; width: 20px; height: 20px; }
+    p { margin: 0; font-size: 13px; color: #f0f6fc; line-height: 1.4; }
+  }
+}

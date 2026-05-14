@@ -13,7 +13,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { HackathonService } from '../../../services/hackathon.service';
-import { FullHackathonResponse, HackathonStatus } from '@h.linker/libs';
+import {
+  FullHackathonResponse,
+  HackathonStatus,
+  UserRegistrationStatusResponse,
+} from '@h.linker/libs';
 import { Subscription, timer } from 'rxjs';
 import { HackathonWeightPreviewComponent } from '../hackathon-weight-preview.component';
 import { HackathonTimelineComponent } from '../hackathon-timeline/hackathon-timeline.component';
@@ -50,6 +54,7 @@ export class HackathonViewComponent implements OnInit, OnDestroy {
   currentUser = toSignal(this.authService.user$);
   hackathon = signal<FullHackathonResponse | null>(null);
   timeLeft = signal({ days: 0, hrs: 0, min: 0 });
+  userRegistration = signal<UserRegistrationStatusResponse | null>(null);
   private timerSub?: Subscription;
 
   readonly Status = HackathonStatus;
@@ -64,6 +69,11 @@ export class HackathonViewComponent implements OnInit, OnDestroy {
   private loadHackathon(slug: string) {
     this.hackathonService.getBySlug(slug).subscribe((res) => {
       this.hackathon.set(res);
+
+      if (this.currentUser()) {
+        this.checkRegistration(res.id);
+      }
+
       if (
         res.status === HackathonStatus.REGISTRATION ||
         res.status === HackathonStatus.DRAFT
@@ -71,7 +81,14 @@ export class HackathonViewComponent implements OnInit, OnDestroy {
         this.startCountdown(new Date(res.startDate));
       }
     });
-  };
+  }
+
+  private checkRegistration(id: string) {
+    this.hackathonService.getRegistrationStatus(id).subscribe({
+      next: (status) => this.userRegistration.set(status),
+      error: () => this.userRegistration.set(null),
+    });
+  }
 
   isCreator = computed(() => {
     const user = this.currentUser();
@@ -118,6 +135,7 @@ export class HackathonViewComponent implements OnInit, OnDestroy {
         this.hackathonService.registerTeam(h.id, teamId).subscribe({
           next: () => {
             this.notificationService.success('Team registered successfully!');
+            this.checkRegistration(h.id);
             this.loadHackathon(h.slug);
           },
           error: (err) => {

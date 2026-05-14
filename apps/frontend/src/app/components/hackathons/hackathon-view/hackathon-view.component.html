@@ -97,31 +97,35 @@
               <span class="sep">:</span>
               <div class="time-box"><span class="val">{{ timeLeft().min }}</span><span class="lab">MIN</span></div>
             </div>
-            <button mat-flat-button
-                    color="primary"
-                    class="w-full h-12"
-                    [disabled]="h.status !== Status.REGISTRATION"
-                    (click)="onRegister()">
-              Register for Event
-            </button>
-            <button [routerLink]="['/teams']" mat-stroked-button class="w-full h-12 mt-3">Find a Team</button>
 
-            <div class="organizer-section">
-              <span class="h-text-secondary">Organized by</span>
-              <div class="h-user-redirect-group mt-3" [routerLink]="['/users', h.creator.username]" matTooltip="View organizer profile">
-                <img [src]="h.creator.avatarUrl || 'https://ui-avatars.com/api/?name=' + h.creator.username" class="h-avatar-sm" alt="Organizer avatar">
-                <div class="org-name">
-                  <span class="h-username-link">{{ h.creator.firstName }} {{ h.creator.lastName }}</span>
+            @let regStatus = userRegistration();
+
+            @if (regStatus?.isRegistered) {
+              <div class="registration-confirmed">
+                <div class="h-item-note success-note" style="margin-bottom: 16px;">
+                  <mat-icon>check_circle</mat-icon>
+                  <p>Your team <strong>{{ regStatus?.team?.name }}</strong> is registered!</p>
                 </div>
-              </div>
-            </div>
-          </div>
 
-          <div class="h-card sidebar-widget mt-6">
-            <h3>Tech Stack</h3>
-            <div class="h-tag-cloud">
-              @for (cat of h.categories; track cat) { <span class="tech-tag tech-data">{{ cat }}</span> }
-            </div>
+                <button mat-flat-button color="accent" class="w-full h-12" [routerLink]="['/teams', regStatus?.team?.id]">
+                  <mat-icon>dashboard</mat-icon> Team Workspace
+                </button>
+              </div>
+            } @else {
+              <button mat-flat-button
+                      color="primary"
+                      class="w-full h-12"
+                      [disabled]="h.status !== Status.REGISTRATION"
+                      (click)="onRegister()">
+                <mat-icon>app_registration</mat-icon>
+                Register for Event
+              </button>
+
+              <button [routerLink]="['/teams']" mat-stroked-button class="w-full h-12 mt-3">
+                Find a Team
+              </button>
+            }
+
           </div>
         </aside>
       </div>

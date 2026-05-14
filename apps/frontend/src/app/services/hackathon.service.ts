@@ -10,6 +10,7 @@ import {
   SetCategoriesDTO,
   SetCriteriaDTO,
   UpdateHackathonDTO,
+  UserRegistrationStatusResponse,
 } from '@h.linker/libs';
 
 @Injectable({
@@ -72,6 +73,14 @@ export class HackathonService {
 
   removeJury(id: string, userId: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}/jury/${userId}`);
+  }
+
+  getRegistrationStatus(
+    id: string,
+  ): Observable<UserRegistrationStatusResponse> {
+    return this.http.get<UserRegistrationStatusResponse>(
+      `${this.baseUrl}/${id}/registration-status`,
+    );
   }
 
   registerTeam(hackathonId: string, teamId: string): Observable<void> {
