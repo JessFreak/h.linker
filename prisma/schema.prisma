@@ -139,11 +139,13 @@ model HackathonCategory {
 }
 
 model Participation {
-  id            String  @id @default(uuid())
-  teamId        String  @map("team_id")
-  hackathonId   String  @map("hackathon_id")
-  githubRepoUrl String? @map("github_repo_url")
-  finalScore    Float   @default(0) @map("final_score")
+  id                 String  @id @default(uuid())
+  teamId             String  @map("team_id")
+  hackathonId        String  @map("hackathon_id")
+  projectTitle       String? @map("project_title")
+  projectDescription String? @map("project_description") @db.Text
+  githubRepoUrl      String? @map("github_repo_url")
+  finalScore         Float   @default(0) @map("final_score")
 
   team      Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
   hackathon Hackathon @relation(fields: [hackathonId], references: [id], onDelete: Cascade)
