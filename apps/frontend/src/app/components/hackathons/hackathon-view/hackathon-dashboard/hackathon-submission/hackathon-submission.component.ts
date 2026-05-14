@@ -98,19 +98,35 @@ export class HackathonSubmissionComponent implements OnInit {
   }
 
   submitProject() {
+    const h = this.hackathon();
     if (
       this.infoForm.invalid ||
       this.repoForm.invalid ||
-      this.confirmForm.invalid
+      this.confirmForm.invalid ||
+      !h
     )
       return;
 
     this.isSaving.set(true);
-    // Тут буде виклик методу сабміту (який ми зробимо наступним кроком на беці)
-    setTimeout(() => {
-      this.notification.success('Project submitted successfully!');
-      this.isSaving.set(false);
-      this.router.navigate(['../'], { relativeTo: this.route });
-    }, 1500);
+
+    const dto = {
+      projectTitle: this.infoForm.value.title as string,
+      projectDescription: this.infoForm.value.description as string,
+      githubRepoUrl: this.repoForm.value.repoUrl as string,
+    };
+
+    this.hackathonService.submitProject(h.id, dto).subscribe({
+      next: () => {
+        this.notification.success('Project submitted successfully!');
+        this.isSaving.set(false);
+        this.router.navigate(['../'], { relativeTo: this.route });
+      },
+      error: (err) => {
+        this.notification.error(
+          err.error?.message || 'Failed to submit project. Please try again.',
+        );
+        this.isSaving.set(false);
+      },
+    });
   }
 }

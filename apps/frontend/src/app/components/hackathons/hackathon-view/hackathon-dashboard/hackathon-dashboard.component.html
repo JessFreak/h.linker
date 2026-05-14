@@ -4,7 +4,7 @@
       <div class="h-container">
         <div class="header-center-layout">
           <div class="deadline-info">
-            <span class="h-text-secondary">Project Submission Deadline</span>
+            <span class="h-text-secondary uppercase tech-data" style="letter-spacing: 1px">Project Submission Deadline</span>
             <div class="h-timer tech-data">
               <div class="t-unit"><span class="val">{{ timeLeft().days }}</span><span class="lab">DAYS</span></div>
               <span class="t-sep">:</span>
@@ -14,13 +14,14 @@
               <span class="t-sep">:</span>
               <div class="t-unit"><span class="val">{{ timeLeft().sec }}</span><span class="lab">SEC</span></div>
             </div>
-            <small class="h-text-secondary mt-2 block">Friday, March 27, 2026 • 23:59 UTC+2</small>
+            <small class="h-text-secondary mt-2 block">{{ h.submissionDeadline | date:'EEEE, MMMM d, y • HH:mm' }} UTC+2</small>
           </div>
 
           <div class="action-zone">
             @if (isLeader()) {
-              <button mat-flat-button color="primary" class="h-submit-btn" [routerLink]="[`/events/${h.slug}/dashboard/submission`]">
-                SUBMIT PROJECT
+              <button mat-flat-button color="primary" class="h-submit-btn" [routerLink]="['submission']">
+                <mat-icon>{{ registration()?.submission?.repoUrl ? 'edit' : 'upload_file' }}</mat-icon>
+                {{ registration()?.submission?.repoUrl ? 'EDIT SUBMISSION' : 'SUBMIT PROJECT' }}
               </button>
             } @else {
               <div class="h-badge h-badge-leader">VIEW ONLY</div>
@@ -40,13 +41,13 @@
 
             @if (teamDetails(); as team) {
               <div class="team-identity">
-                <h3>{{ team.name }}</h3>
+                <h3 class="mb-4">{{ team.name }}</h3>
                 <app-team-members-list
-                  [members]="teamDetails()?.members || []"
-                  [leaderId]="teamDetails()?.leaderId">
+                  [members]="team.members || []"
+                  [leaderId]="team.leaderId">
                 </app-team-members-list>
-                <button mat-stroked-button class="w-full mt-4" [routerLink]="['/teams', team.id]">
-                  Team Settings
+                <button mat-stroked-button class="w-full mt-6" [routerLink]="['/teams', team.id]">
+                  <mat-icon>settings</mat-icon> Team Settings
                 </button>
               </div>
             }
@@ -55,10 +56,12 @@
           <mat-card class="h-card widget-card mt-6">
             <div class="widget-header"><span class="h-text-secondary uppercase">Your Score</span></div>
             <div class="score-row">
-              <span class="big-score">74.5<small>/100</small></span>
+              <span class="big-score">
+                {{ registration()?.submission?.finalScore || 0 }}<small>/100</small>
+              </span>
               <div class="h-badge">Rank #12</div>
             </div>
-            <div class="mini-chart mt-2">
+            <div class="mini-chart mt-4">
               <div class="chart-line"></div>
               <div class="chart-dot"></div>
             </div>
@@ -69,7 +72,22 @@
           <mat-card class="h-card widget-card h-full">
             <div class="widget-header"><span class="h-text-secondary uppercase">Submission Status</span></div>
 
-            @if (!registration()?.team?.id) {
+            @if (registration()?.submission?.repoUrl) {
+              <div class="submission-details-box">
+                <div class="h-flex-between mb-4">
+                  <h2 class="m-0">{{ registration()?.submission?.title }}</h2>
+                  <a [href]="registration()?.submission?.repoUrl" target="_blank" class="h-text-secondary" matTooltip="Open Repository">
+                    <mat-icon>open_in_new</mat-icon>
+                  </a>
+                </div>
+                <p class="h-text-secondary mb-6" style="white-space: pre-wrap; line-height: 1.6;">{{ registration()?.submission?.description }}</p>
+
+                <div class="repo-link-box p-4 h-card" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05)">
+                  <div class="h-text-secondary uppercase tech-data mb-2" style="font-size: 10px;">Repository URL</div>
+                  <code class="tech-data" style="color: var(--h-primary-blue)">{{ registration()?.submission?.repoUrl }}</code>
+                </div>
+              </div>
+            } @else {
               <div class="submission-status-box empty">
                 <mat-icon>inventory_2</mat-icon>
                 <h4>No code submitted</h4>
@@ -77,10 +95,13 @@
               </div>
             }
 
-            <div class="checklist mt-6">
-              <div class="check-item"><mat-icon>check_circle</mat-icon> Team formed</div>
-              <div class="check-item"><mat-icon>check_circle</mat-icon> Identity verified</div>
-              <div class="check-item pending"><mat-icon>radio_button_unchecked</mat-icon> GitHub linked</div>
+            <div class="checklist mt-8">
+              <div class="check-item"><mat-icon color="primary">check_circle</mat-icon> Team formed</div>
+              <div class="check-item"><mat-icon color="primary">check_circle</mat-icon> Identity verified</div>
+              <div class="check-item" [class.pending]="!registration()?.submission?.repoUrl">
+                <mat-icon>{{ registration()?.submission?.repoUrl ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+                GitHub linked
+              </div>
             </div>
           </mat-card>
         </div>
@@ -91,7 +112,6 @@
               <span class="h-text-secondary uppercase">Leaderboard</span>
               <span class="live-dot">● LIVE</span>
             </div>
-
             <div class="l-list">
               @for (item of leaderboard(); track item.rank) {
                 <div class="l-item" [class.is-me]="item.isCurrent">

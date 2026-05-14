@@ -9,6 +9,7 @@ import {
   HackathonStatus,
   SetCategoriesDTO,
   SetCriteriaDTO,
+  SubmitProjectDto,
   UpdateHackathonDTO,
   UserRegistrationStatusResponse,
 } from '@h.linker/libs';
@@ -87,5 +88,9 @@ export class HackathonService {
     return this.http.post<void>(`${this.baseUrl}/${hackathonId}/register`, {
       teamId,
     });
+  }
+
+  submitProject(id: string, dto: SubmitProjectDto): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/${id}/submit`, dto);
   }
 }
