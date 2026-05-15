@@ -169,7 +169,6 @@
 }
 
 .event-card, .discovery-card {
-  padding: 20px;
   .event-header { display: flex; justify-content: space-between; align-items: center; }
   h2, h3 { margin: 0; font-size: 18px; }
   .view-link { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--h-primary-blue); text-decoration: none; }
@@ -279,6 +278,7 @@
   flex-direction: row !important;
   height: 100px;
   overflow: hidden;
+  padding: 0;
 
   .event-banner-mini {
     width: 200px;

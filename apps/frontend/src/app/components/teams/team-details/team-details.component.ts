@@ -1,4 +1,4 @@
-import { Component, inject, Input, signal } from '@angular/core';
+import { Component, inject, Input, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -48,6 +48,10 @@ class TeamDetailsComponent {
   team = signal<TeamResponse | null>(null);
   currentUser = toSignal(this.authService.user$);
 
+  hasRepositories = computed(() => {
+    return !!this.team()?.participations?.some((p) => !!p.githubRepoUrl);
+  });
+
   loadTeam(id: string) {
     this.teamService.getById(id).subscribe((res) => this.team.set(res));
   }
@@ -65,7 +69,6 @@ class TeamDetailsComponent {
   }
 
   isRejected(): boolean {
-    console.log(this.team());
     return TeamUtils.isRejected(this.team(), this.currentUser()?.id);
   }
 
@@ -80,7 +83,6 @@ class TeamDetailsComponent {
     }
 
     if (!team) return;
-
     this.teamActions.openApplyDialog(team, () => this.loadTeam(team.id));
   }
 

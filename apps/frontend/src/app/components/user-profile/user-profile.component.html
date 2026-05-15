@@ -206,16 +206,27 @@
                     <div class="event-content">
                       <div class="event-header">
                         <h2 [matTooltip]="'Hackathon: ' + project.hackathonTitle">{{ project.hackathonTitle }}</h2>
-                        @if (project.repoUrl) {
-                          <a [href]="project.repoUrl"
-                             target="_blank"
-                             class="view-link"
-                             matTooltip="Open source code on GitHub">
-                            Repo <mat-icon>open_in_new</mat-icon>
-                          </a>
-                        }
+
+                        <div>
+                          @if (project.finalScore) {
+                            <span class="h-badge">
+                  Score: {{ project.finalScore }}
+                </span>
+                          } @else {
+                            <span class="h-text-secondary">Not yet rated</span>
+                          }
+
+                          @if (project.repoUrl) {
+                            <a [href]="project.repoUrl"
+                               target="_blank"
+                               class="view-link"
+                               matTooltip="Open source code on GitHub">
+                              Repo <mat-icon>open_in_new</mat-icon>
+                            </a>
+                          }
+                        </div>
                       </div>
-                      <p class="h-text-secondary">Team: {{ project.teamName }}</p>
+                      <p class="h-text-secondary mt-2">Team: {{ project.teamName }}</p>
                     </div>
                   </mat-card>
                 } @empty {

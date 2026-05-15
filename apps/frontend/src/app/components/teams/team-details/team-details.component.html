@@ -56,59 +56,61 @@
       </p>
     </section>
 
-    <section class="h-card repo-list-card">
-      <div class="section-label">TEAM REPOSITORIES</div>
-      <div class="repo-list">
-        <div class="repo-item" matTooltip="Project repository linked to this team">
-          <div class="repo-info">
-            <mat-icon>folder</mat-icon>
-            <span class="code-tag">h-linker-core</span>
-          </div>
-          <a href="#" class="mat-button mat-primary">View on GitHub</a>
+    @if (hasRepositories()) {
+      <section class="h-card repo-list-card">
+        <div class="section-label">TEAM REPOSITORIES</div>
+        <div class="repo-list">
+          @for (part of team()?.participations; track part.id) {
+            @if (part.githubRepoUrl) {
+              <div class="repo-item" matTooltip="Project repository linked to this team">
+                <div class="repo-info">
+                  <mat-icon>folder</mat-icon>
+                  <span class="code-tag">{{ part.projectTitle || (part.hackathonTitle + ' Sub') }}</span>
+                </div>
+                <a [href]="part.githubRepoUrl" target="_blank" class="mat-button mat-primary">View on GitHub</a>
+              </div>
+            }
+          }
         </div>
+      </section>
+    }
 
-        <div class="repo-item" matTooltip="Project repository linked to this team">
-          <div class="repo-info">
-            <mat-icon>folder</mat-icon>
-            <span class="code-tag">ai-accessibility-agent</span>
-          </div>
-          <a href="#" class="mat-button mat-primary">View on GitHub</a>
+    @if (team()?.participations?.length) {
+      <section class="h-card history-card">
+        <div class="section-label">HACKATHON HISTORY</div>
+        <div class="history-list">
+          @for (part of team()?.participations; track part.id) {
+            <div class="history-item" [routerLink]="['/events', part.hackathonSlug]" matTooltip="View hackathon page">
+              <div class="event-info">
+                <div class="event-name">{{ part.hackathonTitle }}</div>
+                <div class="h-text-secondary">
+                  @if (part.projectTitle) {
+                    <span>Project: {{ part.projectTitle }} • </span>
+                  }
+                  <span>Score: {{ part.finalScore || 0 }}</span>
+                </div>
+              </div>
+              <mat-chip class="code-tag" [class.winner]="part.finalScore >= 95">
+                {{ part.hackathonStatus }}
+              </mat-chip>
+            </div>
+          }
         </div>
-      </div>
-    </section>
-
-    <section class="h-card history-card">
-      <div class="section-label">HACKATHON HISTORY</div>
-      <div class="history-list">
-        <div class="history-item" matTooltip="View event results and submissions">
-          <div class="event-info">
-            <div class="event-name">Global AI Hack 2026</div>
-            <div class="h-text-secondary">Rank: #4 | Score: 91.4</div>
-          </div>
-          <mat-chip class="code-tag" matTooltip="Event has concluded">Finished</mat-chip>
-        </div>
-
-        <div class="history-item" matTooltip="Top performance in this competition!">
-          <div class="event-info">
-            <div class="event-name">Kyiv KPI Tech Week</div>
-            <div class="h-text-secondary">Rank: #1 | Score: 98.0</div>
-          </div>
-          <mat-chip class="winner code-tag" matTooltip="First place winner">Winner</mat-chip>
-        </div>
-      </div>
-    </section>
+      </section>
+    }
   </div>
 
   <aside class="sidebar-column">
     <section class="h-card chat-card">
       <div class="section-label">COMMUNICATION</div>
       <button mat-flat-button color="accent" class="w-100"
+              [disabled]="!team()?.communicationLink"
               (click)="openChat()"
               matTooltip="Go to Discord/Telegram/Slack workspace">
         Open Team Chat <mat-icon>send</mat-icon>
       </button>
       <div class="chat-caption h-text-secondary">
-        Link provided by Team Lead
+        {{ team()?.communicationLink ? 'Link provided by Team Lead' : 'No link provided yet' }}
       </div>
     </section>
 
