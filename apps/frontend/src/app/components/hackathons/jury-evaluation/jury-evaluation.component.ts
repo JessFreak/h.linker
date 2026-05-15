@@ -28,8 +28,7 @@ import {
   JurySubmissionItem,
 } from '@h.linker/libs';
 import { HackathonService } from '../../../services/hackathon.service';
-
-import { Subscription, debounceTime } from 'rxjs';
+import { Subscription, debounceTime, forkJoin } from 'rxjs';
 import { NotificationService } from '../../../utils/notification.service';
 
 export interface EvaluationFormValues {
@@ -218,16 +217,46 @@ export class JuryEvaluationComponent implements OnInit, OnDestroy {
   onSaveAndNext() {
     const h = this.hackathon();
     const sub = this.currentSub();
-    if (!h || !sub) return;
+    if (!h || !sub || this.evalForm.invalid) return;
 
-    const storageKey = `h_linker_draft:${h.id}:${sub.participationId}`;
-    localStorage.removeItem(storageKey);
+    const formValues = this.evalForm.value as EvaluationFormValues;
 
-    this.notificationService.success(
-      `Evaluation for team "${sub.teamName}" successfully saved`,
-    );
+    const { review, ...criteriaScores } = formValues;
 
-    this.nextTeam();
+    const scores: Record<string, number> = {};
+    Object.entries(criteriaScores).forEach(([key, val]) => {
+      scores[key] = Number(val ?? 0);
+    });
+
+    this.draftStatus.set('Saving evaluation...');
+
+    forkJoin({
+      score: this.hackathonService.submitScores(
+        h.id,
+        sub.participationId,
+        scores,
+      ),
+      comment: this.hackathonService.submitComment(
+        h.id,
+        sub.participationId,
+        review,
+      ),
+    }).subscribe({
+      next: () => {
+        const storageKey = `h_linker_draft:${h.id}:${sub.participationId}`;
+        localStorage.removeItem(storageKey);
+
+        this.notificationService.success(
+          `Evaluation for team "${sub.teamName}" successfully saved`,
+        );
+
+        this.nextTeam();
+      },
+      error: (err) => {
+        this.notificationService.error(err.message);
+        this.draftStatus.set('Error saving changes');
+      },
+    });
   }
 
   nextTeam() {

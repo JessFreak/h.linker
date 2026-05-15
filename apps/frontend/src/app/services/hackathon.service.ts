@@ -107,4 +107,22 @@ export class HackathonService {
       `${this.baseUrl}/${id}/submissions`,
     );
   }
+
+  submitScores(
+    id: string,
+    projectId: string,
+    scores: Record<string, number>,
+  ): Observable<void> {
+    return this.http.post<void>(
+      `${this.baseUrl}/${id}/projects/${projectId}/score`,
+      { scores },
+    );
+  }
+
+  submitComment(id: string, projectId: string, text: string): Observable<void> {
+    return this.http.post<void>(
+      `${this.baseUrl}/${id}/projects/${projectId}/comment`,
+      { text },
+    );
+  }
 }
