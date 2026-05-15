@@ -1,5 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,18 +10,27 @@ import { RouterLink } from '@angular/router';
 import { UserResponse } from '@h.linker/libs';
 import { UserService } from '../../../services/user.service';
 import { AuthService } from '../../../services/auth.service';
+import { CategoryService } from '../../../services/category.service';
 import { NotificationService } from '../../../utils/notification.service';
 import { MatDialog } from '@angular/material/dialog';
 import { InviteUserDialogComponent } from './invite-user-dialog/invite-user-dialog.component';
 import { TeamService } from '../../../services/team.service';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatFormField, MatInput } from '@angular/material/input';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  startWith,
+  switchMap,
+} from 'rxjs';
 
 @Component({
   selector: 'app-users',
   standalone: true,
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     MatButtonModule,
     MatIconModule,
     MatChipsModule,
@@ -38,14 +48,27 @@ export class UsersComponent implements OnInit {
   private userService = inject(UserService);
   private authService = inject(AuthService);
   private teamService = inject(TeamService);
+  private categoryService = inject(CategoryService);
   private notify = inject(NotificationService);
   private dialog = inject(MatDialog);
 
+  categorySearchCtrl = new FormControl('');
   currentUser = toSignal(this.authService.user$);
   allUsers = signal<UserResponse[]>([]);
 
   searchQuery = signal('');
   showOnlyWithGithub = signal(false);
+
+  allCategories = toSignal(
+    this.categorySearchCtrl.valueChanges.pipe(
+      startWith(''),
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap((query) => this.categoryService.searchCategories(query || '')),
+      map((res) => res.categories),
+    ),
+    { initialValue: [] as string[] },
+  );
 
   filteredUsers = computed(() => {
     let list = this.allUsers();

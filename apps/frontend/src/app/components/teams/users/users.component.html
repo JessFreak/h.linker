@@ -9,8 +9,26 @@
       <h3>Query</h3>
       <mat-form-field appearance="outline" class="h-filter-search" subscriptSizing="dynamic" matTooltip="Search by full name, @username or specific technical skills">
         <mat-icon matPrefix>search</mat-icon>
-        <input matInput type="text" placeholder="Search by name or skill..." (input)="onSearch($event)">
+        <input matInput type="text" placeholder="Search by name..." (input)="onSearch($event)">
       </mat-form-field>
+    </div>
+
+    <div class="filter-section">
+      <h3>Categories & Tech</h3>
+      <mat-form-field appearance="outline" class="h-filter-search" subscriptSizing="dynamic">
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput [formControl]="categorySearchCtrl" placeholder="Search tech...">
+      </mat-form-field>
+
+      <div class="filter-group scrollable-filters">
+        @for (cat of allCategories(); track cat) {
+          <mat-checkbox color="primary">{{ cat }}</mat-checkbox>
+        } @empty {
+          <div class="h-empty-search">
+            <small class="h-text-secondary">No matching categories found.</small>
+          </div>
+        }
+      </div>
     </div>
 
     <div class="filter-section">
