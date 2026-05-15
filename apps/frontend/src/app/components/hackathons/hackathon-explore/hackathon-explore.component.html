@@ -1,5 +1,5 @@
 <div class="h-page-layout">
-  <aside class="h-sidebar">
+  <aside>
     <div class="filter-header">
       <h2>Filters</h2>
       <button mat-button color="primary" class="reset-link">Reset</button>
@@ -41,7 +41,7 @@
       <div class="h-card h-featured-hero" [routerLink]="['/events', hero.slug]">
         <div class="hero-image" [style.background-image]="hero.imageUrl ? 'url(' + hero.imageUrl + ')' : 'none'">
           <div class="hero-overlay">
-            <span class="h-badge hero-status">FEATURED</span>
+            <span class="h-badge hero-status">{{ hero.status }}</span>
             <div class="hero-content">
               <h1>{{ hero.title }}</h1>
               <p class="h-text-secondary">{{ hero.startDate | date:'MMM d' }} – {{ hero.endDate | date:'MMM d' }} • {{ hero.prize || 'TBA' }}</p>
@@ -63,7 +63,7 @@
     </div>
 
     <div class="h-hack-grid">
-      @for (h of hackathons(); track h.id) {
+      @for (h of hackathons().slice(1); track h.id) {
         <div class="h-card h-hack-card" [routerLink]="['/events', h.slug]">
           <div class="card-banner" [style.background-image]="h.imageUrl ? 'url(' + h.imageUrl + ')' : 'none'">
             <span class="h-status-tag" [class]="h.status.toLowerCase()">{{ h.status }}</span>

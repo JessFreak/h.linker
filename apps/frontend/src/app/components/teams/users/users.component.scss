@@ -40,37 +40,6 @@
   }
 }
 
-.search-box {
-  display: flex;
-  align-items: center;
-  background: var(--h-bg-deep-navy);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  padding: 4px 12px;
-  gap: 8px;
-
-  mat-icon {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
-    opacity: 0.5;
-  }
-
-  input {
-    background: transparent;
-    border: none;
-    color: white;
-    padding: 8px 0;
-    font-size: 14px;
-    width: 100%;
-    outline: none;
-
-    &::placeholder {
-      color: rgba(255, 255, 255, 0.3);
-    }
-  }
-}
-
 .invite-btn {
   height: 36px;
   line-height: 36px;

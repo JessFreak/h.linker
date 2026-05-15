@@ -9,7 +9,7 @@ import { TeamMemberResponse } from '@h.linker/libs';
   standalone: true,
   imports: [CommonModule, NgOptimizedImage, RouterLink, MatTooltipModule],
   template: `
-    <div class="section-label">MEMBERS ({{ members()?.length || 0 }})</div>
+    <div class="section-label">MEMBERS ({{ members().length || 0 }})</div>
     <div class="members-container">
       @for (member of members(); track member.id) {
         <div class="member-item">

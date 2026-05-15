@@ -1,27 +1,34 @@
 <div class="h-page-layout">
-  <aside class="sidebar-filters">
-    <h2 class="mat-headline-3">Find Talent</h2>
+  <aside>
+    <div class="filter-header">
+      <h2>Find Talent</h2>
+      <button mat-button color="primary" class="reset-link">Reset</button>
+    </div>
 
-    <div class="filter-group">
-      <div class="search-box" matTooltip="Search by full name, @username or specific technical skills">
-        <mat-icon>search</mat-icon>
-        <input type="text" placeholder="Search by name or skill..." (input)="onSearch($event)">
+    <div class="filter-section">
+      <h3>Query</h3>
+      <mat-form-field appearance="outline" class="h-filter-search" subscriptSizing="dynamic" matTooltip="Search by full name, @username or specific technical skills">
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput type="text" placeholder="Search by name or skill..." (input)="onSearch($event)">
+      </mat-form-field>
+    </div>
+
+    <div class="filter-section">
+      <h3>Profile Options</h3>
+      <div class="filter-group">
+        <mat-checkbox
+          color="primary"
+          [checked]="showOnlyWithGithub()"
+          (change)="showOnlyWithGithub.set(!showOnlyWithGithub())"
+          matTooltip="Show only developers who have linked their GitHub profile">
+          Connected GitHub
+        </mat-checkbox>
       </div>
-
-      <div class="divider"></div>
-
-      <mat-checkbox
-        color="primary"
-        [checked]="showOnlyWithGithub()"
-        (change)="showOnlyWithGithub.set(!showOnlyWithGithub())"
-        matTooltip="Show only developers who have linked their GitHub profile">
-        Connected GitHub
-      </mat-checkbox>
     </div>
 
-    <div class="sidebar-footer h-text-secondary">
-      <p>Looking for specific stack? Use the search bar to filter skills.</p>
-    </div>
+    <button mat-flat-button color="primary" class="apply-btn">
+      Apply Filters
+    </button>
   </aside>
 
   <main class="discovery-grid">

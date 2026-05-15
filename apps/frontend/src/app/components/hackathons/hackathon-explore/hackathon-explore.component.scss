@@ -21,7 +21,7 @@
 
   .hero-overlay {
     height: 100%;
-    padding: 40px;
+    padding: 20px;
     background: linear-gradient(to right, var(--h-bg-deep-navy) 20%, transparent);
     display: flex;
     flex-direction: column;
@@ -35,7 +35,6 @@
       font-weight: 700;
       border-radius: 8px;
       margin-top: 16px;
-      mat-icon { font-size: 18px; width: 18px; height: 18px; vertical-align: middle; }
     }
   }
 }

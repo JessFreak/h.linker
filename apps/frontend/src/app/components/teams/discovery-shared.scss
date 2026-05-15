@@ -1,22 +1,3 @@
-.sidebar-filters {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  position: sticky;
-  top: 24px;
-
-  .filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .action-btn {
-    width: 100%;
-    margin-top: 12px;
-  }
-}
-
 .discovery-grid {
   .header {
     margin-bottom: 24px;

@@ -14,6 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { InviteUserDialogComponent } from './invite-user-dialog/invite-user-dialog.component';
 import { TeamService } from '../../../services/team.service';
 import { MatTooltip } from '@angular/material/tooltip';
+import { MatFormField, MatInput } from '@angular/material/input';
 
 @Component({
   selector: 'app-users',
@@ -27,6 +28,8 @@ import { MatTooltip } from '@angular/material/tooltip';
     RouterLink,
     NgOptimizedImage,
     MatTooltip,
+    MatFormField,
+    MatInput,
   ],
   templateUrl: './users.component.html',
   styleUrls: ['../discovery-shared.scss', './users.component.scss'],
