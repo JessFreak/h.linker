@@ -147,6 +147,9 @@ model Participation {
   githubRepoUrl      String? @map("github_repo_url")
   finalScore         Float   @default(0) @map("final_score")
 
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
   team      Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
   hackathon Hackathon @relation(fields: [hackathonId], references: [id], onDelete: Cascade)
   scores    Score[]
