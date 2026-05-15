@@ -20,6 +20,7 @@ import {
   FullHackathonResponse,
   TeamResponse,
   UserRegistrationStatusResponse,
+  LeaderboardItem, // Додано новий інтерфейс з ліби
 } from '@h.linker/libs';
 import { Subscription } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -63,12 +64,17 @@ export class HackathonDashboardComponent implements OnInit, OnDestroy {
   timeLeft = signal<TimeLeft>({ days: 0, hrs: 0, min: 0, sec: 0 });
   private timerSub?: Subscription;
 
-  leaderboard = signal([
-    { rank: 1, name: 'Team Nova', score: 94.2, isCurrent: false },
-    { rank: 2, name: 'Team Horizon', score: 91.7, isCurrent: false },
-    { rank: 12, name: 'Dream Team', score: 74.5, isCurrent: true },
-    { rank: 13, name: 'Atlas Code', score: 72.1, isCurrent: false },
-  ]);
+  leaderboardItems = signal<LeaderboardItem[]>([]);
+
+  currentRank = computed(() => {
+    const myTeamId = this.teamDetails()?.id;
+    if (!myTeamId || this.leaderboardItems().length === 0) return null;
+
+    const found = this.leaderboardItems().find(
+      (item) => item.teamId === myTeamId,
+    );
+    return found ? found.rank : null;
+  });
 
   isLeader = computed(() => {
     const user = this.currentUser();
@@ -91,6 +97,10 @@ export class HackathonDashboardComponent implements OnInit, OnDestroy {
       );
       this.timeLeft = timeLeft;
       this.timerSub = sub;
+
+      this.hackathonService.getLeaderboard(h.id).subscribe((res) => {
+        this.leaderboardItems.set(res.leaderboard);
+      });
 
       this.hackathonService.getRegistrationStatus(h.id).subscribe((reg) => {
         if (!reg.isRegistered || !reg.team) {

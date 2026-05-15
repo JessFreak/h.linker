@@ -80,9 +80,9 @@
         <div class="section-label">HACKATHON HISTORY</div>
         <div class="history-list">
           @for (part of team()?.participations; track part.id) {
-            <div class="history-item" [routerLink]="['/events', part.hackathonSlug]" matTooltip="View hackathon page">
+            <div class="history-item h-user-redirect-group" [routerLink]="['/events', part.hackathonSlug]" matTooltip="View hackathon page">
               <div class="event-info">
-                <div class="event-name">{{ part.hackathonTitle }}</div>
+                <div class="event-name h-username-link">{{ part.hackathonTitle }}</div>
                 <div class="h-text-secondary">
                   @if (part.projectTitle) {
                     <span>Project: {{ part.projectTitle }} • </span>

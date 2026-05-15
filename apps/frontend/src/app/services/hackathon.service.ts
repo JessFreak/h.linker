@@ -7,6 +7,7 @@ import {
   FullHackathonResponse,
   HackathonsResponse,
   HackathonStatus,
+  LeaderboardResponse,
   SetCategoriesDTO,
   SetCriteriaDTO,
   SubmitProjectDto,
@@ -92,5 +93,11 @@ export class HackathonService {
 
   submitProject(id: string, dto: SubmitProjectDto): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/${id}/submit`, dto);
+  }
+
+  getLeaderboard(id: string): Observable<LeaderboardResponse> {
+    return this.http.get<LeaderboardResponse>(
+      `${this.baseUrl}/${id}/leaderboard`,
+    );
   }
 }

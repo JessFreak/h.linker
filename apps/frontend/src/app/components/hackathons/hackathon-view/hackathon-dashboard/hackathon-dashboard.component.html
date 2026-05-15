@@ -59,7 +59,10 @@
               <span class="big-score">
                 {{ registration()?.submission?.finalScore || 0 }}<small>/100</small>
               </span>
-              <div class="h-badge">Rank #12</div>
+
+              <div class="h-badge">
+                {{ currentRank() ? 'Rank #' + currentRank() : 'Unranked' }}
+              </div>
             </div>
             <div class="mini-chart mt-4">
               <div class="chart-line"></div>
@@ -112,15 +115,24 @@
               <span class="h-text-secondary uppercase">Leaderboard</span>
               <span class="live-dot">● LIVE</span>
             </div>
+
             <div class="l-list">
-              @for (item of leaderboard(); track item.rank) {
-                <div class="l-item" [class.is-me]="item.isCurrent">
+              @for (item of leaderboardItems().slice(0, 4); track item.teamId) {
+                <div class="l-item" [class.is-me]="item.teamId === teamDetails()?.id">
                   <span class="l-rank">#{{ item.rank }}</span>
-                  <span class="l-name">{{ item.name }}</span>
-                  <span class="l-val tech-data">{{ item.score }}</span>
+                  <span class="l-name">{{ item.teamName }}</span>
+                  <span class="l-val tech-data">{{ item.score | number:'1.1-1' }}</span>
+                </div>
+              } @empty {
+                <div class="h-empty-search py-4">
+                  <small class="h-text-secondary">No scores recorded yet.</small>
                 </div>
               }
             </div>
+
+            <button mat-button color="primary" class="w-full mt-4" [routerLink]="['/events', h.slug, 'leaderboard']">
+              View Full Standings <mat-icon>chevron_right</mat-icon>
+            </button>
           </mat-card>
 
           <mat-card class="h-card widget-card mt-6">

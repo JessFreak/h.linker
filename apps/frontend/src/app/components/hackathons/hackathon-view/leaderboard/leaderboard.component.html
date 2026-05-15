@@ -1,0 +1,90 @@
+<div class="bg-glow-blue"></div>
+<div class="bg-glow-orange"></div>
+
+<div class="h-leaderboard-container">
+
+  @if (isLoading()) {
+    <div class="leaderboard-loader">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p class="h-text-secondary">Calculating scores and ranks...</p>
+    </div>
+  } @else if (hackathon()) {
+
+    <header class="leaderboard-header">
+      <button mat-icon-button [routerLink]="['/events', hackathon()?.slug]" matTooltip="Back to Event">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div>
+        <h1><span>{{ hackathon()?.title }}</span></h1>
+        <p class="h-text-secondary uppercase tech-data subtitle">Live Competition Leaderboard</p>
+      </div>
+    </header>
+
+    @if (leaderboard().length === 0) {
+      <div class="h-card empty-leaderboard">
+        <mat-icon>leaderboard</mat-icon>
+        <p class="h-text-secondary">No submissions evaluated yet. Results will appear here live.</p>
+      </div>
+    } @else {
+
+      @if (leaderboard().length >= 1) {
+        <div class="podium-container">
+          @for (team of podiumTeams(); track team.teamId) {
+            <div class="podium-card h-card"
+                 [class.first-place]="team.rank === 1"
+                 [class.second-place]="team.rank === 2"
+                 [class.third-place]="team.rank === 3">
+
+              <div class="podium-bg-number tech-data">{{ team.rank }}</div>
+
+              <div class="podium-inner">
+                <div class="podium-crown">
+                  @if (team.rank === 1) {
+                    <mat-icon>workspace_premium</mat-icon>
+                  }
+                  <span class="rank-badge tech-data">RANK #{{ team.rank }}</span>
+                </div>
+
+                <h3 [routerLink]="['/teams', team.teamId]">{{ team.teamName }}</h3>
+
+                <div class="score-display tech-data">
+                  <span class="val">{{ team.score | number:'1.1-1' }}</span>
+                  <span class="lbl">PTS</span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <div class="leaderboard-list">
+        <div class="section-label">All Standings</div>
+
+        @for (team of remainingTeams(); track team.teamId) {
+          <div class="leaderboard-row h-card" [class.in-podium]="team.rank <= 3" [routerLink]="['/teams', team.teamId]">
+            <div class="rank-col tech-data" [class.gold]="team.rank === 1" [class.silver]="team.rank === 2" [class.bronze]="team.rank === 3">
+              {{ team.rank | number:'2.0-0' }}
+            </div>
+
+            <div class="team-col">
+              <span class="team-name">{{ team.teamName }}</span>
+              @if (team.rank === 1) {
+                <span class="row-badge winner-badge uppercase">Leader</span>
+              }
+            </div>
+
+            <div class="score-col tech-data">
+              <strong>{{ team.score | number:'1.1-1' }}</strong> <small class="h-text-secondary">PTS</small>
+            </div>
+          </div>
+        } @empty {
+          <div class="h-empty-standings tech-data h-text-secondary">
+            <mat-icon>info_outline</mat-icon>
+            <span>All active teams are currently featured on the podium above.</span>
+          </div>
+        }
+      </div>
+
+    }
+  }
+</div>

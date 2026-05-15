@@ -110,6 +110,10 @@
                 <button mat-flat-button color="accent" class="w-full h-12" [routerLink]="['/events', h.slug, 'dashboard']">
                   <mat-icon>dashboard</mat-icon> Participation Dashboard
                 </button>
+
+                <button mat-stroked-button class="w-full h-12 mt-3" [routerLink]="['/events', h.slug, 'leaderboard']">
+                  <mat-icon>leaderboard</mat-icon> View Live Leaderboard
+                </button>
               </div>
             } @else {
               <button mat-flat-button
@@ -123,6 +127,10 @@
 
               <button [routerLink]="['/teams']" mat-stroked-button class="w-full h-12 mt-3">
                 Find a Team
+              </button>
+
+              <button mat-button color="primary" class="w-full h-12 mt-2" [routerLink]="['/events', h.slug, 'leaderboard']">
+                <mat-icon>leaderboard</mat-icon> Live Standings
               </button>
             }
 
