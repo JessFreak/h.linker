@@ -7,6 +7,7 @@ import {
   FullHackathonResponse,
   HackathonsResponse,
   HackathonStatus,
+  JurySubmissionsResponse,
   LeaderboardResponse,
   SetCategoriesDTO,
   SetCriteriaDTO,
@@ -98,6 +99,12 @@ export class HackathonService {
   getLeaderboard(id: string): Observable<LeaderboardResponse> {
     return this.http.get<LeaderboardResponse>(
       `${this.baseUrl}/${id}/leaderboard`,
+    );
+  }
+
+  getJurySubmissions(id: string): Observable<JurySubmissionsResponse> {
+    return this.http.get<JurySubmissionsResponse>(
+      `${this.baseUrl}/${id}/submissions`,
     );
   }
 }

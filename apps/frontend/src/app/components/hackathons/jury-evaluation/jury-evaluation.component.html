@@ -1,0 +1,185 @@
+@if (isLoading()) {
+  <div class="h-loader-full">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p class="h-text-secondary mt-4">Loading evaluation workspace...</p>
+  </div>
+} @else if (hackathon() && currentSub()) {
+
+  <div class="jury-workspace-layout" [formGroup]="evalForm">
+
+    <header class="jury-header">
+      <div class="header-left">
+        <button mat-icon-button [routerLink]="['/events', hackathon()?.slug]" matTooltip="Exit to Event">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="progress-info">
+          <span class="label">Scored</span>
+          <span class="count tech-data"><strong>0</strong> / {{ submissions().length }} <span class="h-text-secondary">teams</span></span>
+        </div>
+      </div>
+
+      <div class="team-stepper scrollable-hide-bar">
+        @for (team of submissions(); track team.teamId; let idx = $index) {
+          <div class="stepper-item"
+               role="button"
+               tabindex="0"
+               [class.active]="idx === currentIndex()"
+               (click)="selectTeam(idx)"
+               (keydown.enter)="selectTeam(idx)"
+               (keydown.space)="$event.preventDefault(); selectTeam(idx)">
+            <div class="team-name">{{ team.teamName }}</div>
+            <div class="team-status h-text-secondary">
+              @if (idx === currentIndex()) {
+                <span class="status-text highlight">In review</span>
+              } @else {
+                <span class="status-text">Pending</span>
+                <mat-icon class="status-icon">radio_button_unchecked</mat-icon>
+              }
+            </div>
+          </div>
+          @if (idx < submissions().length - 1) {
+            <div class="stepper-divider"></div>
+          }
+        }
+      </div>
+    </header>
+
+    <main class="jury-main-content">
+
+      <section class="project-panel scrollable-hide-bar">
+        <div class="panel-inner">
+          <div class="project-meta h-text-secondary mb-2">
+            {{ currentSub()?.teamName }} • Hackathon Project
+          </div>
+
+          <div class="project-title-row">
+            <h1>{{ currentSub()?.projectTitle || 'Untitled Project' }}</h1>
+            <span class="submit-time h-text-secondary tech-data">Submitted: {{ currentSub()?.submittedAt | date:'MMM d, HH:mm' }}</span>
+          </div>
+
+          <div class="project-actions">
+            @if (currentSub()?.githubRepoUrl) {
+              <a mat-flat-button class="github-btn" [href]="currentSub()?.githubRepoUrl" target="_blank">
+                <mat-icon>code</mat-icon> Open GitHub Repository <mat-icon class="suffix">open_in_new</mat-icon>
+              </a>
+            }
+          </div>
+
+          <div class="content-section mt-8">
+            <div class="section-label">PROJECT DESCRIPTION</div>
+            <div class="description-body h-text-secondary">
+              {{ currentSub()?.projectDescription || 'No description provided by the team.' }}
+            </div>
+          </div>
+
+          <div class="content-section mt-8">
+            <div class="section-label">OTHER JURY SCORES <span class="h-text-secondary" style="text-transform: none;">• Read-only</span></div>
+            <div class="other-scores-list">
+              @for (score of mockOtherScores; track score.name) {
+                <div class="other-score-item">
+                  <div class="juror-avatar h-text-secondary">{{ score.name.charAt(0) }}</div>
+                  <div class="juror-info">
+                    <span class="name">{{ score.name }}</span>
+                    @if (score.score) {
+                      <div class="score-bar">
+                        <mat-progress-bar mode="determinate" [value]="(score.score / 10) * 100"></mat-progress-bar>
+                      </div>
+                    }
+                  </div>
+                  <div class="score-val tech-data" [class.h-text-secondary]="!score.score">
+                    {{ score.score || 'Pending...' }}
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="evaluation-panel">
+        <div class="panel-inner scrollable-hide-bar">
+          <div class="eval-header">
+            <h2>Evaluation Form</h2>
+            <span class="h-text-secondary">{{ currentSub()?.teamName }}</span>
+          </div>
+
+          <div class="criteria-list">
+            @for (crit of hackathon()?.criteria; track crit.id) {
+              <div class="criterion-card">
+                <div class="crit-header">
+                  <h4>{{ crit.name }}</h4>
+                  <span class="weight-badge">Weight: {{ crit.weight }}%</span>
+                </div>
+
+                <div class="crit-slider-row">
+                  <span class="range-val h-text-secondary">1</span>
+                  <mat-slider class="custom-slider" min="1" [max]="crit.maxValue" step="0.5" showTickMarks discrete>
+                    <input matSliderThumb [formControlName]="crit.id">
+                  </mat-slider>
+                  <span class="range-val h-text-secondary">{{ crit.maxValue }}</span>
+
+                  <div class="score-input-box tech-data">
+                    {{ evalForm.get(crit.id)?.value || '-' }}
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+
+          <div class="review-section mt-6">
+            <div class="section-label">EXPERT REVIEW / COMMENTS</div>
+            <mat-form-field appearance="outline" class="w-full custom-textarea">
+              <textarea matInput rows="6" formControlName="review" placeholder="Strengths, weaknesses, or tips for the team..."></textarea>
+              <mat-hint align="end">{{ evalForm.get('review')?.value?.length || 0 }} / 800</mat-hint>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="calc-footer">
+          <div class="calc-left">
+            <div class="calc-label h-text-secondary">CALCULATED SCORE</div>
+            <div class="calc-formula tech-data">{{ getMathFormula() }}</div>
+            <div class="final-score tech-data">
+              <span class="huge">{{ calculatedScore() | number:'1.1-1' }}</span> <span class="max h-text-secondary">/ 10</span>
+            </div>
+            <div class="calc-note h-text-secondary">Auto-calculated from weighted criteria above</div>
+          </div>
+
+          <div class="calc-right">
+            @for (crit of hackathon()?.criteria; track crit.id) {
+              <div class="mini-crit-bar">
+                <span class="name">{{ crit.name | slice:0:15 }}</span>
+                <mat-progress-bar mode="determinate" [value]="((evalForm.get(crit.id)?.value || 0) / crit.maxValue) * 100"></mat-progress-bar>
+                <span class="val tech-data">{{ evalForm.get(crit.id)?.value || 0 }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="jury-footer">
+      <div class="footer-left h-text-secondary">
+        <mat-icon style="font-size: 16px; width: 16px; height: 16px;">fiber_manual_record</mat-icon>
+        <span>{{ draftStatus() }}</span>
+      </div>
+
+      <div class="footer-center">
+        <button mat-button class="nav-btn h-text-secondary" [disabled]="currentIndex() === 0" (click)="prevTeam()">
+          <mat-icon>arrow_back</mat-icon> Prev Team
+        </button>
+        <span class="h-text-secondary mx-4">-</span>
+        <button mat-button class="nav-btn h-text-secondary" [disabled]="currentIndex() === submissions().length - 1" (click)="nextTeam()">
+          Next Team <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </div>
+
+      <div class="footer-right">
+        <button mat-button class="mr-4 h-text-secondary">Save as Draft</button>
+        <button mat-flat-button color="primary" class="save-next-btn" (click)="onSaveAndNext()">
+          Save & Next Team <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </div>
+    </footer>
+  </div>
+}

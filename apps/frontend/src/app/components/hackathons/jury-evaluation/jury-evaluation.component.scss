@@ -1,0 +1,319 @@
+:host {
+  display: block;
+  background-color: var(--h-bg-deep-navy);
+  height: calc(100vh - 64px);
+  overflow: hidden;
+}
+
+.h-loader-full {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.scrollable-hide-bar {
+  overflow-y: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.jury-workspace-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--h-bg-deep-navy);
+}
+
+.jury-header {
+  height: 64px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  background: var(--h-surface-gray);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 10;
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 24px;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    min-width: 250px;
+
+    .progress-info {
+      display: flex;
+      flex-direction: column;
+      .label { font-size: 10px; text-transform: uppercase; opacity: 0.5; font-weight: 700; }
+      .count { font-size: 14px; }
+    }
+  }
+
+  .team-stepper {
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+    flex: 1;
+    padding: 0 24px;
+    gap: 16px;
+
+    .stepper-item {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 140px;
+      height: 100%;
+      cursor: pointer;
+      opacity: 0.4;
+      transition: all 0.2s;
+
+      &:hover { opacity: 0.8; }
+      &.active {
+        opacity: 1;
+        background: rgba(255,255,255,0.03);
+        padding: 0 16px;
+        border-radius: 8px;
+        box-shadow: inset 0 -2px 0 var(--h-safety-orange);
+      }
+
+      .team-name { font-size: 14px; font-weight: 600; white-space: nowrap; }
+      .team-status {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+
+        .highlight {
+          color: var(--h-safety-orange);
+          background: rgba(240, 136, 0, 0.12);
+          border: 1px solid rgba(240, 136, 0, 0.15);
+          padding: 2px 6px;
+          border-radius: 4px;
+          font-weight: 600;
+        }
+        .status-icon { font-size: 12px; width: 12px; height: 12px; }
+      }
+    }
+
+    .stepper-divider {
+      width: 24px;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+      border-style: dashed;
+    }
+  }
+}
+
+.jury-main-content {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  flex: 1;
+  overflow: hidden;
+}
+
+.project-panel {
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--h-bg-deep-navy);
+
+  .panel-inner { padding: 40px; max-width: 800px; margin: 0 auto; }
+
+  .project-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    h1 { font-size: 32px; font-weight: 800; margin: 0; }
+  }
+
+  .project-actions {
+    display: flex;
+    gap: 16px;
+
+    .github-btn { background: #161b22; color: #fff; border: 1px solid rgba(255,255,255,0.1); }
+  }
+
+  .description-body {
+    line-height: 1.8;
+    white-space: pre-wrap;
+    background: rgba(255,255,255,0.02);
+    padding: 24px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .other-scores-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .other-score-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+
+      .juror-avatar {
+        width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.1);
+        display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;
+      }
+
+      .juror-info {
+        flex: 1; max-width: 200px;
+        .name { font-size: 13px; font-weight: 500; margin-bottom: 4px; display: block; }
+        .score-bar mat-progress-bar { height: 4px; border-radius: 2px; }
+      }
+
+      .score-val { font-size: 16px; font-weight: 700; }
+    }
+  }
+}
+
+.evaluation-panel {
+  display: flex;
+  flex-direction: column;
+  background: var(--h-surface-gray);
+  position: relative;
+
+  .panel-inner {
+    flex: 1;
+    padding: 40px;
+  }
+
+  .eval-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    margin-bottom: 32px;
+
+    h2 { font-size: 20px; font-weight: 700; margin: 0; }
+  }
+
+  .criterion-card {
+    margin-bottom: 32px;
+
+    .crit-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+
+      h4 { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
+
+
+      .weight-badge {
+        font-size: 11px; font-weight: 600; padding: 2px 8px;
+        border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+        color: rgba(255,255,255,0.6);
+      }
+    }
+
+    .crit-slider-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+
+      .range-val { font-size: 12px; font-weight: 600; }
+
+      .custom-slider { flex: 1; }
+
+      .score-input-box {
+        width: 48px; height: 40px;
+        display: flex; align-items: center; justify-content: center;
+        background: var(--h-bg-deep-navy);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 6px;
+        font-size: 16px; font-weight: 700;
+      }
+    }
+  }
+
+  .w-full {
+    width: 100%;
+  }
+
+  .custom-textarea {
+    ::ng-deep {
+      .mat-mdc-text-field-wrapper {
+        background: rgba(0,0,0,0.2) !important;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+      }
+      textarea { color: #fff !important; font-size: 14px; resize: vertical; }
+    }
+  }
+
+  .calc-footer {
+    background: #11141a;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding: 24px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .calc-left {
+      .calc-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px; }
+      .calc-formula { font-size: 11px; opacity: 0.3; margin-bottom: 8px; }
+      .final-score {
+        .huge { font-size: 48px; font-weight: 800; color: #fff; line-height: 1; }
+        .max { font-size: 24px; font-weight: 400; }
+      }
+      .calc-note { font-size: 11px; margin-top: 8px; }
+    }
+
+    .calc-right {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 200px;
+
+      .mini-crit-bar {
+        display: grid;
+        grid-template-columns: 80px 1fr 20px;
+        align-items: center;
+        gap: 12px;
+        font-size: 10px;
+
+        .name { color: rgba(255,255,255,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        mat-progress-bar { height: 4px !important; }
+        .val { font-weight: 700; color: #fff; text-align: right; }
+      }
+    }
+  }
+}
+
+.jury-footer {
+  height: 64px;
+  background: var(--h-surface-gray);
+  border-top: 1px solid rgba(255,255,255,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+
+  .footer-left { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+
+  .footer-center {
+    display: flex;
+    align-items: center;
+    .nav-btn { font-weight: 600; font-size: 13px; }
+  }
+
+  .footer-right {
+    .save-next-btn { font-weight: 600; }
+  }
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding-bottom: 8px;
+}
