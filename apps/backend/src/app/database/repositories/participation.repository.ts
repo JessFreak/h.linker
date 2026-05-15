@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Prisma, UserTeamStatus } from '@prisma/client';
-import { ParticipationWithTeam } from '../entities/participation.entity';
+import {
+  LeaderboardRow,
+  ParticipationWithTeam,
+} from '../entities/participation.entity';
 
 @Injectable()
 export class ParticipationRepository {
@@ -59,6 +62,43 @@ export class ParticipationRepository {
         },
       },
       data,
+    });
+  }
+
+  async findAllSubmissionsByHackathonId(
+    hackathonId: string,
+  ): Promise<ParticipationWithTeam[]> {
+    return this.prisma.participation.findMany({
+      where: {
+        hackathonId,
+        githubRepoUrl: {
+          not: null,
+        },
+      },
+      include: {
+        team: true,
+      },
+      orderBy: {
+        finalScore: 'desc',
+      },
+    });
+  }
+
+  async getLeaderboardData(hackathonId: string): Promise<LeaderboardRow[]> {
+    return this.prisma.participation.findMany({
+      where: { hackathonId },
+      select: {
+        teamId: true,
+        finalScore: true,
+        team: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        finalScore: 'desc',
+      },
     });
   }
 }

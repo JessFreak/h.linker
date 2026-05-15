@@ -11,3 +11,4 @@ export * from './lib/responses/role.response';
 export * from './lib/responses/hackathon.response';
 export * from './lib/responses/category.response';
 export * from './lib/responses/registration.response';
+export * from './lib/responses/submission.response';

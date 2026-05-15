@@ -17,6 +17,7 @@ import {
   CreateHackathonDTO,
   FullHackathonResponse,
   HackathonsResponse,
+  LeaderboardResponse,
   SetCategoriesDTO,
   SetCriteriaDTO,
   SubmitProjectDto,
@@ -52,11 +53,6 @@ export class HackathonController {
   async getBySlug(@Param('slug') slug: string): Promise<FullHackathonResponse> {
     const hackathon = await this.hackathonService.getBySlug(slug);
     return HackathonMapper.getHackathonResponse(hackathon);
-  }
-
-  @Get(':id/leaderboard')
-  async getLeaderboard(@Param('id') id: string) {
-    // Таблиця результатів: Команда -> Сума балів
   }
 
   @Post()
@@ -131,8 +127,6 @@ export class HackathonController {
     await this.hackathonService.deleteById(id);
   }
 
-  ///////////////////////////////////////////////////////////////////////////////
-
   @Get(':id/registration-status')
   @Access()
   async getRegistrationStatus(
@@ -169,10 +163,19 @@ export class HackathonController {
     await this.hackathonService.submitProject(id, user.id, dto);
   }
 
+  @Get(':id/leaderboard')
+  @HttpCode(HttpStatus.OK)
+  async getLeaderboard(@Param('id') id: string): Promise<LeaderboardResponse> {
+    const data = await this.hackathonService.getLeaderboard(id);
+    return ParticipationMapper.getLeaderboardResponse(data);
+  }
+
   @Get(':id/submissions')
   @Access('JURY')
   async getSubmissions(@Param('id') id: string) {
-    // Список усіх зданих проектів для оцінювання
+    const participations =
+      await this.hackathonService.getHackathonSubmissionsForJury(id);
+    return ParticipationMapper.getJurySubmissionsResponse(participations);
   }
 
   @Post(':id/projects/:projectId/score')

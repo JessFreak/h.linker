@@ -16,7 +16,10 @@ import { CriteriaRepository } from '../database/repositories/criteria.repository
 import { CategoryRepository } from '../database/repositories/category.repository';
 import { FullHackathon } from '../database/entities/hackathon.entity';
 import { ParticipationRepository } from '../database/repositories/participation.repository';
-import { ParticipationWithTeam } from '../database/entities/participation.entity';
+import {
+  LeaderboardRow,
+  ParticipationWithTeam,
+} from '../database/entities/participation.entity';
 
 @Injectable()
 export class HackathonService {
@@ -166,5 +169,17 @@ export class HackathonService {
       participation.teamId,
       dto,
     );
+  }
+
+  async getHackathonSubmissionsForJury(
+    hackathonId: string,
+  ): Promise<ParticipationWithTeam[]> {
+    return this.participationRepository.findAllSubmissionsByHackathonId(
+      hackathonId,
+    );
+  }
+
+  async getLeaderboard(id: string): Promise<LeaderboardRow[]> {
+    return this.participationRepository.getLeaderboardData(id);
   }
 }
