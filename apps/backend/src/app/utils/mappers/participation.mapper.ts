@@ -1,6 +1,12 @@
-import { UserRegistrationStatusResponse } from '@h.linker/libs';
+import {
+  UserRegistrationStatusResponse,
+  TeamParticipationResponse,
+} from '@h.linker/libs';
 import { TeamMapper } from './team.mapper';
 import { ParticipationWithTeam } from '../../database/entities/participation.entity';
+import { Participation, Hackathon } from '@prisma/client';
+
+type ParticipationWithHackathon = Participation & { hackathon: Hackathon };
 
 export class ParticipationMapper {
   static getRegistrationStatusResponse(
@@ -20,5 +26,29 @@ export class ParticipationMapper {
           }
         : null,
     };
+  }
+
+  static getTeamParticipationResponse(
+    p: ParticipationWithHackathon,
+  ): TeamParticipationResponse {
+    return {
+      id: p.id,
+      hackathonId: p.hackathonId,
+      hackathonTitle: p.hackathon.title,
+      hackathonSlug: p.hackathon.slug,
+      hackathonStatus: p.hackathon.status,
+      projectTitle: p.projectTitle,
+      projectDescription: p.projectDescription,
+      githubRepoUrl: p.githubRepoUrl,
+      finalScore: p.finalScore,
+    };
+  }
+
+  static getTeamParticipationsListResponse(
+    participations: ParticipationWithHackathon[],
+  ): TeamParticipationResponse[] {
+    return (
+      participations?.map((p) => this.getTeamParticipationResponse(p)) || []
+    );
   }
 }

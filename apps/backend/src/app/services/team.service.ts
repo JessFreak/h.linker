@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { TeamRepository } from '../database/repositories/team.repository';
 import {
-  TeamWithMembers,
+  FullTeam,
   UserInvitationWithTeam,
 } from '../database/entities/team.entity';
 import { MemberRepository } from '../database/repositories/member.repository';
@@ -24,15 +24,15 @@ export class TeamService {
     private readonly memberRepository: MemberRepository,
   ) {}
 
-  async create(dto: CreateTeamDTO, leaderId: string): Promise<TeamWithMembers> {
+  async create(dto: CreateTeamDTO, leaderId: string): Promise<FullTeam> {
     return this.teamRepository.create({ ...dto, leaderId });
   }
 
-  async findById(id: string): Promise<TeamWithMembers> {
+  async findById(id: string): Promise<FullTeam> {
     return this.teamRepository.findById(id);
   }
 
-  async getAll(leaderId?: string): Promise<TeamWithMembers[]> {
+  async getAll(leaderId?: string): Promise<FullTeam[]> {
     const where: Prisma.TeamWhereInput = {};
     if (leaderId) {
       where.leaderId = leaderId;
@@ -41,7 +41,7 @@ export class TeamService {
     return this.teamRepository.find(where);
   }
 
-  async updateById(id: string, dto: UpdateTeamDTO): Promise<TeamWithMembers> {
+  async updateById(id: string, dto: UpdateTeamDTO): Promise<FullTeam> {
     return this.teamRepository.updateById(id, dto);
   }
 
@@ -53,7 +53,7 @@ export class TeamService {
     teamId: string,
     userId: string,
     dto: JoinRequestDTO,
-  ): Promise<TeamWithMembers> {
+  ): Promise<FullTeam> {
     await this.validateConnection(teamId, userId);
 
     await this.memberRepository.upsertConnection({
@@ -71,7 +71,7 @@ export class TeamService {
   async inviteUser(
     teamId: string,
     dto: InviteUserDTO,
-  ): Promise<TeamWithMembers> {
+  ): Promise<FullTeam> {
     await this.validateConnection(teamId, dto.userId);
 
     await this.memberRepository.upsertConnection({
@@ -100,7 +100,7 @@ export class TeamService {
     }
   }
 
-  async removeMember(teamId: string, userId: string): Promise<TeamWithMembers> {
+  async removeMember(teamId: string, userId: string): Promise<FullTeam> {
     await this.memberRepository.removeMember(teamId, userId);
 
     return this.teamRepository.findById(teamId);
@@ -110,7 +110,7 @@ export class TeamService {
     teamId: string,
     userId: string,
     status: UserTeamStatus,
-  ): Promise<TeamWithMembers> {
+  ): Promise<FullTeam> {
     const membership = await this.memberRepository.findMember(teamId, userId);
 
     if (!membership) {
@@ -131,7 +131,7 @@ export class TeamService {
   async changeLeader(
     id: string,
     newLeaderId: string,
-  ): Promise<TeamWithMembers> {
+  ): Promise<FullTeam> {
     return this.teamRepository.updateById(id, { leaderId: newLeaderId });
   }
 

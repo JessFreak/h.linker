@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Prisma, UserTeamStatus, UserTeamType } from '@prisma/client';
 import {
-  TeamWithMembers,
+  FullTeam,
   UserInvitationWithTeam,
 } from '../entities/team.entity';
 
@@ -25,7 +25,7 @@ export class TeamRepository {
 
   async create(
     data: Prisma.TeamUncheckedCreateInput,
-  ): Promise<TeamWithMembers> {
+  ): Promise<FullTeam> {
     return this.prisma.team.create({
       data: {
         name: data.name,
@@ -45,14 +45,14 @@ export class TeamRepository {
     });
   }
 
-  async find(where: Prisma.TeamWhereInput): Promise<TeamWithMembers[]> {
+  async find(where: Prisma.TeamWhereInput): Promise<FullTeam[]> {
     return this.prisma.team.findMany({
       where,
       include: this.include,
     });
   }
 
-  async findById(id: string): Promise<TeamWithMembers> {
+  async findById(id: string): Promise<FullTeam> {
     return this.prisma.team.findFirst({
       where: { id },
       include: this.include,
@@ -63,7 +63,7 @@ export class TeamRepository {
     id: string,
 
     data: Prisma.TeamUncheckedUpdateInput,
-  ): Promise<TeamWithMembers> {
+  ): Promise<FullTeam> {
     return this.prisma.team.update({
       where: { id },
       data,

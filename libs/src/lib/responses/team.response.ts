@@ -9,6 +9,18 @@ export interface TeamMemberResponse extends UserResponse {
   createdAt: Date;
 }
 
+export interface TeamParticipationResponse {
+  id: string;
+  hackathonId: string;
+  hackathonTitle: string;
+  hackathonSlug: string;
+  hackathonStatus: string;
+  projectTitle: string | null;
+  projectDescription: string | null;
+  githubRepoUrl: string | null;
+  finalScore: number;
+}
+
 export interface TeamResponse {
   id: string;
   name: string;
@@ -17,6 +29,7 @@ export interface TeamResponse {
   leaderId: string;
   members?: TeamMemberResponse[];
   requests?: TeamMemberResponse[];
+  participations?: TeamParticipationResponse[];
 }
 
 export interface TeamsResponse {

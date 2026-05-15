@@ -1,8 +1,18 @@
-import { Prisma, Team, User, UserTeam } from '@prisma/client';
+import {
+  Team,
+  User,
+  UserTeam,
+  Participation,
+  Hackathon,
+  Prisma,
+} from '@prisma/client';
 
-export type TeamWithMembers = Team & {
+export type FullTeam = Team & {
   members: (UserTeam & {
     user: User;
+  })[];
+  participations: (Participation & {
+    hackathon: Hackathon;
   })[];
 };
 

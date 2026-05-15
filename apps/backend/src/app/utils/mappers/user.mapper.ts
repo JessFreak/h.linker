@@ -7,6 +7,8 @@ import {
   UsersResponse,
 } from '@h.linker/libs';
 import { HackathonMapper } from './hackathon.mapper';
+import { TeamMapper } from './team.mapper';
+import { ParticipationMapper } from './participation.mapper';
 
 export class UserMapper {
   static getUserResponse(user: UserWithSkills): UserResponse {
@@ -35,8 +37,11 @@ export class UserMapper {
     const base = this.getUserResponse(user);
 
     const teams: UserTeamResponse[] = user.memberships.map((m) => ({
-      ...m.team,
+      ...TeamMapper.getDetailResponse(m.team),
       userRole: m.roleName,
+      participations: ParticipationMapper.getTeamParticipationsListResponse(
+        m.team.participations,
+      ),
     }));
 
     const projects: UserProjectResponse[] = user.memberships.flatMap((m) =>

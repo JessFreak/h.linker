@@ -1,5 +1,5 @@
 import {
-  TeamWithMembers,
+  FullTeam,
   UserInvitationWithTeam,
 } from '../../database/entities/team.entity';
 import {
@@ -12,6 +12,7 @@ import {
   MemberType,
 } from '@h.linker/libs';
 import { UserMapper } from './user.mapper';
+import { ParticipationMapper } from './participation.mapper';
 import { Team } from '@prisma/client';
 
 export class TeamMapper {
@@ -20,12 +21,12 @@ export class TeamMapper {
       id: team.id,
       name: team.name,
       leaderId: team.leaderId,
-      description: team.description || undefined,
-      communicationLink: team.communicationLink || undefined,
+      description: team.description || null,
+      communicationLink: team.communicationLink || null,
     };
   }
 
-  static getTeamResponse(team: TeamWithMembers): TeamResponse {
+  static getTeamResponse(team: FullTeam): TeamResponse {
     if (!team) return null;
 
     const allMapped: TeamMemberResponse[] = team.members.map((m) => {
@@ -59,10 +60,13 @@ export class TeamMapper {
       ...this.getDetailResponse(team),
       members,
       requests,
+      participations: ParticipationMapper.getTeamParticipationsListResponse(
+        team.participations,
+      ),
     };
   }
 
-  static getTeamsResponse(teams: TeamWithMembers[]): TeamsResponse {
+  static getTeamsResponse(teams: FullTeam[]): TeamsResponse {
     return {
       teams: teams.map((team) => this.getTeamResponse(team)),
     };
