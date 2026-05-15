@@ -20,6 +20,7 @@ import {
   LeaderboardRow,
   ParticipationWithTeam,
 } from '../database/entities/participation.entity';
+import { EvaluationRepository } from '../database/repositories/evaluation.repository';
 
 @Injectable()
 export class HackathonService {
@@ -29,6 +30,7 @@ export class HackathonService {
     private readonly criteriaRepository: CriteriaRepository,
     private readonly categoryRepository: CategoryRepository,
     private readonly participationRepository: ParticipationRepository,
+    private readonly evaluationRepository: EvaluationRepository,
   ) {}
 
   async create(
@@ -181,5 +183,42 @@ export class HackathonService {
 
   async getLeaderboard(id: string): Promise<LeaderboardRow[]> {
     return this.participationRepository.getLeaderboardData(id);
+  }
+
+  async setTeamScores(
+    userId: string,
+    hackathonId: string,
+    participationId: string,
+    scores: Record<string, number>,
+  ): Promise<void> {
+    const jury = await this.juryRepository.getJuryByUserAndHackathon(userId, hackathonId);
+
+    await this.evaluationRepository.upsertScores(
+      jury.id,
+      participationId,
+      scores,
+    );
+
+    await this.evaluationRepository.recalculateProjectFinalScore(
+      participationId,
+      hackathonId,
+    );
+  }
+
+  async setTeamComment(
+    userId: string,
+    hackathonId: string,
+    participationId: string,
+    text: string,
+  ): Promise<void> {
+    const jury = await this.juryRepository.getJuryByUserAndHackathon(
+      userId,
+      hackathonId,
+    );
+    await this.evaluationRepository.upsertComment(
+      jury.id,
+      participationId,
+      text,
+    );
   }
 }

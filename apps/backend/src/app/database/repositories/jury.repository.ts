@@ -34,4 +34,13 @@ export class JuryRepository {
     });
     return !!juryMember;
   }
+
+  async getJuryByUserAndHackathon(
+    userId: string,
+    hackathonId: string,
+  ): Promise<Jury> {
+    return this.prisma.jury.findUnique({
+      where: { hackathonId_userId: { userId, hackathonId } },
+    });
+  }
 }

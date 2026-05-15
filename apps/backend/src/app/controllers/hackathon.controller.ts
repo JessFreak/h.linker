@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { Access } from '../../config/security/decorators/access';
 import {
+  AddCommentDto,
   AddJuryDTO,
   CreateHackathonDTO,
   FullHackathonResponse,
@@ -21,6 +22,7 @@ import {
   LeaderboardResponse,
   SetCategoriesDTO,
   SetCriteriaDTO,
+  SetScoresDto,
   SubmitProjectDto,
   UpdateHackathonDTO,
   UpdateHackathonStatusDTO,
@@ -173,7 +175,9 @@ export class HackathonController {
 
   @Get(':id/submissions')
   @Access('JURY')
-  async getSubmissions(@Param('id') id: string): Promise<JurySubmissionsResponse> {
+  async getSubmissions(
+    @Param('id') id: string,
+  ): Promise<JurySubmissionsResponse> {
     const participations =
       await this.hackathonService.getHackathonSubmissionsForJury(id);
     return ParticipationMapper.getJurySubmissionsResponse(participations);
@@ -181,21 +185,35 @@ export class HackathonController {
 
   @Post(':id/projects/:projectId/score')
   @Access('JURY')
+  @HttpCode(HttpStatus.OK)
   async setScore(
-    @Param('id') id: string,
-    @Param('projectId') projectId: string,
-    @Body() scores: any, // { criterionId: scoreValue }
-  ) {
-    // Виставлення балів за критеріями
+    @Param('id') hackathonId: string,
+    @Param('projectId') participationId: string,
+    @Body() dto: SetScoresDto,
+    @UserRequest() user: UserResponse,
+  ): Promise<void> {
+    await this.hackathonService.setTeamScores(
+      user.id,
+      hackathonId,
+      participationId,
+      dto.scores,
+    );
   }
 
   @Post(':id/projects/:projectId/comment')
   @Access('JURY')
+  @HttpCode(HttpStatus.OK)
   async addComment(
-    @Param('id') id: string,
-    @Param('projectId') projectId: string,
-    @Body('text') text: string,
-  ) {
-    // Коментар жюрі до роботи команди
+    @Param('id') hackathonId: string,
+    @Param('projectId') participationId: string,
+    @Body() dto: AddCommentDto,
+    @UserRequest() user: UserResponse,
+  ): Promise<void> {
+    await this.hackathonService.setTeamComment(
+      user.id,
+      hackathonId,
+      participationId,
+      dto.text,
+    );
   }
 }
