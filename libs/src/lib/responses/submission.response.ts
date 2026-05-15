@@ -6,6 +6,7 @@ export interface JurySubmissionItem {
   projectDescription: string;
   githubRepoUrl: string;
   finalScore: number;
+  submittedAt: Date;
 }
 
 export interface JurySubmissionsResponse {

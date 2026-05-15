@@ -17,6 +17,7 @@ import {
   CreateHackathonDTO,
   FullHackathonResponse,
   HackathonsResponse,
+  JurySubmissionsResponse,
   LeaderboardResponse,
   SetCategoriesDTO,
   SetCriteriaDTO,
@@ -172,7 +173,7 @@ export class HackathonController {
 
   @Get(':id/submissions')
   @Access('JURY')
-  async getSubmissions(@Param('id') id: string) {
+  async getSubmissions(@Param('id') id: string): Promise<JurySubmissionsResponse> {
     const participations =
       await this.hackathonService.getHackathonSubmissionsForJury(id);
     return ParticipationMapper.getJurySubmissionsResponse(participations);

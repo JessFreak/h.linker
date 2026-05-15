@@ -79,7 +79,7 @@ export class ParticipationRepository {
         team: true,
       },
       orderBy: {
-        finalScore: 'desc',
+        updatedAt: 'asc',
       },
     });
   }

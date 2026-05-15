@@ -67,6 +67,7 @@ export class ParticipationMapper {
       projectDescription: p.projectDescription,
       githubRepoUrl: p.githubRepoUrl,
       finalScore: p.finalScore,
+      submittedAt: p.updatedAt,
     };
   }
 
