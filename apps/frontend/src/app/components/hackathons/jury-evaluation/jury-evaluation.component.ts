@@ -29,7 +29,7 @@ import {
 } from '@h.linker/libs';
 import { HackathonService } from '../../../services/hackathon.service';
 import { AuthService } from '../../../services/auth.service';
-import { Subscription, debounceTime, forkJoin } from 'rxjs';
+import { Subscription, debounceTime, forkJoin, of } from 'rxjs';
 import { NotificationService } from '../../../utils/notification.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 
@@ -268,17 +268,17 @@ export class JuryEvaluationComponent implements OnInit, OnDestroy {
 
     this.draftStatus.set('Saving evaluation...');
 
+    const hasComment = review && review.trim().length > 0;
+
     forkJoin({
       score: this.hackathonService.submitScores(
         h.id,
         sub.participationId,
         scores,
       ),
-      comment: this.hackathonService.submitComment(
-        h.id,
-        sub.participationId,
-        review,
-      ),
+      comment: hasComment
+        ? this.hackathonService.submitComment(h.id, sub.participationId, review)
+        : of(null),
     }).subscribe({
       next: () => {
         const storageKey = `h_linker_draft:${h.id}:${sub.participationId}`;
@@ -297,7 +297,7 @@ export class JuryEvaluationComponent implements OnInit, OnDestroy {
                 ? {
                     ...s,
                     submittedScores: scores,
-                    submittedComment: review,
+                    submittedComment: hasComment ? review : '',
                     otherScores: [
                       ...s.otherScores.filter((os) => os.userId !== myId),
                       {

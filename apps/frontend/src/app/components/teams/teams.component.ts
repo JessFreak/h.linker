@@ -82,6 +82,13 @@ export class TeamsComponent implements OnInit {
   }
 
   openCreateDialog() {
+    const user = this.currentUser();
+    if (!user) {
+      this.notify.info('Please sign in to create a team');
+      this.router.navigate(['/login']);
+      return;
+    }
+
     const dialogRef = this.dialog.open(CreateTeamDialogComponent, {
       width: '450px',
     });
