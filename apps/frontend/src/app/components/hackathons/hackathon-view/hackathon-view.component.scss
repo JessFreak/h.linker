@@ -1,3 +1,9 @@
+:host {
+  display: block;
+  background-color: var(--h-bg-deep-navy);
+  scrollbar-gutter: stable;
+}
+
 .h-view-wrapper {
   background-color: var(--h-bg-deep-navy);
 }
@@ -55,6 +61,7 @@
   align-items: flex-start;
   margin-bottom: 16px;
   width: 100%;
+  gap: 20px;
 }
 
 .h-edit-btn {
@@ -64,6 +71,7 @@
   font-size: 13px;
   border-radius: 6px;
   background-color: var(--h-safety-orange);
+  flex-shrink: 0;
 
   mat-icon {
     font-size: 18px;
@@ -83,6 +91,8 @@
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
 
     .h-status-badge {
       padding: 6px 14px;
@@ -91,6 +101,7 @@
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      flex-shrink: 0;
 
       &.active {
         background: #238636;
@@ -111,9 +122,13 @@
     .h-category-tag {
       background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
       padding: 6px 14px;
       border-radius: 4px;
       font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
     }
   }
 
@@ -160,6 +175,7 @@
 
 .h-main-content {
   overflow: hidden;
+  min-height: 450px;
 
   .tab-padding {
     padding: 32px;
@@ -328,6 +344,7 @@
   .h-top-actions {
     flex-direction: column;
     gap: 12px;
+    align-items: stretch;
   }
 }
 

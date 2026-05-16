@@ -7,7 +7,7 @@ import {
   computed,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink, Router } from '@angular/router'; // Додав Router сюди
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -52,6 +52,7 @@ export class HackathonViewComponent implements OnInit, OnDestroy {
   private dialog = inject(MatDialog);
   private notificationService = inject(NotificationService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private hackathonService = inject(HackathonService);
   private authService = inject(AuthService);
   private countdownService = inject(CountdownService);
@@ -112,6 +113,7 @@ export class HackathonViewComponent implements OnInit, OnDestroy {
 
     if (!user) {
       this.notificationService.info('Please sign in to register for the event');
+      this.router.navigate(['/login']);
       return;
     }
 

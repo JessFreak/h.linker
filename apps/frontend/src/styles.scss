@@ -331,3 +331,21 @@ html, body {
 .create-btn {
   background-color: var(--h-safety-orange) !important;
 }
+
+.h-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 6px;
+
+  mat-icon {
+    flex-shrink: 0;
+  }
+}

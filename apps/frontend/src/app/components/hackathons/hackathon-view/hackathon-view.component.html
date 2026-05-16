@@ -8,7 +8,7 @@
               <div class="h-badges">
                 <span class="h-status-badge" [class]="h.status.toLowerCase()">{{ h.status }}</span>
                 @for (cat of h.categories; track cat) {
-                  <span class="h-category-tag">Category: {{ cat }}</span>
+                  <span class="h-category-tag">{{ cat }}</span>
                 }
               </div>
 
