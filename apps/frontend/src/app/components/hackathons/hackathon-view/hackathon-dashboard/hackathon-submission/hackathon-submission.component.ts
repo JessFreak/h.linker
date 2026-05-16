@@ -90,6 +90,19 @@ export class HackathonSubmissionComponent implements OnInit {
           this.teamService.getById(reg.team.id).subscribe((team) => {
             this.teamDetails.set(team);
           });
+
+          if (reg.submission) {
+            this.infoForm.patchValue({
+              title: reg.submission.title || '',
+              description: reg.submission.description || '',
+            });
+            this.repoForm.patchValue({
+              repoUrl: reg.submission.repoUrl || '',
+            });
+            this.confirmForm.patchValue({
+              agreed: true,
+            });
+          }
         } else {
           this.router.navigate(['/events', slug]);
         }
@@ -117,13 +130,13 @@ export class HackathonSubmissionComponent implements OnInit {
 
     this.hackathonService.submitProject(h.id, dto).subscribe({
       next: () => {
-        this.notification.success('Project submitted successfully!');
+        this.notification.success('Project submission updated successfully!');
         this.isSaving.set(false);
         this.router.navigate(['../'], { relativeTo: this.route });
       },
       error: (err) => {
         this.notification.error(
-          err.error?.message || 'Failed to submit project. Please try again.',
+          err.error?.message || 'Failed to update project. Please try again.',
         );
         this.isSaving.set(false);
       },
