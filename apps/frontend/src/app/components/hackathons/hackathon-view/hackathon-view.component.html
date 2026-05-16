@@ -12,12 +12,21 @@
                 }
               </div>
 
-              @if (isCreator()) {
-                <button mat-flat-button color="accent" class="h-edit-btn"
-                        [routerLink]="['/events/constructor']" [queryParams]="{ id: h.id }">
-                  <mat-icon>edit</mat-icon> Edit Event
-                </button>
-              }
+              <div class="h-action-buttons-group">
+                @if (isJury()) {
+                  <button mat-flat-button color="primary" class="h-jury-mode-btn"
+                          [routerLink]="['/events', h.slug, 'jury']">
+                    <mat-icon>gavel</mat-icon> Jury Workspace
+                  </button>
+                }
+
+                @if (isCreator()) {
+                  <button mat-flat-button color="accent" class="h-edit-btn"
+                          [routerLink]="['/events/constructor']" [queryParams]="{ id: h.id }">
+                    <mat-icon>edit</mat-icon> Edit Event
+                  </button>
+                }
+              </div>
             </div>
 
             <h1 class="h-title">{{ h.title }}</h1>

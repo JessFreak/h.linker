@@ -15,8 +15,22 @@
 
 .scrollable-hide-bar {
   overflow-y: auto;
-  scrollbar-width: none;
-  &::-webkit-scrollbar { display: none; }
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    &:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
 }
 
 .jury-workspace-layout {
@@ -35,6 +49,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   position: relative;
   z-index: 10;
+  flex-shrink: 0;
 
   .header-left {
     display: flex;
@@ -175,10 +190,12 @@
   display: flex;
   flex-direction: column;
   background: var(--h-surface-gray);
-  position: relative;
+  height: 100%;
+  overflow: hidden;
 
   .panel-inner {
     flex: 1;
+    min-height: 0;
     padding: 40px;
   }
 
@@ -203,7 +220,6 @@
       margin-bottom: 16px;
 
       h4 { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
-
 
       .weight-badge {
         font-size: 11px; font-weight: 600; padding: 2px 8px;
@@ -254,6 +270,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-shrink: 0;
 
     .calc-left {
       .calc-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px; }
@@ -294,6 +311,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 0 24px;
+  flex-shrink: 0;
 
   .footer-left { display: flex; align-items: center; gap: 8px; font-size: 12px; }
 

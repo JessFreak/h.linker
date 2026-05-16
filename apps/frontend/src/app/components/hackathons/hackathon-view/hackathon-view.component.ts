@@ -107,6 +107,14 @@ export class HackathonViewComponent implements OnInit, OnDestroy {
     return !!user && !!h && user.id === h.creator.id;
   });
 
+  isJury = computed(() => {
+    const user = this.currentUser();
+    const h = this.hackathon();
+    if (!user || !h || !h.jury) return false;
+
+    return h.jury.some((j) => j.userId === user.id);
+  });
+
   onRegister() {
     const h = this.hackathon();
     const user = this.currentUser();
