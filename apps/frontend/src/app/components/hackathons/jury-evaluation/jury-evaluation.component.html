@@ -14,7 +14,7 @@
         </button>
         <div class="progress-info">
           <span class="label">Scored</span>
-          <span class="count tech-data"><strong>0</strong> / {{ submissions().length }} <span class="h-text-secondary">teams</span></span>
+          <span class="count tech-data"><strong>{{ scoredCount() }}</strong> / {{ submissions().length }} <span class="h-text-secondary">teams</span></span>
         </div>
       </div>
 
@@ -31,6 +31,9 @@
             <div class="team-status h-text-secondary">
               @if (idx === currentIndex()) {
                 <span class="status-text highlight">In review</span>
+              } @else if (isTeamEvaluatedByMe(team)) {
+                <span class="status-text" style="color: #3fb950; font-weight: 600;">Scored</span>
+                <mat-icon class="status-icon" style="color: #3fb950;">check_circle</mat-icon>
               } @else {
                 <span class="status-text">Pending</span>
                 <mat-icon class="status-icon">radio_button_unchecked</mat-icon>
@@ -75,19 +78,28 @@
           <div class="content-section mt-8">
             <div class="section-label">OTHER JURY SCORES <span class="h-text-secondary" style="text-transform: none;">• Read-only</span></div>
             <div class="other-scores-list">
-              @for (score of mockOtherScores; track score.name) {
+              @for (score of otherJuryScores(); track score.name) {
                 <div class="other-score-item">
-                  <div class="juror-avatar h-text-secondary">{{ score.name.charAt(0) }}</div>
-                  <div class="juror-info">
-                    <span class="name">{{ score.name }}</span>
-                    @if (score.score) {
-                      <div class="score-bar">
-                        <mat-progress-bar mode="determinate" [value]="(score.score / 10) * 100"></mat-progress-bar>
-                      </div>
+
+                  <div class="h-user-redirect-group" [routerLink]="['/users', score.name]" style="display: flex; align-items: center; gap: 16px; flex: 1;">
+                    @if (score.avatarUrl) {
+                      <img [src]="score.avatarUrl" class="juror-avatar" style="object-fit: cover;" alt="Avatar">
+                    } @else {
+                      <div class="juror-avatar h-text-secondary">{{ score.name.charAt(0).toUpperCase() }}</div>
                     }
+
+                    <div class="juror-info" style="flex: 1; min-width: 0;">
+                      <span class="h-username-link">&#64;{{ score.name }}</span>
+                      @if (score.score) {
+                        <div class="score-bar">
+                          <mat-progress-bar mode="determinate" [value]="(score.score / 10) * 100"></mat-progress-bar>
+                        </div>
+                      }
+                    </div>
                   </div>
+
                   <div class="score-val tech-data" [class.h-text-secondary]="!score.score">
-                    {{ score.score || 'Pending...' }}
+                    {{ score.score ? (score.score | number:'1.1-1') : 'Pending...' }}
                   </div>
                 </div>
               }

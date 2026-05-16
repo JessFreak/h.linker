@@ -28,8 +28,10 @@ import {
   JurySubmissionItem,
 } from '@h.linker/libs';
 import { HackathonService } from '../../../services/hackathon.service';
+import { AuthService } from '../../../services/auth.service';
 import { Subscription, debounceTime, forkJoin } from 'rxjs';
 import { NotificationService } from '../../../utils/notification.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 export interface EvaluationFormValues {
   review: string;
@@ -58,9 +60,11 @@ export class JuryEvaluationComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private hackathonService = inject(HackathonService);
+  private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
   private fb = inject(FormBuilder);
 
+  currentUser = toSignal(this.authService.user$);
   hackathon = signal<FullHackathonResponse | null>(null);
   submissions = signal<JurySubmissionItem[]>([]);
   currentIndex = signal<number>(0);
@@ -77,11 +81,31 @@ export class JuryEvaluationComponent implements OnInit, OnDestroy {
     return subs.length > 0 ? subs[this.currentIndex()] : null;
   });
 
-  mockOtherScores = [
-    { name: 'Juror A', score: 7.9 },
-    { name: 'Juror B', score: 9.0 },
-    { name: 'Juror C', score: null },
-  ];
+  scoredCount = computed(() => {
+    const userId = this.currentUser()?.id;
+    if (!userId) return 0;
+    return this.submissions().filter((s) =>
+      s.otherScores.some((os) => os.userId === userId),
+    ).length;
+  });
+
+  otherJuryScores = computed(() => {
+    const h = this.hackathon();
+    const sub = this.currentSub();
+    const myId = this.currentUser()?.id;
+    if (!h || !sub) return [];
+
+    return (h.jury || [])
+      .filter((j) => j.userId !== myId)
+      .map((j) => {
+        const scoreDoc = sub.otherScores.find((os) => os.userId === j.userId);
+        return {
+          name: j.username || 'Juror',
+          avatarUrl: j.avatarUrl || undefined,
+          score: scoreDoc ? scoreDoc.score : null,
+        };
+      });
+  });
 
   constructor() {
     effect(() => {
@@ -153,9 +177,14 @@ export class JuryEvaluationComponent implements OnInit, OnDestroy {
     this.evalForm = this.fb.group(group);
   }
 
+  isTeamEvaluatedByMe(sub: JurySubmissionItem): boolean {
+    const myId = this.currentUser()?.id;
+    if (!myId) return false;
+    return sub.otherScores.some((os) => os.userId === myId);
+  }
+
   selectTeam(index: number) {
     this.formListenerSub?.unsubscribe();
-
     this.currentIndex.set(index);
 
     const sub = this.currentSub();
@@ -171,10 +200,20 @@ export class JuryEvaluationComponent implements OnInit, OnDestroy {
       try {
         const parsedData = JSON.parse(savedDraft) as EvaluationFormValues;
         this.evalForm.patchValue(parsedData, { emitEvent: false });
-        this.draftStatus.set('Draft loaded');
+        this.draftStatus.set('Unsaved draft loaded from local storage');
       } catch (e) {
         console.error('Failed to parse draft data', e);
       }
+    } else if (
+      sub.submittedScores &&
+      Object.keys(sub.submittedScores).length > 0
+    ) {
+      const dbValues: Record<string, unknown> = {
+        review: sub.submittedComment || '',
+        ...sub.submittedScores,
+      };
+      this.evalForm.patchValue(dbValues, { emitEvent: false });
+      this.draftStatus.set('Saved evaluation loaded from database');
     } else {
       this.draftStatus.set('All changes saved to database');
     }
@@ -220,7 +259,6 @@ export class JuryEvaluationComponent implements OnInit, OnDestroy {
     if (!h || !sub || this.evalForm.invalid) return;
 
     const formValues = this.evalForm.value as EvaluationFormValues;
-
     const { review, ...criteriaScores } = formValues;
 
     const scores: Record<string, number> = {};
@@ -249,6 +287,31 @@ export class JuryEvaluationComponent implements OnInit, OnDestroy {
         this.notificationService.success(
           `Evaluation for team "${sub.teamName}" successfully saved`,
         );
+
+        const myId = this.currentUser()?.id;
+        const myName = this.currentUser()?.username;
+        if (myId && myName) {
+          this.submissions.update((subs) =>
+            subs.map((s, idx) =>
+              idx === this.currentIndex()
+                ? {
+                    ...s,
+                    submittedScores: scores,
+                    submittedComment: review,
+                    otherScores: [
+                      ...s.otherScores.filter((os) => os.userId !== myId),
+                      {
+                        userId: myId,
+                        username: myName,
+                        avatarUrl: this.currentUser()?.avatarUrl ?? undefined,
+                        score: Number(this.calculatedScore().toFixed(1)),
+                      },
+                    ],
+                  }
+                : s,
+            ),
+          );
+        }
 
         this.nextTeam();
       },
