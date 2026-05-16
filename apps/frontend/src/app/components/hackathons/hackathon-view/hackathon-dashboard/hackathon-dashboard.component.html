@@ -64,9 +64,9 @@
           <mat-card class="h-card widget-card mt-6">
             <div class="widget-header"><span class="h-text-secondary uppercase">Your Score</span></div>
             <div class="score-row">
-    <span class="big-score">
-      {{ (registration()?.submission?.finalScore || 0) | number:'1.1-1' }}<small>/{{ maxPossibleScore() }}</small>
-    </span>
+              <span class="big-score">
+                {{ (registration()?.submission?.finalScore || 0) | number:'1.1-1' }}<small>/{{ maxPossibleScore() }}</small>
+              </span>
 
               <div class="h-badge">
                 {{ currentRank() ? 'Rank #' + currentRank() : 'Unranked' }}
@@ -97,6 +97,38 @@
                   <div class="h-text-secondary uppercase tech-data mb-2" style="font-size: 10px;">Repository URL</div>
                   <code class="tech-data" style="color: var(--h-primary-blue)">{{ registration()?.submission?.repoUrl }}</code>
                 </div>
+
+                <div class="h-reviews-carousel mt-8">
+                  <div class="section-label" style="margin: 0 0 12px 0;">Jury Reviews & Feedback</div>
+
+                  @if (currentReview(); as review) {
+                    <div class="carousel-card-body">
+                      <mat-icon class="quote-icon">format_quote</mat-icon>
+                      <p class="review-text h-text-secondary">{{ review.comment }}</p>
+
+                      <div class="carousel-meta-footer">
+                        <span class="juror-author tech-data">Reviewed by &#64;{{ review.juror }}</span>
+
+                        @if (teamReviews().length > 1) {
+                          <div class="carousel-nav-controls">
+                            <button mat-icon-button [disabled]="activeReviewIndex() === 0" (click)="prevReview()">
+                              <mat-icon>chevron_left</mat-icon>
+                            </button>
+                            <span class="counter-indicator tech-data">{{ activeReviewIndex() + 1 }} / {{ teamReviews().length }}</span>
+                            <button mat-icon-button [disabled]="activeReviewIndex() === teamReviews().length - 1" (click)="nextReview()">
+                              <mat-icon>chevron_right</mat-icon>
+                            </button>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  } @else {
+                    <div class="carousel-empty h-text-secondary">
+                      <mat-icon>rate_review</mat-icon>
+                      <span>No evaluation comments left by the jury yet.</span>
+                    </div>
+                  }
+                </div>
               </div>
             } @else {
               <div class="submission-status-box empty">
@@ -105,15 +137,6 @@
                 <p class="h-text-secondary">Provide your repository link using the "Submit" button above before the deadline.</p>
               </div>
             }
-
-            <div class="checklist mt-8">
-              <div class="check-item"><mat-icon color="primary">check_circle</mat-icon> Team formed</div>
-              <div class="check-item"><mat-icon color="primary">check_circle</mat-icon> Identity verified</div>
-              <div class="check-item" [class.pending]="!registration()?.submission?.repoUrl">
-                <mat-icon>{{ registration()?.submission?.repoUrl ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
-                GitHub linked
-              </div>
-            </div>
           </mat-card>
         </div>
 

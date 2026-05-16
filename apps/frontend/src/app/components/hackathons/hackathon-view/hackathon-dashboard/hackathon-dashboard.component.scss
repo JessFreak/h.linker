@@ -86,11 +86,104 @@
   h4 { font-size: 20px; margin-bottom: 12px; }
 }
 
-.checklist {
-  .check-item {
-    display: flex; align-items: center; gap: 12px; font-size: 15px; margin-bottom: 12px;
-    mat-icon { font-size: 20px; width: 20px; height: 20px; color: #3fb950; }
-    &.pending { opacity: 0.3; mat-icon { color: white; } }
+.h-reviews-carousel {
+  .carousel-card-body {
+    position: relative;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 32px 32px 24px 32px;
+    margin-top: 12px;
+
+    .quote-icon {
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      font-size: 36px;
+      width: 36px;
+      height: 36px;
+      opacity: 0.05;
+      color: white;
+    }
+
+    .review-text {
+      font-size: 14px;
+      line-height: 1.7;
+      margin: 0 0 24px 0;
+      color: rgba(255, 255, 255, 0.8) !important;
+      position: relative;
+      z-index: 2;
+    }
+
+    .carousel-meta-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 16px;
+
+      .juror-author {
+        font-size: 12px;
+        color: var(--h-primary-blue);
+        font-weight: 600;
+      }
+
+      .carousel-nav-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        button[mat-icon-button] {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
+          line-height: 32px;
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+
+          mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          &[disabled] {
+            opacity: 0.2;
+            background: transparent;
+          }
+        }
+
+        .counter-indicator {
+          font-size: 12px;
+          opacity: 0.4;
+          min-width: 36px;
+          text-align: center;
+        }
+      }
+    }
+  }
+
+  .carousel-empty {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.01);
+    border: 1px dashed rgba(255,255,255,0.04);
+    padding: 20px;
+    border-radius: 8px;
+    font-size: 13px;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      opacity: 0.2;
+    }
   }
 }
 
@@ -100,6 +193,35 @@
     &.is-me { background: rgba(65, 105, 165, 0.15); border: 1px solid var(--h-primary-blue); font-weight: 700; }
     .l-rank { opacity: 0.4; font-family: 'JetBrains Mono', serif; }
     .l-val { color: var(--h-primary-blue); font-weight: 700; }
+  }
+}
+
+.l-item-divider {
+  text-align: center;
+  opacity: 0.15;
+  font-size: 10px;
+  letter-spacing: 3px;
+  margin: 8px 0 4px;
+  color: white;
+}
+
+.l-list {
+  .l-item {
+    &.is-disconnected {
+      border: 1px dashed rgba(255, 255, 255, 0.12) !important;
+      background: rgba(255, 255, 255, 0.02) !important;
+      margin-top: 4px;
+      font-size: 13px;
+
+      strong {
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 600;
+      }
+
+      .l-val {
+        color: var(--h-safety-orange) !important;
+      }
+    }
   }
 }
 
@@ -134,27 +256,6 @@
   code {
     word-break: break-all;
     font-size: 13px;
-  }
-}
-
-.check-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
-  font-size: 14px;
-
-  mat-icon {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
-  }
-
-  &.pending {
-    opacity: 0.4;
-    mat-icon {
-      color: white;
-    }
   }
 }
 

@@ -12,6 +12,7 @@ import {
   SetCategoriesDTO,
   SetCriteriaDTO,
   SubmitProjectDto,
+  TeamReviewsResponse,
   UpdateHackathonDTO,
   UserRegistrationStatusResponse,
 } from '@h.linker/libs';
@@ -83,6 +84,12 @@ export class HackathonService {
   ): Observable<UserRegistrationStatusResponse> {
     return this.http.get<UserRegistrationStatusResponse>(
       `${this.baseUrl}/${id}/registration-status`,
+    );
+  }
+
+  getMySubmissionReviews(id: string): Observable<TeamReviewsResponse> {
+    return this.http.get<TeamReviewsResponse>(
+      `${this.baseUrl}/${id}/reviews`,
     );
   }
 

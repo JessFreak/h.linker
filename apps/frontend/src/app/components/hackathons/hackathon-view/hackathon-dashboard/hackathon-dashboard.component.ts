@@ -22,6 +22,8 @@ import {
   TeamResponse,
   UserRegistrationStatusResponse,
   LeaderboardItem,
+  TeamReviewResponse,
+  TeamReviewsResponse,
 } from '@h.linker/libs';
 import { Subscription } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -67,6 +69,14 @@ export class HackathonDashboardComponent implements OnInit, OnDestroy {
   private timerSub?: Subscription;
 
   leaderboardItems = signal<LeaderboardItem[]>([]);
+
+  teamReviews = signal<TeamReviewResponse[]>([]);
+  activeReviewIndex = signal<number>(0);
+
+  currentReview = computed(() => {
+    const reviews = this.teamReviews();
+    return reviews.length > 0 ? reviews[this.activeReviewIndex()] : null;
+  });
 
   currentRank = computed(() => {
     const myTeamId = this.teamDetails()?.id;
@@ -117,6 +127,18 @@ export class HackathonDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+  nextReview(): void {
+    if (this.activeReviewIndex() < this.teamReviews().length - 1) {
+      this.activeReviewIndex.update((idx) => idx + 1);
+    }
+  }
+
+  prevReview(): void {
+    if (this.activeReviewIndex() > 0) {
+      this.activeReviewIndex.update((idx) => idx - 1);
+    }
+  }
+
   private loadDashboardData(slug: string) {
     this.hackathonService.getBySlug(slug).subscribe((h) => {
       this.hackathon.set(h);
@@ -134,6 +156,15 @@ export class HackathonDashboardComponent implements OnInit, OnDestroy {
 
       this.hackathonService.getLeaderboard(h.id).subscribe((res) => {
         this.leaderboardItems.set(res.leaderboard);
+      });
+
+      this.hackathonService.getMySubmissionReviews(h.id).subscribe({
+        next: (res: TeamReviewsResponse) => {
+          this.teamReviews.set(res.reviews);
+        },
+        error: () => {
+          console.error('Failed to load project reviews from database');
+        },
       });
 
       this.hackathonService.getRegistrationStatus(h.id).subscribe((reg) => {
