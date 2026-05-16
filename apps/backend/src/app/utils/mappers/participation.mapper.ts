@@ -4,12 +4,14 @@ import {
   JurySubmissionItem,
   JurySubmissionsResponse,
   LeaderboardResponse,
+  TeamReviewsResponse,
 } from '@h.linker/libs';
 import { TeamMapper } from './team.mapper';
 import {
   LeaderboardRow,
   ParticipationWithScoresAndReviews,
   ParticipationWithTeam,
+  ReviewWithJuryData,
 } from '../../database/entities/participation.entity';
 import { Participation, Hackathon } from '@prisma/client';
 
@@ -142,6 +144,17 @@ export class ParticipationMapper {
         teamId: p.teamId,
         teamName: p.team.name,
         score: p.finalScore,
+      })),
+    };
+  }
+
+  static getTeamReviewsResponse(
+    reviews: ReviewWithJuryData[],
+  ): TeamReviewsResponse {
+    return {
+      reviews: reviews.map((r) => ({
+        juror: r.jury.user.username,
+        comment: r.summary,
       })),
     };
   }

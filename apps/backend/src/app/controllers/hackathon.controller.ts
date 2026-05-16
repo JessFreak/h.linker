@@ -24,6 +24,7 @@ import {
   SetCriteriaDTO,
   SetScoresDto,
   SubmitProjectDto,
+  TeamReviewsResponse,
   UpdateHackathonDTO,
   UpdateHackathonStatusDTO,
   UserRegistrationStatusResponse,
@@ -144,6 +145,20 @@ export class HackathonController {
     return ParticipationMapper.getRegistrationStatusResponse(registration);
   }
 
+  @Get(':id/reviews')
+  @Access()
+  async getMySubmissionReviews(
+    @Param('id') hackathonId: string,
+    @UserRequest() user: UserResponse,
+  ): Promise<TeamReviewsResponse> {
+    const reviews = await this.hackathonService.findTeamReviews(
+      hackathonId,
+      user.id,
+    );
+
+    return ParticipationMapper.getTeamReviewsResponse(reviews);
+  }
+
   @Post(':id/register')
   @Access()
   @HttpCode(HttpStatus.OK)
@@ -181,7 +196,10 @@ export class HackathonController {
   ): Promise<JurySubmissionsResponse> {
     const participations =
       await this.hackathonService.getHackathonSubmissionsForJury(id);
-    return ParticipationMapper.getJurySubmissionsResponse(participations, user.id);
+    return ParticipationMapper.getJurySubmissionsResponse(
+      participations,
+      user.id,
+    );
   }
 
   @Post(':id/projects/:projectId/score')

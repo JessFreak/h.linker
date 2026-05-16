@@ -5,6 +5,7 @@ import {
   LeaderboardRow,
   ParticipationWithScoresAndReviews,
   ParticipationWithTeam,
+  ReviewWithJuryData,
 } from '../entities/participation.entity';
 
 @Injectable()
@@ -106,6 +107,34 @@ export class ParticipationRepository {
       },
       orderBy: {
         finalScore: 'desc',
+      },
+    });
+  }
+
+  async findReviewsByMember(
+    hackathonId: string,
+    userId: string,
+  ): Promise<ReviewWithJuryData[]> {
+    return this.prisma.review.findMany({
+      where: {
+        participation: {
+          hackathonId,
+          team: {
+            members: {
+              some: {
+                userId,
+                status: UserTeamStatus.ACCEPTED,
+              },
+            },
+          },
+        },
+      },
+      include: {
+        jury: {
+          include: {
+            user: true,
+          },
+        },
       },
     });
   }

@@ -23,6 +23,15 @@ export interface JurySubmissionsResponse {
   submissions: JurySubmissionItem[];
 }
 
+export interface TeamReviewResponse {
+  juror: string;
+  comment: string;
+}
+
+export interface TeamReviewsResponse {
+  reviews: TeamReviewResponse[];
+}
+
 export interface LeaderboardItem {
   rank: number;
   teamId: string;

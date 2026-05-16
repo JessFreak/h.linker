@@ -20,6 +20,7 @@ import {
   LeaderboardRow,
   ParticipationWithScoresAndReviews,
   ParticipationWithTeam,
+  ReviewWithJuryData,
 } from '../database/entities/participation.entity';
 import { EvaluationRepository } from '../database/repositories/evaluation.repository';
 
@@ -192,7 +193,10 @@ export class HackathonService {
     participationId: string,
     scores: Record<string, number>,
   ): Promise<void> {
-    const jury = await this.juryRepository.getJuryByUserAndHackathon(userId, hackathonId);
+    const jury = await this.juryRepository.getJuryByUserAndHackathon(
+      userId,
+      hackathonId,
+    );
 
     await this.evaluationRepository.upsertScores(
       jury.id,
@@ -220,6 +224,16 @@ export class HackathonService {
       jury.id,
       participationId,
       text,
+    );
+  }
+
+  async findTeamReviews(
+    hackathonId: string,
+    userId: string,
+  ): Promise<ReviewWithJuryData[]> {
+    return this.participationRepository.findReviewsByMember(
+      hackathonId,
+      userId,
     );
   }
 }

@@ -1,5 +1,15 @@
 import { Participation, Prisma, Team } from '@prisma/client';
 
+export type ReviewWithJuryData = Prisma.ReviewGetPayload<{
+  include: {
+    jury: {
+      include: {
+        user: true;
+      };
+    };
+  };
+}>;
+
 export type ParticipationWithTeam = Participation & {
   team: Team;
 };
