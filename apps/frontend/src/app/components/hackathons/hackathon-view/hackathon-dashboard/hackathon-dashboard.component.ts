@@ -16,11 +16,12 @@ import { MatCardModule } from '@angular/material/card';
 import { HackathonService } from '../../../../services/hackathon.service';
 import { TeamService } from '../../../../services/team.service';
 import { AuthService } from '../../../../services/auth.service';
+import { NotificationService } from '../../../../utils/notification.service';
 import {
   FullHackathonResponse,
   TeamResponse,
   UserRegistrationStatusResponse,
-  LeaderboardItem, // Додано новий інтерфейс з ліби
+  LeaderboardItem,
 } from '@h.linker/libs';
 import { Subscription } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -55,6 +56,7 @@ export class HackathonDashboardComponent implements OnInit, OnDestroy {
   private teamService = inject(TeamService);
   private authService = inject(AuthService);
   private countdownService = inject(CountdownService);
+  private notificationService = inject(NotificationService);
 
   currentUser = toSignal(this.authService.user$);
   hackathon = signal<FullHackathonResponse | null>(null);
@@ -74,6 +76,22 @@ export class HackathonDashboardComponent implements OnInit, OnDestroy {
       (item) => item.teamId === myTeamId,
     );
     return found ? found.rank : null;
+  });
+
+  isMyTeamInTop3 = computed(() => {
+    const myTeamId = this.teamDetails()?.id;
+    if (!myTeamId) return false;
+    return this.leaderboardItems()
+      .slice(0, 3)
+      .some((item) => item.teamId === myTeamId);
+  });
+
+  myTeamLeaderboardItem = computed(() => {
+    const myTeamId = this.teamDetails()?.id;
+    if (!myTeamId) return null;
+    return (
+      this.leaderboardItems().find((item) => item.teamId === myTeamId) || null
+    );
   });
 
   isLeader = computed(() => {
@@ -97,6 +115,12 @@ export class HackathonDashboardComponent implements OnInit, OnDestroy {
       );
       this.timeLeft = timeLeft;
       this.timerSub = sub;
+
+      if (h.status !== 'ACTIVE') {
+        this.notificationService.info(
+          `Project submission is locked. Event stage: ${h.status}`,
+        );
+      }
 
       this.hackathonService.getLeaderboard(h.id).subscribe((res) => {
         this.leaderboardItems.set(res.leaderboard);
