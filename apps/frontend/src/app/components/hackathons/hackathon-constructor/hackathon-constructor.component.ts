@@ -59,6 +59,7 @@ import {
   MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-hackathon-constructor',
@@ -95,6 +96,7 @@ export class HackathonConstructorComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private imageUploadService = inject(ImageUploadService);
+  private authService = inject(AuthService);
 
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
@@ -127,6 +129,7 @@ export class HackathonConstructorComponent implements OnInit {
 
   hackathonId = signal<string | null>(null);
   isSaving = signal(false);
+  currentUser = toSignal(this.authService.user$);
 
   infoForm = this.fb.group({
     title: [
@@ -236,9 +239,9 @@ export class HackathonConstructorComponent implements OnInit {
         this.isSaving.set(false);
         this.notificationService.success(`${user.username} added to jury`);
       },
-      error: () => {
+      error: (err) => {
         this.isSaving.set(false);
-        this.notificationService.error('Failed to add jury member');
+        this.notificationService.error(err.message);
       },
     });
 
@@ -256,9 +259,9 @@ export class HackathonConstructorComponent implements OnInit {
         this.isSaving.set(false);
         this.notificationService.success('Jury member removed');
       },
-      error: () => {
+      error: (err) => {
         this.isSaving.set(false);
-        this.notificationService.error('Failed to remove jury member');
+        this.notificationService.error(err.message);
       },
     });
   }
@@ -338,6 +341,16 @@ export class HackathonConstructorComponent implements OnInit {
   private loadHackathonData(id: string): void {
     this.hackathonService.getById(id).subscribe({
       next: (h: FullHackathonResponse) => {
+        const user = this.currentUser();
+
+        if (!user || h.creator.id !== user.id) {
+          this.notificationService.error(
+            'Access denied. You are not the creator of this event.',
+          );
+          this.router.navigate(['/events']);
+          return;
+        }
+
         this.hackathonId.set(h.id);
         this.infoForm.patchValue({
           title: h.title,
@@ -447,9 +460,9 @@ export class HackathonConstructorComponent implements OnInit {
         this.notificationService.success('Identity saved');
         stepper.next();
       },
-      error: () => {
+      error: (err) => {
         this.isSaving.set(false);
-        this.notificationService.error('Save failed');
+        this.notificationService.error(err.message);
       },
     });
   }
@@ -481,8 +494,7 @@ export class HackathonConstructorComponent implements OnInit {
       },
       error: (err) => {
         this.isSaving.set(false);
-        this.notificationService.error('Failed to save details');
-        console.error(err);
+        this.notificationService.error(err.message);
       },
     });
   }

@@ -9,15 +9,11 @@ import { TeamsComponent } from './components/teams/teams.component';
 import TeamDetailsComponent from './components/teams/team-details/team-details.component';
 import { TeamSettingsComponent } from './components/teams/team-details/team-setttings/team-settings.component';
 import { UsersComponent } from './components/teams/users/users.component';
-import {
-  HackathonConstructorComponent
-} from './components/hackathons/hackathon-constructor/hackathon-constructor.component';
+import { HackathonConstructorComponent } from './components/hackathons/hackathon-constructor/hackathon-constructor.component';
 import { HackathonViewComponent } from './components/hackathons/hackathon-view/hackathon-view.component';
 import { HackathonExploreComponent } from './components/hackathons/hackathon-explore/hackathon-explore.component';
 import { HackathonDashboardComponent } from './components/hackathons/hackathon-view/hackathon-dashboard/hackathon-dashboard.component';
-import {
-  HackathonSubmissionComponent
-} from './components/hackathons/hackathon-view/hackathon-dashboard/hackathon-submission/hackathon-submission.component';
+import { HackathonSubmissionComponent } from './components/hackathons/hackathon-view/hackathon-dashboard/hackathon-submission/hackathon-submission.component';
 import { LeaderboardComponent } from './components/hackathons/hackathon-view/leaderboard/leaderboard.component';
 import { JuryEvaluationComponent } from './components/hackathons/jury-evaluation/jury-evaluation.component';
 
@@ -34,16 +30,37 @@ export const appRoutes: Route[] = [
   { path: 'users/:username', component: UserProfileComponent },
   { path: 'teams', component: TeamsComponent },
   { path: 'teams/:id', component: TeamDetailsComponent },
-  { path: 'teams/:id/settings', component: TeamSettingsComponent },
+  {
+    path: 'teams/:id/settings',
+    component: TeamSettingsComponent,
+    canActivate: [authGuard],
+  },
+
   { path: 'events', component: HackathonExploreComponent },
-  { path: 'events/constructor', component: HackathonConstructorComponent },
+  {
+    path: 'events/constructor',
+    component: HackathonConstructorComponent,
+    canActivate: [authGuard],
+  },
+
   { path: 'events/:slug', component: HackathonViewComponent },
-  { path: 'events/:slug/dashboard', component: HackathonDashboardComponent },
+  {
+    path: 'events/:slug/dashboard',
+    component: HackathonDashboardComponent,
+    canActivate: [authGuard],
+  },
   {
     path: 'events/:slug/dashboard/submission',
     component: HackathonSubmissionComponent,
+    canActivate: [authGuard],
   },
+
   { path: 'events/:slug/leaderboard', component: LeaderboardComponent },
-  { path: 'events/:slug/jury', component: JuryEvaluationComponent },
+  {
+    path: 'events/:slug/jury',
+    component: JuryEvaluationComponent,
+    canActivate: [authGuard],
+  },
+
   { path: '**', redirectTo: '' },
 ];
