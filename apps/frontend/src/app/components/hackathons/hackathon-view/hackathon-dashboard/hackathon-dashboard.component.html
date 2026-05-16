@@ -64,9 +64,9 @@
           <mat-card class="h-card widget-card mt-6">
             <div class="widget-header"><span class="h-text-secondary uppercase">Your Score</span></div>
             <div class="score-row">
-              <span class="big-score">
-                {{ registration()?.submission?.finalScore || 0 }}<small>/100</small>
-              </span>
+    <span class="big-score">
+      {{ (registration()?.submission?.finalScore || 0) | number:'1.1-1' }}<small>/{{ maxPossibleScore() }}</small>
+    </span>
 
               <div class="h-badge">
                 {{ currentRank() ? 'Rank #' + currentRank() : 'Unranked' }}

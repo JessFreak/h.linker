@@ -94,6 +94,16 @@ export class HackathonDashboardComponent implements OnInit, OnDestroy {
     );
   });
 
+  maxPossibleScore = computed(() => {
+    const h = this.hackathon();
+    if (!h?.criteria || h.criteria.length === 0) return 10;
+
+    return h.criteria.reduce(
+      (acc, c) => acc + c.maxValue * (c.weight / 100),
+      0,
+    );
+  });
+
   isLeader = computed(() => {
     const user = this.currentUser();
     const team = this.teamDetails();
