@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma.service';
 import { Prisma, UserTeamStatus } from '@prisma/client';
 import {
   LeaderboardRow,
+  ParticipationWithScoresAndReviews,
   ParticipationWithTeam,
 } from '../entities/participation.entity';
 
@@ -67,20 +68,27 @@ export class ParticipationRepository {
 
   async findAllSubmissionsByHackathonId(
     hackathonId: string,
-  ): Promise<ParticipationWithTeam[]> {
+  ): Promise<ParticipationWithScoresAndReviews[]> {
     return this.prisma.participation.findMany({
       where: {
         hackathonId,
-        githubRepoUrl: {
-          not: null,
-        },
+        githubRepoUrl: { not: null },
       },
       include: {
         team: true,
+        reviews: {
+          include: {
+            jury: { include: { user: true } },
+          },
+        },
+        scores: {
+          include: {
+            criterion: true,
+            jury: { include: { user: true } },
+          },
+        },
       },
-      orderBy: {
-        updatedAt: 'asc',
-      },
+      orderBy: { updatedAt: 'asc' },
     });
   }
 

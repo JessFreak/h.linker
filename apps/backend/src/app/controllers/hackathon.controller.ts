@@ -177,10 +177,11 @@ export class HackathonController {
   @Access('JURY')
   async getSubmissions(
     @Param('id') id: string,
+    @UserRequest() user: UserResponse,
   ): Promise<JurySubmissionsResponse> {
     const participations =
       await this.hackathonService.getHackathonSubmissionsForJury(id);
-    return ParticipationMapper.getJurySubmissionsResponse(participations);
+    return ParticipationMapper.getJurySubmissionsResponse(participations, user.id);
   }
 
   @Post(':id/projects/:projectId/score')

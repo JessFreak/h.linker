@@ -1,3 +1,10 @@
+export interface JurorScoreItem {
+  userId: string;
+  username: string;
+  avatarUrl?: string;
+  score: number;
+}
+
 export interface JurySubmissionItem {
   participationId: string;
   teamId: string;
@@ -7,6 +14,9 @@ export interface JurySubmissionItem {
   githubRepoUrl: string;
   finalScore: number;
   submittedAt: Date;
+  otherScores: JurorScoreItem[];
+  submittedScores: Record<string, number>;
+  submittedComment: string;
 }
 
 export interface JurySubmissionsResponse {

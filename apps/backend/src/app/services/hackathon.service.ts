@@ -18,6 +18,7 @@ import { FullHackathon } from '../database/entities/hackathon.entity';
 import { ParticipationRepository } from '../database/repositories/participation.repository';
 import {
   LeaderboardRow,
+  ParticipationWithScoresAndReviews,
   ParticipationWithTeam,
 } from '../database/entities/participation.entity';
 import { EvaluationRepository } from '../database/repositories/evaluation.repository';
@@ -175,7 +176,7 @@ export class HackathonService {
 
   async getHackathonSubmissionsForJury(
     hackathonId: string,
-  ): Promise<ParticipationWithTeam[]> {
+  ): Promise<ParticipationWithScoresAndReviews[]> {
     return this.participationRepository.findAllSubmissionsByHackathonId(
       hackathonId,
     );
