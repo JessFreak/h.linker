@@ -1,0 +1,329 @@
+@startuml
+skinparam classAttributeIconSize 10
+skinparam nodesep 30
+skinparam ranksep 40
+
+class AppController {
+  + getData()
+}
+class AppModule {
+  + init(): self
+}
+class AppService {
+  + getData()
+}
+class AuthController {
+  + auth()
+  + googleAuthCallback(user, res)
+  + githubAuth()
+  + githubAuthCallback(user, res)
+  + githubConnect()
+  + githubConnectCallback(res)
+  + register(body)
+  + login(body, res)
+  + logout(res)
+  + getMe(user)
+  + deleteMe(user, res)
+  + updatePassword(user, body)
+}
+class CategoryController {
+  + search(query)
+}
+class HackathonController {
+  + getAll()
+  + getById(id)
+  + getBySlug(slug)
+  + create(user, dto)
+  + update(id, dto)
+  + updateStatus(id, dto)
+  + setCriteria(id, dto)
+  + setCategories(id, dto)
+  + addJury(id, dto)
+  + removeJury(id, userId)
+  + remove(id)
+  + getRegistrationStatus(id, user)
+  + getMySubmissionReviews(hackathonId, user)
+  + registerTeam(id, teamId, user)
+  + submitProject(id, dto, user)
+  + getLeaderboard(id)
+  + getSubmissions(id, user)
+  + setScore(hackathonId, participationId, dto, user)
+  + addComment(hackathonId, participationId, dto, user)
+}
+class RoleController {
+  + getAll()
+  + create(name)
+}
+class TeamController {
+  + create(dto, user)
+  + getAll(leaderId)
+  + getMyInvitations(user)
+  + getById(id)
+  + update(id, dto)
+  + remove(id)
+  + applyToTeam(user, teamId, dto)
+  + inviteUser(teamId, dto)
+  + removeMember(teamId, userId)
+  + respondToRequest(teamId, userId, status)
+  + changeLeader(id, newLeaderId)
+  + leave(teamId, user)
+}
+class UserController {
+  + getAllUsers(query)
+  + getByUsername(username)
+  + update(user, body)
+}
+class PrismaService {
+  + onModuleInit()
+  + onModuleDestroy()
+}
+class AuthModule {
+  + init(): self
+}
+class CategoryModule {
+  + init(): self
+}
+class HackathonModule {
+  + init(): self
+}
+class PrismaModule {
+  + init(): self
+}
+class TeamModule {
+  + init(): self
+}
+class UserModule {
+  + init(): self
+}
+class AuthService {
+  + register(dto)
+  + validatePassword(password, userPassword)
+  + getToken(userId)
+  + login({ email, password })
+  + validateGoogleUser(externalUser)
+  + validateGithubUser({ skills, ...gitHub }, currentUser)
+  + handleAccountLinking(user, githubId, githubUsername)
+  + handleGithubAuth(data)
+  + setToken(userId, res)
+  + deleteMe(userId)
+  + updatePassword(userId, { oldPassword, newPassword })
+}
+class CategoryService {
+  + syncUserSkills(userId, skills)
+  + deleteUserSkills(userId)
+  + search(query)
+}
+class GithubService {
+  + GITHUB_GRAPHQL_URL: "https://api.github.com/graphql"
+  + BLACKLIST: Set<string>
+  + getProfileData(accessToken, username)
+  + calculateContributionTrend(weeks)
+  + incrementSkill(acc, skill)
+  + calculateTopLanguages(sizes)
+}
+class HackathonService {
+  + create(creatorId, dto)
+  + getAll()
+  + getById(id)
+  + getBySlug(slug)
+  + update(id, dto)
+  + updateStatus(id, status)
+  + deleteById(id)
+  + addJuryMember(hackathonId, userId)
+  + removeJuryMember(hackathonId, userId)
+  + setCriteria(hackathonId, criteria)
+  + setCategories(hackathonId, categories)
+  + findUserRegistration(hackathonId, userId)
+  + registerTeam(hackathonId, teamId, userId)
+  + submitProject(hackathonId, userId, dto)
+  + getHackathonSubmissionsForJury(hackathonId)
+  + getLeaderboard(id)
+  + setTeamScores(userId, hackathonId, participationId, scores)
+  + setTeamComment(userId, hackathonId, participationId, text)
+  + findTeamReviews(hackathonId, userId)
+}
+class RoleService {
+  + getAll()
+  + create(name)
+}
+class TeamService {
+  + create(dto, leaderId)
+  + findById(id)
+  + getAll(leaderId)
+  + updateById(id, dto)
+  + delete(id)
+  + joinRequest(teamId, userId, dto)
+  + inviteUser(teamId, dto)
+  + validateConnection(teamId, userId)
+  + removeMember(teamId, userId)
+  + respondToMemberRequest(teamId, userId, status)
+  + changeLeader(id, newLeaderId)
+  + findUserInvitations(userId)
+}
+class UserService {
+  + create(data)
+  + findByEmail(email)
+  + findByUsername(username, full)
+  + findById(id)
+  + getAll(searchQuery)
+  + findByGithubId(githubId)
+  + updateGithub(userId, githubId, githubUsername)
+  + updatePassword(userId, hashedPass)
+  + updateProfile(userId, dto)
+  + delete(id)
+  + checkEmailUniqueness(email, userId)
+  + checkUsernameUniqueness(username, userId)
+}
+class CategoryRepository {
+  + upsertCategory(name)
+  + linkUserToCategory(userId, skill)
+  + deleteUserSkills(userId)
+  + syncHackathonCategories(hackathonId, categoryNames)
+  + search(query)
+}
+class CriteriaRepository {
+  + syncCriteria(hackathonId, criteria)
+}
+class EvaluationRepository {
+  + upsertScores(juryId, participationId, scores)
+  + upsertComment(juryId, participationId, text)
+  + recalculateProjectFinalScore(participationId, hackathonId)
+}
+class HackathonRepository {
+  + hackathonFullInclude: Object
+  + create(data)
+  + getAll()
+  + getById(id)
+  + getBySlug(slug)
+  + updateById(id, data)
+  + isCreator(hackathonId, userId)
+  + deleteById(id)
+}
+class JuryRepository {
+  + add(hackathonId, userId)
+  + remove(hackathonId, userId)
+  + isUserInJury(hackathonId, userId)
+  + getJuryByUserAndHackathon(userId, hackathonId)
+}
+class MemberRepository {
+  + findMember(teamId, userId)
+  + findConnection(teamId, userId)
+  + upsertConnection(data)
+  + removeMember(teamId, userId)
+  + updateMemberStatus(teamId, userId, status)
+}
+class ParticipationRepository {
+  + findUserParticipation(hackathonId, userId)
+  + create(hackathonId, teamId)
+  + findByTeamAndHackathon(hackathonId, teamId)
+  + updateSubmission(hackathonId, teamId, data)
+  + findAllSubmissionsByHackathonId(hackathonId)
+  + getLeaderboardData(hackathonId)
+  + findReviewsByMember(hackathonId, userId)
+}
+class RoleRepository {
+  + findMany()
+  + create(name)
+}
+class TeamRepository {
+  + include: Object
+  + create(data)
+  + find(where)
+  + findById(id)
+  + updateById(id, data)
+  + deleteById(id)
+  + findUserInvitations(userId)
+}
+class UserRepository {
+  + FULL_USER_INCLUDE: Object
+  + create(data)
+  + find(where)
+  + findById(id)
+  + findByEmail(email)
+  + findByUsername(username, full)
+  + findByGithubId(githubId)
+  + findMany(where)
+  + updateById(id, data)
+  + deleteById(id)
+}
+class GithubConnectGuard {
+  + getAuthenticateOptions()
+  + handleRequest(err, user, info, context)
+}
+class GithubOauthGuard {
+}
+class GoogleOauthGuard {
+}
+class JwtAuthGuard {
+  + canActivate(context)
+}
+class RolesGuard {
+  + canActivate(context)
+}
+class GithubStrategy {
+  + validate(req, accessToken, _refreshToken, profile, done)
+}
+class GoogleStrategy {
+  + validate(_accessToken, _refreshToken, profile, done)
+}
+
+' ==========================================
+' СТРУКТУРА ПАВУТИНИ (РАДІАЛЬНЕ РОЗМІЩЕННЯ)
+' ==========================================
+
+' 1. ЦЕНТР
+AppModule -up-> AuthModule
+AppModule -down-> PrismaModule
+AppModule -left-> TeamModule
+AppModule -right-> HackathonModule
+AppModule -up-> UserModule
+AppModule -left-> AppService
+AppModule -right-> AppController
+
+' 2. ВГОРУ (Auth та User)
+AuthModule -up-> AuthController
+AuthModule -up-> AuthService
+AuthModule -left-> GoogleOauthGuard
+AuthModule -left-> GithubOauthGuard
+AuthModule -right-> JwtAuthGuard
+AuthModule -right-> GoogleStrategy
+AuthModule -up-> GithubStrategy
+AuthModule -left-> GithubConnectGuard
+
+UserModule -up-> UserController
+UserModule -up-> UserService
+
+' Міжмодульні зв'язки спрямовуємо так, щоб не ламати структуру
+AuthModule -right-> CategoryModule
+UserModule -right-> CategoryModule
+
+' Category (справа від User)
+CategoryModule -up-> CategoryController
+CategoryModule -right-> CategoryService
+CategoryModule -right-> GithubService
+
+' 3. ВЛІВО (Team)
+TeamModule -left-> TeamController
+TeamModule -left-> TeamService
+TeamModule -up-> RoleController
+TeamModule -down-> RoleService
+
+' 4. ВПРАВО (Hackathon)
+HackathonModule -right-> HackathonController
+HackathonModule -right-> HackathonService
+HackathonModule -down-> RolesGuard
+
+' 5. ВНИЗ (Prisma - найбільший вузол, тому розкидаємо його в усі боки від себе)
+PrismaModule -down-> PrismaService
+PrismaModule -down-> UserRepository
+PrismaModule -left-> CategoryRepository
+PrismaModule -left-> RoleRepository
+PrismaModule -left-> CriteriaRepository
+PrismaModule -right-> TeamRepository
+PrismaModule -right-> MemberRepository
+PrismaModule -right-> ParticipationRepository
+PrismaModule -down-> HackathonRepository
+PrismaModule -down-> JuryRepository
+PrismaModule -down-> EvaluationRepository
+
+@enduml
