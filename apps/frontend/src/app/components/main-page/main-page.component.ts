@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { TeamService } from '../../services/team.service';
 import { UserService } from '../../services/user.service';
 import { MatTooltip } from '@angular/material/tooltip';
+import { HackathonService } from '../../services/hackathon.service';
 
 @Component({
   selector: 'app-main-page',
@@ -23,10 +24,11 @@ import { MatTooltip } from '@angular/material/tooltip';
 export class MainPageComponent implements OnInit {
   private teamService = inject(TeamService);
   private userService = inject(UserService);
+  private hackathonService = inject(HackathonService);
 
   studentsCount = signal<number>(0);
   teamsCount = signal<number>(0);
-  hackathonsCount = signal<number>(15);
+  hackathonsCount = signal<number>(0);
 
   ngOnInit(): void {
     this.loadStats();
@@ -40,6 +42,11 @@ export class MainPageComponent implements OnInit {
 
     this.userService.getAll().subscribe({
       next: (res) => this.studentsCount.set(res.users?.length || 0),
+      error: () => console.error('Failed to load users count'),
+    });
+
+    this.hackathonService.getAll().subscribe({
+      next: (res) => this.hackathonsCount.set(res.hackathons?.length || 0),
       error: () => console.error('Failed to load users count'),
     });
   }
