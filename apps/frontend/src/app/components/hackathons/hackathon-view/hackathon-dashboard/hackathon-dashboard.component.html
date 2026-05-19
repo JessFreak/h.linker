@@ -5,16 +5,24 @@
         <div class="header-center-layout">
           <div class="deadline-info">
             <span class="h-text-secondary uppercase tech-data" style="letter-spacing: 1px">Project Submission Deadline</span>
-            <div class="h-timer tech-data">
-              <div class="t-unit"><span class="val">{{ timeLeft().days }}</span><span class="lab">DAYS</span></div>
-              <span class="t-sep">:</span>
-              <div class="t-unit"><span class="val">{{ timeLeft().hrs }}</span><span class="lab">HRS</span></div>
-              <span class="t-sep">:</span>
-              <div class="t-unit"><span class="val">{{ timeLeft().min }}</span><span class="lab">MIN</span></div>
-              <span class="t-sep">:</span>
-              <div class="t-unit"><span class="val">{{ timeLeft().sec }}</span><span class="lab">SEC</span></div>
-            </div>
-            <small class="h-text-secondary mt-2 block">{{ h.submissionDeadline | date:'EEEE, MMMM d, y • HH:mm' }} UTC+2</small>
+
+            @if (!isTimeUp()) {
+              <div class="h-timer tech-data">
+                <div class="t-unit"><span class="val">{{ timeLeft().days }}</span><span class="lab">DAYS</span></div>
+                <span class="t-sep">:</span>
+                <div class="t-unit"><span class="val">{{ timeLeft().hrs }}</span><span class="lab">HRS</span></div>
+                <span class="t-sep">:</span>
+                <div class="t-unit"><span class="val">{{ timeLeft().min }}</span><span class="lab">MIN</span></div>
+                <span class="t-sep">:</span>
+                <div class="t-unit"><span class="val">{{ timeLeft().sec }}</span><span class="lab">SEC</span></div>
+              </div>
+              <small class="h-text-secondary mt-2 block">{{ h.submissionDeadline | date:'EEEE, MMMM d, y • HH:mm' }} UTC+2</small>
+            } @else {
+              <div class="time-up-badge mt-4 mb-2">
+                <mat-icon>timer_off</mat-icon>
+                <span>DEADLINE HAS PASSED</span>
+              </div>
+            }
 
             @if (h.status !== 'ACTIVE') {
               <small class="block mt-3 tech-data" style="color: var(--h-safety-orange); font-weight: 600; letter-spacing: 0.5px;">
