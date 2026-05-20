@@ -4,7 +4,7 @@
       <div class="h-container">
         <div class="header-center-layout">
           <div class="deadline-info">
-            <span class="h-text-secondary uppercase tech-data" style="letter-spacing: 1px">Project Submission Deadline</span>
+            <span class="h-text-secondary uppercase tech-data block" style="letter-spacing: 1px; margin-bottom: 16px;">Project Submission Deadline</span>
 
             @if (!isTimeUp()) {
               <div class="h-timer tech-data">
@@ -18,7 +18,7 @@
               </div>
               <small class="h-text-secondary mt-2 block">{{ h.submissionDeadline | date:'EEEE, MMMM d, y • HH:mm' }} UTC+2</small>
             } @else {
-              <div class="time-up-badge mt-4 mb-2">
+              <div class="time-up-badge">
                 <mat-icon>timer_off</mat-icon>
                 <span>DEADLINE HAS PASSED</span>
               </div>

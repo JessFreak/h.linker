@@ -99,13 +99,21 @@
 
         <aside class="h-sidebar">
           <div class="h-card sidebar-widget sticky-widget">
-            <div class="timer-display tech-data">
-              <div class="time-box"><span class="val">{{ timeLeft().days }}</span><span class="lab">DAYS</span></div>
-              <span class="sep">:</span>
-              <div class="time-box"><span class="val">{{ timeLeft().hrs }}</span><span class="lab">HRS</span></div>
-              <span class="sep">:</span>
-              <div class="time-box"><span class="val">{{ timeLeft().min }}</span><span class="lab">MIN</span></div>
-            </div>
+
+            @if (!isTimeUp()) {
+              <div class="timer-display tech-data">
+                <div class="time-box"><span class="val">{{ timeLeft().days }}</span><span class="lab">DAYS</span></div>
+                <span class="sep">:</span>
+                <div class="time-box"><span class="val">{{ timeLeft().hrs }}</span><span class="lab">HRS</span></div>
+                <span class="sep">:</span>
+                <div class="time-box"><span class="val">{{ timeLeft().min }}</span><span class="lab">MIN</span></div>
+              </div>
+            } @else {
+              <div class="time-up-badge" style="margin-bottom: 24px; width: 100%; box-sizing: border-box; padding: 16px 0;">
+                <mat-icon>timer_off</mat-icon>
+                <span style="font-size: 14px;">REGISTRATION CLOSED</span>
+              </div>
+            }
 
             @let regStatus = userRegistration();
 
@@ -128,7 +136,7 @@
               <button mat-flat-button
                       color="primary"
                       class="w-full h-12"
-                      [disabled]="h.status !== Status.REGISTRATION"
+                      [disabled]="h.status !== Status.REGISTRATION || isTimeUp()"
                       (click)="onRegister()">
                 <mat-icon>app_registration</mat-icon>
                 Register for Event

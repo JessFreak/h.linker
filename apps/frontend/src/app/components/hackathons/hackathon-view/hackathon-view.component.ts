@@ -7,7 +7,7 @@ import {
   computed,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink, Router } from '@angular/router'; // Додав Router сюди
+import { ActivatedRoute, RouterLink, Router } from '@angular/router';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -62,6 +62,11 @@ export class HackathonViewComponent implements OnInit, OnDestroy {
   userRegistration = signal<UserRegistrationStatusResponse | null>(null);
   timeLeft = signal<TimeLeft>({ days: 0, hrs: 0, min: 0, sec: 0 });
   private timerSub?: Subscription;
+
+  isTimeUp = computed(() => {
+    const t = this.timeLeft();
+    return t.days === 0 && t.hrs === 0 && t.min === 0 && t.sec === 0;
+  });
 
   readonly Status = HackathonStatus;
 
