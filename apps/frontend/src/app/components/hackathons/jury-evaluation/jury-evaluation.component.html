@@ -140,10 +140,26 @@
 
           <div class="review-section mt-6">
             <div class="section-label">EXPERT REVIEW / COMMENTS</div>
+
             <mat-form-field appearance="outline" class="w-full custom-textarea">
-              <textarea matInput rows="6" formControlName="review" placeholder="Strengths, weaknesses, or tips for the team..."></textarea>
-              <mat-hint align="end">{{ evalForm.get('review')?.value?.length || 0 }} / 800</mat-hint>
+              <mat-label>General Summary / Feedback</mat-label>
+              <textarea matInput rows="4" formControlName="summary" placeholder="Overall impression of the project..."></textarea>
+              <mat-hint align="end">{{ evalForm.get('summary')?.value?.length || 0 }} / 800</mat-hint>
             </mat-form-field>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+              <mat-form-field appearance="outline" class="w-full custom-textarea">
+                <mat-label>Key Strengths</mat-label>
+                <textarea matInput rows="3" formControlName="strengths" placeholder="What did the team do exceptionally well?"></textarea>
+                <mat-hint align="end">{{ evalForm.get('strengths')?.value?.length || 0 }} / 500</mat-hint>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-full custom-textarea">
+                <mat-label>Areas for Improvement (Weaknesses)</mat-label>
+                <textarea matInput rows="3" formControlName="weaknesses" placeholder="What could be improved or is missing?"></textarea>
+                <mat-hint align="end">{{ evalForm.get('weaknesses')?.value?.length || 0 }} / 500</mat-hint>
+              </mat-form-field>
+            </div>
           </div>
         </div>
 

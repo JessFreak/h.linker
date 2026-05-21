@@ -106,6 +106,56 @@
       color: white;
     }
 
+    .feedback-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.08);
+
+      .feedback-block {
+        padding: 16px;
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.02);
+
+        .fb-label {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 10px;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          font-weight: 700;
+          margin-bottom: 8px;
+
+          mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+          }
+        }
+
+        p {
+          font-size: 13px;
+          margin: 0;
+          line-height: 1.5;
+          color: rgba(255, 255, 255, 0.7);
+        }
+
+        &.is-strength {
+          border-left: 3px solid #3fb950;
+          .fb-label { color: #3fb950; }
+        }
+
+        &.is-weakness {
+          border-left: 3px solid var(--h-safety-orange);
+          .fb-label { color: var(--h-safety-orange); }
+        }
+      }
+    }
+
     .review-text {
       font-size: 14px;
       line-height: 1.7;

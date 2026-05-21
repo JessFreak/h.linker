@@ -114,7 +114,24 @@
                       <mat-icon class="quote-icon">format_quote</mat-icon>
                       <p class="review-text h-text-secondary">{{ review.comment }}</p>
 
-                      <div class="carousel-meta-footer">
+                      @if (review.strengths || review.weaknesses) {
+                        <div class="feedback-split">
+                          @if (review.strengths) {
+                            <div class="feedback-block is-strength">
+                              <span class="fb-label"><mat-icon>add_circle_outline</mat-icon> Strengths</span>
+                              <p>{{ review.strengths }}</p>
+                            </div>
+                          }
+                          @if (review.weaknesses) {
+                            <div class="feedback-block is-weakness">
+                              <span class="fb-label"><mat-icon>remove_circle_outline</mat-icon> Areas for Improvement</span>
+                              <p>{{ review.weaknesses }}</p>
+                            </div>
+                          }
+                        </div>
+                      }
+
+                      <div class="carousel-meta-footer mt-6">
                         <span class="juror-author tech-data">Reviewed by &#64;{{ review.juror }}</span>
 
                         @if (teamReviews().length > 1) {

@@ -88,9 +88,7 @@ export class HackathonService {
   }
 
   getMySubmissionReviews(id: string): Observable<TeamReviewsResponse> {
-    return this.http.get<TeamReviewsResponse>(
-      `${this.baseUrl}/${id}/reviews`,
-    );
+    return this.http.get<TeamReviewsResponse>(`${this.baseUrl}/${id}/reviews`);
   }
 
   registerTeam(hackathonId: string, teamId: string): Observable<void> {
@@ -126,10 +124,14 @@ export class HackathonService {
     );
   }
 
-  submitComment(id: string, projectId: string, text: string): Observable<void> {
+  submitComment(
+    id: string,
+    projectId: string,
+    payload: { summary: string; strengths?: string; weaknesses?: string },
+  ): Observable<void> {
     return this.http.post<void>(
       `${this.baseUrl}/${id}/projects/${projectId}/comment`,
-      { text },
+      payload,
     );
   }
 }

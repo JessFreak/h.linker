@@ -1,7 +1,7 @@
 .h-submission-layout {
   background-color: var(--h-bg-deep-navy);
   min-height: calc(100vh - 64px);
-  padding: 60px 20px;
+  padding: 40px 20px 120px;
 }
 
 .h-container-narrow {
@@ -10,69 +10,118 @@
 }
 
 .submission-header {
-  display: flex;
-  align-items: center;
-  gap: 20px;
   margin-bottom: 40px;
 
-  h1 { margin: 0; font-size: 28px; font-weight: 700; }
+  .header-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+
+    .back-btn {
+      background: rgba(255, 255, 255, 0.05);
+      margin-top: 4px;
+      &:hover { background: rgba(255, 255, 255, 0.1); }
+    }
+
+    .titles {
+      h1 { font-size: 36px; font-weight: 800; margin: 0; line-height: 1.1; }
+      p {
+        display: flex; align-items: center; gap: 8px; font-size: 13px; opacity: 0.7;
+        .sm-icon { font-size: 16px; width: 16px; height: 16px; }
+        .sep { opacity: 0.3; }
+      }
+    }
+  }
 }
 
 .h-main-stepper {
-  ::ng-deep .mat-horizontal-stepper-header-container {
-    padding: 0 24px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-  }
-
-  ::ng-deep .mat-step-header .mat-step-icon-selected {
-    background-color: var(--h-primary-blue);
-  }
+  background: transparent !important;
+  ::ng-deep .mat-horizontal-stepper-header-container { margin-bottom: 32px; }
 }
 
-.step-content {
-  padding: 32px 8px;
-  display: flex;
-  flex-direction: column;
-
-  .step-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-top: 40px;
-    padding-top: 24px;
-    border-top: 1px solid rgba(255,255,255,0.05);
-  }
+.h-step-content {
+  background: var(--h-surface-gray);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-.review-summary {
+.h-form-column {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 20px;
-  background: rgba(255,255,255,0.02);
-  border-radius: 8px;
-  border-left: 4px solid var(--h-primary-blue);
+}
+
+.step-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+
+  button { height: 42px; padding: 0 24px; border-radius: 6px; font-weight: 600; }
+
+  .submit-btn {
+    background-color: #238636;
+    color: white;
+    &:not([disabled]):hover { background-color: #2ea043; }
+  }
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.review-summary {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 24px;
 
   .review-item {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    font-size: 14px;
+    margin-bottom: 20px;
+
+    .r-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+    .r-value { font-size: 18px; font-weight: 600; color: white; }
+
+    .code-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--h-primary-blue);
+      text-decoration: none;
+      font-size: 14px;
+      background: rgba(65, 105, 165, 0.1);
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: 1px dashed rgba(65, 105, 165, 0.3);
+      width: fit-content;
+      transition: all 0.2s;
+
+      mat-icon { font-size: 18px; width: 18px; height: 18px; }
+      &:hover { background: rgba(65, 105, 165, 0.2); }
+    }
+  }
+
+  .members-box {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 20px;
   }
 }
 
-.mb-6 { margin-bottom: 24px; }
+.mt-2 { margin-top: 8px; }
+.mt-4 { margin-top: 16px; }
+.mt-6 { margin-top: 24px; }
 .mt-8 { margin-top: 32px; }
-
-.info-note {
-  background: rgba(65, 105, 165, 0.1);
-  border-left: 3px solid var(--h-primary-blue);
-  padding: 16px;
-  border-radius: 8px;
-  display: flex;
-  gap: 12px;
-  align-items: center;
-
-  mat-icon { color: var(--h-primary-blue); }
-  p { margin: 0; font-size: 13px; }
-}
+.mb-3 { margin-bottom: 12px; }
+.block { display: block; }

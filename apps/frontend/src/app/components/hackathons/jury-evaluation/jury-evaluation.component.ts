@@ -34,7 +34,9 @@ import { NotificationService } from '../../../utils/notification.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 export interface EvaluationFormValues {
-  review: string;
+  summary: string;
+  strengths: string;
+  weaknesses: string;
   [criterionId: string]: string | number | null | undefined;
 }
 
@@ -169,7 +171,9 @@ export class JuryEvaluationComponent implements OnInit, OnDestroy {
 
   private buildForm(criteria: CriterionResponse[]) {
     const group: Record<string, unknown> = {
-      review: ['', Validators.maxLength(800)],
+      summary: ['', Validators.maxLength(800)],
+      strengths: ['', Validators.maxLength(500)],
+      weaknesses: ['', Validators.maxLength(500)],
     };
     criteria.forEach((c) => {
       group[c.id] = [0, [Validators.min(1), Validators.max(c.maxValue)]];
@@ -191,7 +195,10 @@ export class JuryEvaluationComponent implements OnInit, OnDestroy {
     const h = this.hackathon();
     if (!sub || !h) return;
 
-    this.evalForm.reset({ review: '' }, { emitEvent: false });
+    this.evalForm.reset(
+      { summary: '', strengths: '', weaknesses: '' },
+      { emitEvent: false },
+    );
 
     const storageKey = `h_linker_draft:${h.id}:${sub.participationId}`;
     const savedDraft = localStorage.getItem(storageKey);
@@ -209,7 +216,9 @@ export class JuryEvaluationComponent implements OnInit, OnDestroy {
       Object.keys(sub.submittedScores).length > 0
     ) {
       const dbValues: Record<string, unknown> = {
-        review: sub.submittedComment || '',
+        summary: sub.submittedComment || '',
+        strengths: sub.submittedStrengths || '',
+        weaknesses: sub.submittedWeaknesses || '',
         ...sub.submittedScores,
       };
       this.evalForm.patchValue(dbValues, { emitEvent: false });
@@ -259,7 +268,7 @@ export class JuryEvaluationComponent implements OnInit, OnDestroy {
     if (!h || !sub || this.evalForm.invalid) return;
 
     const formValues = this.evalForm.value as EvaluationFormValues;
-    const { review, ...criteriaScores } = formValues;
+    const { summary, strengths, weaknesses, ...criteriaScores } = formValues;
 
     const scores: Record<string, number> = {};
     Object.entries(criteriaScores).forEach(([key, val]) => {
@@ -268,7 +277,12 @@ export class JuryEvaluationComponent implements OnInit, OnDestroy {
 
     this.draftStatus.set('Saving evaluation...');
 
-    const hasComment = review && review.trim().length > 0;
+    const hasComment =
+      (summary && summary.trim().length > 0) ||
+      (strengths && strengths.trim().length > 0) ||
+      (weaknesses && weaknesses.trim().length > 0);
+
+    const commentPayload = { summary, strengths, weaknesses };
 
     forkJoin({
       score: this.hackathonService.submitScores(
@@ -277,7 +291,11 @@ export class JuryEvaluationComponent implements OnInit, OnDestroy {
         scores,
       ),
       comment: hasComment
-        ? this.hackathonService.submitComment(h.id, sub.participationId, review)
+        ? this.hackathonService.submitComment(
+            h.id,
+            sub.participationId,
+            commentPayload,
+          )
         : of(null),
     }).subscribe({
       next: () => {
@@ -297,7 +315,7 @@ export class JuryEvaluationComponent implements OnInit, OnDestroy {
                 ? {
                     ...s,
                     submittedScores: scores,
-                    submittedComment: hasComment ? review : '',
+                    submittedComment: hasComment ? summary : '',
                     otherScores: [
                       ...s.otherScores.filter((os) => os.userId !== myId),
                       {
