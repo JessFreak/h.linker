@@ -232,7 +232,7 @@ export class HackathonController {
       user.id,
       hackathonId,
       participationId,
-      dto.text,
+      dto,
     );
   }
 }

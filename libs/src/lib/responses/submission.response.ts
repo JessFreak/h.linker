@@ -17,6 +17,8 @@ export interface JurySubmissionItem {
   otherScores: JurorScoreItem[];
   submittedScores: Record<string, number>;
   submittedComment: string;
+  submittedStrengths?: string;
+  submittedWeaknesses?: string;
 }
 
 export interface JurySubmissionsResponse {
@@ -26,6 +28,8 @@ export interface JurySubmissionsResponse {
 export interface TeamReviewResponse {
   juror: string;
   comment: string;
+  strengths?: string;
+  weaknesses?: string;
 }
 
 export interface TeamReviewsResponse {

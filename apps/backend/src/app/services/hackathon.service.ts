@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { HackathonRepository } from '../database/repositories/hackathon.repository';
 import {
+  AddCommentDto,
   CreateHackathonDTO,
   CriterionDTO,
   HackathonStatus,
@@ -214,16 +215,17 @@ export class HackathonService {
     userId: string,
     hackathonId: string,
     participationId: string,
-    text: string,
+    dto: AddCommentDto,
   ): Promise<void> {
     const jury = await this.juryRepository.getJuryByUserAndHackathon(
       userId,
       hackathonId,
     );
+
     await this.evaluationRepository.upsertComment(
       jury.id,
       participationId,
-      text,
+      dto,
     );
   }
 

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
+import { ReviewUpsertData } from '../entities/review.entity';
 
 @Injectable()
 export class EvaluationRepository {
@@ -30,19 +31,17 @@ export class EvaluationRepository {
   async upsertComment(
     juryId: string,
     participationId: string,
-    text: string,
+    data: ReviewUpsertData,
   ): Promise<void> {
     await this.prisma.review.upsert({
       where: {
         juryId_participationId: { juryId, participationId },
       },
-      update: {
-        summary: text,
-      },
+      update: data,
       create: {
         juryId,
         participationId,
-        summary: text,
+        ...data,
       },
     });
   }

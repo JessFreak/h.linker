@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsObject, IsString, MaxLength } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsObject,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator';
 
 export class SetScoresDto {
   @IsObject()
@@ -10,5 +16,15 @@ export class AddCommentDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(800)
-    text: string;
+    summary: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(500)
+    strengths?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(500)
+    weaknesses?: string;
 }

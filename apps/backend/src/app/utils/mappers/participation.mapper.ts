@@ -101,6 +101,8 @@ export class ParticipationMapper {
 
     const myReview = p.reviews?.find((r) => r.jury.user.id === currentUserId);
     const submittedComment = myReview ? myReview.summary : '';
+    const submittedStrengths = myReview?.strengths || undefined;
+    const submittedWeaknesses = myReview?.weaknesses || undefined;
 
     const otherScores = Object.values(juryScoresMap).map((js) => ({
       userId: js.userId,
@@ -113,7 +115,7 @@ export class ParticipationMapper {
       participationId: p.id,
       teamId: p.teamId,
       teamName: p.team.name,
-      projectTitle: p.projectTitle || 'Untitled Project',
+      projectTitle: p.projectTitle,
       projectDescription: p.projectDescription || '',
       githubRepoUrl: p.githubRepoUrl || '',
       finalScore: p.finalScore,
@@ -121,6 +123,8 @@ export class ParticipationMapper {
       otherScores,
       submittedScores,
       submittedComment,
+      submittedStrengths,
+      submittedWeaknesses,
     };
   }
 
@@ -155,6 +159,8 @@ export class ParticipationMapper {
       reviews: reviews.map((r) => ({
         juror: r.jury.user.username,
         comment: r.summary,
+        strengths: r.strengths || undefined,
+        weaknesses: r.weaknesses || undefined,
       })),
     };
   }

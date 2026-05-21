@@ -1,4 +1,4 @@
-import { Category, HackathonCategory, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 export type FullHackathon = Prisma.HackathonGetPayload<{
   include: {
@@ -9,7 +9,3 @@ export type FullHackathon = Prisma.HackathonGetPayload<{
     _count: { select: { participations: true } };
   };
 }>;
-
-export type HackathonCategoryWithCat = HackathonCategory & {
-  cat: Category;
-};
