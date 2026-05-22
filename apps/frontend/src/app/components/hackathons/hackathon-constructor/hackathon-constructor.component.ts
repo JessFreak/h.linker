@@ -383,7 +383,10 @@ export class HackathonConstructorComponent implements OnInit {
                 c.weight,
                 [Validators.required, Validators.min(1), Validators.max(100)],
               ],
-              maxValue: [c.maxValue || 10],
+              maxValue: [
+                c.maxValue || 10,
+                [Validators.required, Validators.min(1)],
+              ],
             }),
           );
         });
@@ -400,7 +403,7 @@ export class HackathonConstructorComponent implements OnInit {
           10,
           [Validators.required, Validators.min(1), Validators.max(100)],
         ],
-        maxValue: [10],
+        maxValue: [10, [Validators.required, Validators.min(1)]],
       }),
     );
   }

@@ -189,24 +189,29 @@
               <app-hackathon-weight-preview [criteria]="criteriaArray.value"
                                             matTooltip="Visual distribution of criteria weights">
               </app-hackathon-weight-preview>
-              <div style="margin-bottom: 24px;"></div>
+
+              <div class="criteria-grid-header h-text-secondary mt-8">
+                <div>Criterion Name</div>
+                <div class="text-center">Max Pts</div>
+                <div class="text-center">Weight (%)</div>
+                <div></div>
+              </div>
             }
 
-            <div formArrayName="criteria">
+            <div formArrayName="criteria" class="criteria-list">
               @for (item of criteriaArray.controls; track item; let i = $index) {
-                <div [formGroup]="item" class="h-connection-item">
-                  <div class="h-item-body">
-                    <mat-form-field appearance="outline" style="flex: 3" subscriptSizing="dynamic">
-                      <input matInput formControlName="name" placeholder="Criteria Name (e.g. Innovation)"
-                             matTooltip="Name of the evaluation parameter">
-                    </mat-form-field>
+                <div [formGroup]="item" class="criterion-row">
+                  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                    <input matInput formControlName="name" placeholder="e.g. Innovation">
+                  </mat-form-field>
 
-                    <mat-form-field style="width: 90px" appearance="outline" subscriptSizing="dynamic"
-                                    matTooltip="Percentage weight (importance) of this criterion">
-                      <input matInput type="number" formControlName="weight">
-                      <span matSuffix>%</span>
-                    </mat-form-field>
-                  </div>
+                  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                    <input matInput type="number" formControlName="maxValue" placeholder="10" min="1" class="text-center tech-data">
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                    <input matInput type="number" formControlName="weight" placeholder="50" class="text-center tech-data">
+                  </mat-form-field>
 
                   <button mat-icon-button color="warn" type="button"
                           (click)="removeCriterion(i)"
@@ -218,7 +223,7 @@
             </div>
 
             @if (totalWeight() !== 100) {
-              <div class="h-item-note" matTooltip="The sum of all weights must be exactly 100%">
+              <div class="h-item-note mt-4" matTooltip="The sum of all weights must be exactly 100%">
                 <mat-icon>warning</mat-icon>
                 <p>Total weight must be exactly <strong>100%</strong>. Current: {{ totalWeight() }}%</p>
               </div>
