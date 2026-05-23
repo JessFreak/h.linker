@@ -30,6 +30,11 @@ export class ParticipationRepository {
       },
       include: {
         team: true,
+        scores: {
+          include: {
+            criterion: true,
+          },
+        },
       },
     });
   }

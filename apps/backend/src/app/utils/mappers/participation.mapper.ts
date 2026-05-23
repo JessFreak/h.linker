@@ -19,21 +19,55 @@ type ParticipationWithHackathon = Participation & { hackathon: Hackathon };
 
 export class ParticipationMapper {
   static getRegistrationStatusResponse(
-    registration: ParticipationWithTeam,
+    registration: ParticipationWithTeam | null,
   ): UserRegistrationStatusResponse {
+    if (!registration) {
+      return { isRegistered: false, team: null, submission: null };
+    }
+
+    let criteriaScores = undefined;
+
+    if (registration.scores && registration.scores.length > 0) {
+      const criteriaMap = new Map<
+        string,
+        { name: string; maxValue: number; sum: number; count: number }
+      >();
+
+      registration.scores.forEach((score) => {
+        const critId = score.criterionId;
+        if (!criteriaMap.has(critId)) {
+          criteriaMap.set(critId, {
+            name: score.criterion.name,
+            maxValue: score.criterion.maxValue || 10,
+            sum: 0,
+            count: 0,
+          });
+        }
+        const entry = criteriaMap.get(critId);
+        entry.sum += score.value;
+        entry.count += 1;
+      });
+
+      criteriaScores = Array.from(criteriaMap.entries()).map(
+        ([criterionId, data]) => ({
+          criterionId,
+          name: data.name,
+          score: Number((data.sum / data.count).toFixed(1)),
+          maxValue: data.maxValue,
+        }),
+      );
+    }
+
     return {
-      isRegistered: !!registration,
-      team: registration
-        ? TeamMapper.getDetailResponse(registration.team)
-        : null,
-      submission: registration
-        ? {
-            title: registration.projectTitle,
-            description: registration.projectDescription,
-            repoUrl: registration.githubRepoUrl,
-            finalScore: registration.finalScore,
-          }
-        : null,
+      isRegistered: true,
+      team: TeamMapper.getDetailResponse(registration.team),
+      submission: {
+        title: registration.projectTitle,
+        description: registration.projectDescription,
+        repoUrl: registration.githubRepoUrl,
+        finalScore: registration.finalScore,
+        criteriaScores,
+      },
     };
   }
 

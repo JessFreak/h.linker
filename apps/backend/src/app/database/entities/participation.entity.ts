@@ -1,4 +1,4 @@
-import { Participation, Prisma, Team } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 export type ReviewWithJuryData = Prisma.ReviewGetPayload<{
   include: {
@@ -10,9 +10,16 @@ export type ReviewWithJuryData = Prisma.ReviewGetPayload<{
   };
 }>;
 
-export type ParticipationWithTeam = Participation & {
-  team: Team;
-};
+export type ParticipationWithTeam = Prisma.ParticipationGetPayload<{
+  include: {
+    team: true;
+    scores: {
+      include: {
+        criterion: true;
+      };
+    };
+  };
+}>;
 
 export type ParticipationWithScoresAndReviews = Prisma.ParticipationGetPayload<{
   include: {

@@ -1,5 +1,6 @@
 import { UserResponse } from './user.response';
 import { MemberStatus, MemberType } from '../dtos/member.dto';
+import { CriterionScoreDetail } from './registration.response';
 
 export interface TeamMemberResponse extends UserResponse {
   roleName: string;
@@ -19,6 +20,7 @@ export interface TeamParticipationResponse {
   projectDescription: string | null;
   githubRepoUrl: string | null;
   finalScore: number;
+  criteriaScores?: CriterionScoreDetail[];
 }
 
 export interface TeamResponse {
