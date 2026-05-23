@@ -86,6 +86,47 @@
   h4 { font-size: 20px; margin-bottom: 12px; }
 }
 
+.detailed-scores {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 16px;
+
+  .score-breakdown-item {
+    margin-bottom: 12px;
+
+    .sb-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+
+      .sb-name {
+        font-size: 13px;
+        opacity: 0.9;
+      }
+
+      .sb-val {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--h-primary-blue);
+      }
+    }
+
+    ::ng-deep .mat-mdc-progress-bar {
+      height: 4px;
+      border-radius: 2px;
+      .mdc-linear-progress__bar-inner {
+        border-color: var(--h-primary-blue);
+      }
+    }
+  }
+}
+
+.h-caption {
+  font-size: 12px;
+  opacity: 0.5;
+  text-align: center;
+}
+
 .h-reviews-carousel {
   .carousel-card-body {
     position: relative;

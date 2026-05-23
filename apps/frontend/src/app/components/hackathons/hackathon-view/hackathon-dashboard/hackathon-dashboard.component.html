@@ -80,10 +80,23 @@
                 {{ currentRank() ? 'Rank #' + currentRank() : 'Unranked' }}
               </div>
             </div>
-            <div class="mini-chart mt-4">
-              <div class="chart-line"></div>
-              <div class="chart-dot"></div>
-            </div>
+
+            @if (registration()?.submission?.criteriaScores?.length) {
+              <div class="detailed-scores mt-6">
+                <div class="section-label" style="font-size: 10px; margin-bottom: 12px;">SCORE BREAKDOWN</div>
+                @for (crit of registration()?.submission?.criteriaScores; track crit.criterionId) {
+                  <div class="score-breakdown-item">
+                    <div class="sb-header">
+                      <span class="sb-name">{{ crit.name }}</span>
+                      <span class="sb-val tech-data">{{ crit.score | number:'1.1-1' }} / {{ crit.maxValue }}</span>
+                    </div>
+                    <mat-progress-bar mode="determinate" [value]="(crit.score / crit.maxValue) * 100"></mat-progress-bar>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="h-text-secondary h-caption mt-4">Detailed breakdown will appear after jury evaluation.</p>
+            }
           </mat-card>
         </div>
 
