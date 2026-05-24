@@ -20,7 +20,8 @@
 
           <div class="user-info">
             <h1>{{ userData.firstName }} {{ userData.lastName }}</h1>
-            <span class="username" [matTooltip]="'Unique handle: @' + userData.username">&#64;{{ userData.username }}</span>
+            <span class="username"
+                  [matTooltip]="'Unique handle: @' + userData.username">&#64;{{ userData.username }}</span>
             <p class="bio">{{ userData.bio || 'No bio provided' }}</p>
           </div>
 
@@ -31,12 +32,14 @@
                  [href]="'https://github.com/' + userData.githubUsername"
                  target="_blank"
                  matTooltip="View GitHub profile in a new tab">
-                <mat-icon>code</mat-icon> GitHub Profile
+                <mat-icon>code</mat-icon>
+                GitHub Profile
               </a>
             </div>
           } @else {
             <div class="social-links">
-              <span class="h-text-secondary" style="font-size: 12px;" matTooltip="This user hasn't linked a GitHub account yet">
+              <span class="h-text-secondary" style="font-size: 12px;"
+                    matTooltip="This user hasn't linked a GitHub account yet">
                 GitHub not connected
               </span>
             </div>
@@ -48,7 +51,8 @@
                       routerLink="/profile/settings"
                       class="edit-btn"
                       matTooltip="Edit your bio, skills and integrations">
-                <mat-icon>settings</mat-icon> Manage Profile
+                <mat-icon>settings</mat-icon>
+                Manage Profile
               </button>
             </div>
           }
@@ -80,7 +84,8 @@
           <mat-card class="h-card insights-card">
             <div class="card-header">
               <div class="header-title" matTooltip="Real-time metrics from linked GitHub account">
-                <mat-icon>analytics</mat-icon> <span>GitHub Insights</span>
+                <mat-icon>analytics</mat-icon>
+                <span>GitHub Insights</span>
               </div>
             </div>
 
@@ -113,7 +118,8 @@
                       <span class="lang-name" style="font-size: 12px;">{{ lang.name }}</span>
                       <span class="lang-percent" style="font-size: 11px; opacity: 0.7;">{{ lang.percent }}%</span>
                     </div>
-                    <mat-progress-bar mode="determinate" [value]="lang.percent" style="height: 6px; border-radius: 3px;"></mat-progress-bar>
+                    <mat-progress-bar mode="determinate" [value]="lang.percent"
+                                      style="height: 6px; border-radius: 3px;"></mat-progress-bar>
                   </div>
                 }
               </div>
@@ -210,8 +216,8 @@
                         <div>
                           @if (project.finalScore) {
                             <span class="h-badge">
-                  Score: {{ project.finalScore }}
-                </span>
+    Score: {{ project.finalScore | number:'1.1-1' }}
+  </span>
                           } @else {
                             <span class="h-text-secondary">Not yet rated</span>
                           }
@@ -221,7 +227,8 @@
                                target="_blank"
                                class="view-link"
                                matTooltip="Open source code on GitHub">
-                              Repo <mat-icon>open_in_new</mat-icon>
+                              Repo
+                              <mat-icon>open_in_new</mat-icon>
                             </a>
                           }
                         </div>
