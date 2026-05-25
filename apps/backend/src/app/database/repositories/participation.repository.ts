@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { Prisma, UserTeamStatus } from '@prisma/client';
+import { HackathonStatus, Prisma, UserTeamStatus } from '@prisma/client';
 import {
   LeaderboardRow,
   ParticipationWithScoresAndReviews,
   ParticipationWithTeam,
   ReviewWithJuryData,
 } from '../entities/participation.entity';
+import { ShowcaseParticipationData } from '../entities/project.entity';
 
 @Injectable()
 export class ParticipationRepository {
@@ -138,6 +139,32 @@ export class ParticipationRepository {
         jury: {
           include: {
             user: true,
+          },
+        },
+      },
+    });
+  }
+
+  async getTopShowcaseProjects(): Promise<ShowcaseParticipationData[]> {
+    return this.prisma.participation.findMany({
+      where: {
+        githubRepoUrl: { not: null },
+        finalScore: { gt: 0 },
+        hackathon: {
+          status: HackathonStatus.FINISHED,
+        },
+      },
+      include: {
+        team: {
+          include: {
+            members: {
+              where: { status: UserTeamStatus.ACCEPTED },
+            },
+          },
+        },
+        hackathon: {
+          include: {
+            criteria: true,
           },
         },
       },

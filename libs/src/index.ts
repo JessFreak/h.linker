@@ -13,3 +13,4 @@ export * from './lib/responses/hackathon.response';
 export * from './lib/responses/category.response';
 export * from './lib/responses/registration.response';
 export * from './lib/responses/submission.response';
+export * from './lib/responses/project.response';
