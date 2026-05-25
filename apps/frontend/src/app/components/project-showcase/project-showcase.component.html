@@ -65,6 +65,14 @@
               {{ project.projectDescription.length > 120 ? '...' : '' }}
             </p>
 
+            @if (project.categories && project.categories.length > 0) {
+              <div class="project-categories">
+                @for (cat of project.categories; track cat) {
+                  <span class="category-chip">{{ cat }}</span>
+                }
+              </div>
+            }
+
             <div class="card-footer">
               <div class="absolute-score h-text-secondary tech-data" [matTooltip]="'Score: ' + project.finalScore + ' out of ' + project.maxScore">
                 {{ project.finalScore | number:'1.1-1' }} <small>/ {{ project.maxScore }} pts</small>

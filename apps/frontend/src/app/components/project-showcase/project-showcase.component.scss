@@ -40,7 +40,7 @@
 }
 
 .project-card {
-  padding: 0 !important; /* Перевизначаємо padding з .h-card */
+  padding: 0 !important;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -167,8 +167,26 @@
     .project-desc {
       font-size: 14px;
       line-height: 1.6;
-      margin-bottom: 24px;
+      margin-bottom: 16px;
       flex: 1;
+    }
+
+    .project-categories {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+
+      .category-chip {
+        font-size: 11px;
+        font-weight: 500;
+        padding: 4px 12px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.7);
+        white-space: nowrap;
+      }
     }
 
     .card-footer {
