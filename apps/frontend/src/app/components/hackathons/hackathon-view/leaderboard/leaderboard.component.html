@@ -46,6 +46,9 @@
                 </div>
 
                 <h3 [routerLink]="['/teams', team.teamId]">{{ team.teamName }}</h3>
+                <span class="team-size-badge" matTooltip="Team size">
+                <mat-icon>groups</mat-icon> {{ team.memberCount }}
+              </span>
 
                 <div class="score-display tech-data">
                   <span class="val">{{ team.score | number:'1.1-1' }}</span>
@@ -68,6 +71,10 @@
 
             <div class="team-col">
               <span class="team-name">{{ team.teamName }}</span>
+              <span class="team-size-badge" matTooltip="Team size">
+                <mat-icon>groups</mat-icon> {{ team.memberCount }}
+              </span>
+
               @if (team.rank === 1) {
                 <span class="row-badge winner-badge uppercase">Leader</span>
               }
