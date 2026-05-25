@@ -108,6 +108,10 @@ export class ParticipationRepository {
         team: {
           select: {
             name: true,
+            members: {
+              where: { status: 'ACCEPTED' },
+              select: { id: true },
+            },
           },
         },
       },

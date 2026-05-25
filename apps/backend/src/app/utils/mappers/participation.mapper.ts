@@ -182,6 +182,7 @@ export class ParticipationMapper {
         teamId: p.teamId,
         teamName: p.team.name,
         score: p.finalScore,
+        memberCount: p.team.members.length,
       })),
     };
   }

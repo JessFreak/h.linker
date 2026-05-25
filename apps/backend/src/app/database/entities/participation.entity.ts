@@ -51,5 +51,6 @@ export type LeaderboardRow = {
   finalScore: number;
   team: {
     name: string;
+    members: { id: string }[];
   };
-}
+};

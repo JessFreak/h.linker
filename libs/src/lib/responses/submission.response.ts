@@ -41,6 +41,7 @@ export interface LeaderboardItem {
   teamId: string;
   teamName: string;
   score: number;
+  memberCount: number;
 }
 
 export interface LeaderboardResponse {
