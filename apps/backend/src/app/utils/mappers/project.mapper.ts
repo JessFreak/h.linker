@@ -28,6 +28,7 @@ export class ProjectMapper {
       finalScore: Number(p.finalScore.toFixed(1)),
       maxScore: Number(maxScore.toFixed(1)),
       scorePercentage: Number(scorePercentage.toFixed(1)),
+      categories: p.hackathon.categories.map((c) => c.category),
     };
   }
 

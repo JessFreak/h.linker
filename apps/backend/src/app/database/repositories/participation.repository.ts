@@ -165,6 +165,7 @@ export class ParticipationRepository {
         hackathon: {
           include: {
             criteria: true,
+            categories: true,
           },
         },
       },

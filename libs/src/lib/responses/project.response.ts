@@ -11,6 +11,7 @@ export interface ShowcaseProjectResponse {
   finalScore: number;
   maxScore: number;
   scorePercentage: number;
+  categories: string[];
 }
 
 export interface ProjectShowcaseResponse {

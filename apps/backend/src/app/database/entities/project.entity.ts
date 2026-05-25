@@ -12,6 +12,7 @@ export type ShowcaseParticipationData = Prisma.ParticipationGetPayload<{
     hackathon: {
       include: {
         criteria: true;
+        categories: true;
       };
     };
   };
