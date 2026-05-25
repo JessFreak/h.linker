@@ -1,0 +1,92 @@
+<div class="showcase-layout">
+  <header class="showcase-header">
+    <h1 class="mat-headline-1">Project Showcase</h1>
+    <p class="h-text-secondary">Discover top-tier solutions from past hackathons</p>
+
+    <div class="stats-row tech-data mt-4">
+      <span matTooltip="Total number of showcased projects">Top {{ projects().length }} projects</span>
+      <span class="sep">•</span>
+      <span matTooltip="Projects are sorted by their normalized percentage score">Ranked by Jury Score</span>
+      <span class="sep">•</span>
+      <span matTooltip="All projects include links to their public repositories">Open source code</span>
+    </div>
+  </header>
+
+  @if (isLoading()) {
+    <div class="h-loader-full" style="display: flex; flex-direction: column; align-items: center; margin-top: 80px;">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p class="h-text-secondary mt-4">Loading top projects...</p>
+    </div>
+  } @else {
+    <div class="showcase-grid h-container">
+      @for (project of projects(); track project.participationId; let i = $index) {
+        <mat-card class="h-card project-card clickable-card" [routerLink]="['/events', project.hackathonSlug]">
+
+          <div class="card-banner" [style.background-image]="project.hackathonImageUrl ? 'url(' + project.hackathonImageUrl + ')' : null">
+            <div class="banner-overlay"></div>
+
+            <div class="banner-top-bar">
+              <span class="hackathon-tag h-truncate" [matTooltip]="'Hackathon title'">
+                {{ project.hackathonTitle }}
+              </span>
+
+              <div class="rank-badge tech-data" [class]="getRankClass(i)" [matTooltip]="'Ranked #' + (i + 1) + ' among all showcase projects'">
+                @if (i === 0) { 🏆 1st }
+                @else if (i === 1) { 🥈 2nd }
+                @else if (i === 2) { 🥉 3rd }
+                @else { #{{ i + 1 }} }
+              </div>
+            </div>
+
+            @if (!project.hackathonImageUrl) {
+              <mat-icon class="bg-icon">emoji_objects</mat-icon>
+            }
+          </div>
+
+          <div class="card-content">
+            <div class="content-header">
+              <h2 class="project-title h-truncate" [matTooltip]="'Project title'">
+                {{ project.projectTitle }}
+              </h2>
+              <div class="score-box" matTooltip="Overall success rate">
+                <mat-icon>star</mat-icon>
+                <span class="tech-data">{{ project.scorePercentage | number:'1.1-1' }}%</span>
+              </div>
+            </div>
+
+            <div class="team-info h-text-secondary" matTooltip="Team name and participant count">
+              <mat-icon>groups</mat-icon>
+              <span class="h-truncate">{{ project.teamName }}</span>
+              <span style="opacity: 0.5;">({{ project.memberCount }} members)</span>
+            </div>
+
+            <p class="project-desc h-text-secondary" [matTooltip]="'Project description'">
+              {{ (project.projectDescription | slice:0:120) || 'No description provided.' }}
+              {{ project.projectDescription.length > 120 ? '...' : '' }}
+            </p>
+
+            <div class="card-footer">
+              <div class="absolute-score h-text-secondary tech-data" [matTooltip]="'Score: ' + project.finalScore + ' out of ' + project.maxScore">
+                {{ project.finalScore | number:'1.1-1' }} <small>/ {{ project.maxScore }} pts</small>
+              </div>
+
+              <a mat-flat-button color="primary" class="github-btn"
+                 [href]="project.githubRepoUrl"
+                 target="_blank"
+                 (click)="$event.stopPropagation()"
+                 matTooltip="View source code on GitHub">
+                <mat-icon>code</mat-icon> Repository
+              </a>
+            </div>
+          </div>
+        </mat-card>
+      } @empty {
+        <div class="empty-state" style="grid-column: 1 / -1; text-align: center; padding: 80px 0;">
+          <mat-icon style="font-size: 64px; width: 64px; height: 64px; color: rgba(255,255,255,0.1);">lightbulb_off</mat-icon>
+          <h2 class="mt-4">No projects found</h2>
+          <p class="h-text-secondary">Finished hackathons with public projects will appear here.</p>
+        </div>
+      }
+    </div>
+  }
+</div>

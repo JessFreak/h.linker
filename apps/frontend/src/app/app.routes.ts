@@ -16,6 +16,7 @@ import { HackathonDashboardComponent } from './components/hackathons/hackathon-v
 import { HackathonSubmissionComponent } from './components/hackathons/hackathon-view/hackathon-dashboard/hackathon-submission/hackathon-submission.component';
 import { LeaderboardComponent } from './components/hackathons/hackathon-view/leaderboard/leaderboard.component';
 import { JuryEvaluationComponent } from './components/hackathons/jury-evaluation/jury-evaluation.component';
+import { ProjectShowcaseComponent } from './components/project-showcase/project-showcase.component';
 
 export const appRoutes: Route[] = [
   { path: '', component: MainPageComponent, pathMatch: 'full' },
@@ -61,6 +62,6 @@ export const appRoutes: Route[] = [
     component: JuryEvaluationComponent,
     canActivate: [authGuard],
   },
-
+  { path: 'showcase', component: ProjectShowcaseComponent },
   { path: '**', redirectTo: '' },
 ];

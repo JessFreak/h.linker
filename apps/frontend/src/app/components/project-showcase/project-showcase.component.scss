@@ -1,0 +1,196 @@
+.showcase-layout {
+  min-height: calc(100vh - 64px);
+  padding-bottom: 80px;
+}
+
+.showcase-header {
+  text-align: center;
+  padding: 60px 20px 40px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 100%);
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+  margin-bottom: 40px;
+
+  h1 { margin-bottom: 8px; font-weight: 800; }
+
+  .stats-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 24px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.7);
+    font-size: 12px;
+
+    .sep { opacity: 0.3; }
+  }
+}
+
+.h-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 24px;
+}
+
+.project-card {
+  padding: 0 !important; /* Перевизначаємо padding з .h-card */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &.clickable-card {
+    cursor: pointer;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+    border-color: rgba(255,255,255,0.1) !important;
+  }
+
+  .card-banner {
+    position: relative;
+    height: 160px;
+    background-color: rgba(0,0,0,0.2);
+    background-size: cover;
+    background-position: center;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    .banner-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.8) 100%);
+      z-index: 1;
+    }
+
+    .bg-icon {
+      font-size: 120px;
+      width: 120px;
+      height: 120px;
+      color: rgba(255,255,255,0.03);
+      transform: rotate(15deg);
+      z-index: 0;
+    }
+
+    .banner-top-bar {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      z-index: 2;
+
+      .hackathon-tag {
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(4px);
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        border: 1px solid rgba(255,255,255,0.1);
+        max-width: 60%;
+      }
+
+      .rank-badge {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 800;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+
+        &.rank-1 { background: #D4AF37; color: #000; }
+        &.rank-2 { background: #C0C0C0; color: #000; }
+        &.rank-3 { background: #CD7F32; color: #000; }
+        &.rank-default { background: var(--h-surface-gray); border: 1px solid rgba(255,255,255,0.1); }
+      }
+    }
+  }
+
+  .card-content {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    .content-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 8px;
+
+      .project-title {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0;
+        flex: 1;
+      }
+
+      .score-box {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: #f1e05a;
+        background: rgba(241, 224, 90, 0.1);
+        padding: 4px 8px;
+        border-radius: 6px;
+
+        mat-icon { font-size: 16px; width: 16px; height: 16px; }
+        span { font-weight: 700; font-size: 13px; }
+      }
+    }
+
+    .team-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      margin-bottom: 16px;
+
+      mat-icon { font-size: 18px; width: 18px; height: 18px; }
+    }
+
+    .project-desc {
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      flex: 1;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 20px;
+      border-top: 1px dashed rgba(255,255,255,0.1);
+
+      .absolute-score {
+        font-size: 16px;
+        font-weight: 700;
+        small { font-size: 12px; opacity: 0.5; }
+      }
+
+      .github-btn {
+        background: rgba(255,255,255,0.05);
+        color: white;
+        &:hover { background: rgba(255,255,255,0.1); }
+      }
+    }
+  }
+}
+
+.mt-4 { margin-top: 16px; }
