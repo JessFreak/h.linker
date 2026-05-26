@@ -193,6 +193,8 @@ model Score {
   criterionId     String @map("criterion_id")
   value           Float
 
+  createdAt DateTime @default(now()) @map("created_at")
+
   jury          Jury          @relation(fields: [juryId], references: [id], onDelete: Cascade)
   participation Participation @relation(fields: [participationId], references: [id], onDelete: Cascade)
   criterion     Criterion     @relation(fields: [criterionId], references: [id], onDelete: Cascade)
@@ -207,6 +209,8 @@ model Review {
   summary         String
   strengths       String?
   weaknesses      String?
+
+  createdAt DateTime @default(now()) @map("created_at")
 
   participation Participation @relation(fields: [participationId], references: [id], onDelete: Cascade)
   jury          Jury          @relation(fields: [juryId], references: [id], onDelete: Cascade)

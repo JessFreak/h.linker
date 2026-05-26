@@ -57,3 +57,23 @@ export interface FullHackathonResponse extends HackathonResponse {
 export interface HackathonsResponse {
   hackathons: FullHackathonResponse[];
 }
+
+export interface InsightDataPoint {
+  label: string;
+  value: number;
+}
+
+export interface HackathonInsightsResponse {
+  stats: {
+    totalTeams: number;
+    totalParticipants: number;
+    totalSubmissions: number;
+    averageScore: number;
+  };
+  charts: {
+    roleDistribution: InsightDataPoint[];
+    submissionTimeline: InsightDataPoint[];
+    juryActivityTimeline: InsightDataPoint[];
+    scoreDistribution: InsightDataPoint[];
+  };
+}

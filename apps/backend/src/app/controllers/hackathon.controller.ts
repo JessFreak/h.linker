@@ -17,6 +17,7 @@ import {
   AddJuryDTO,
   CreateHackathonDTO,
   FullHackathonResponse,
+  HackathonInsightsResponse,
   HackathonsResponse,
   JurySubmissionsResponse,
   LeaderboardResponse,
@@ -234,5 +235,13 @@ export class HackathonController {
       participationId,
       dto,
     );
+  }
+
+  @Get(':id/insights')
+  @Access('ADMIN')
+  async getInsights(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<HackathonInsightsResponse> {
+    return this.hackathonService.getInsights(id);
   }
 }

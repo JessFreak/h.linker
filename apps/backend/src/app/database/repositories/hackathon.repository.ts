@@ -76,4 +76,23 @@ export class HackathonRepository {
   async deleteById(id: string): Promise<void> {
     await this.prisma.hackathon.delete({ where: { id } });
   }
+
+  async getInsightsData(hackathonId: string) {
+    return this.prisma.hackathon.findUnique({
+      where: { id: hackathonId },
+      include: {
+        participations: {
+          include: {
+            team: {
+              include: {
+                members: { where: { status: 'ACCEPTED' } },
+              },
+            },
+            scores: true,
+            reviews: true,
+          },
+        },
+      },
+    });
+  }
 }
