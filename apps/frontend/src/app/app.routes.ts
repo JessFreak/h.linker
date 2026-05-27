@@ -17,6 +17,9 @@ import { HackathonSubmissionComponent } from './components/hackathons/hackathon-
 import { LeaderboardComponent } from './components/hackathons/hackathon-view/leaderboard/leaderboard.component';
 import { JuryEvaluationComponent } from './components/hackathons/jury-evaluation/jury-evaluation.component';
 import { ProjectShowcaseComponent } from './components/project-showcase/project-showcase.component';
+import {
+  HackathonInsightsComponent
+} from './components/hackathons/hackathon-view/hackathon-insights/hackathon-insights.component';
 
 export const appRoutes: Route[] = [
   { path: '', component: MainPageComponent, pathMatch: 'full' },
@@ -45,6 +48,7 @@ export const appRoutes: Route[] = [
   },
 
   { path: 'events/:slug', component: HackathonViewComponent },
+  { path: 'events/:id/insights', component: HackathonInsightsComponent },
   {
     path: 'events/:slug/dashboard',
     component: HackathonDashboardComponent,

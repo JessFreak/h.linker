@@ -1,0 +1,77 @@
+<div class="h-page-layout insights-layout">
+  <div class="full-width">
+    <header class="insights-header">
+      <button mat-icon-button [routerLink]="slug ? ['/events', slug] : ['/events']" matTooltip="Back to Event">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div>
+        <h1 class="mat-headline-1">Event Analytics</h1>
+        <p class="h-text-secondary tech-data uppercase">Organizer Dashboard</p>
+      </div>
+    </header>
+
+    @if (isLoading()) {
+      <div class="h-loader-full" style="text-align: center; margin-top: 100px;">
+        <mat-spinner diameter="50" style="margin: 0 auto;"></mat-spinner>
+        <p class="h-text-secondary mt-4">Analyzing hackathon data...</p>
+      </div>
+    } @else if (insights(); as data) {
+
+      <div class="stats-grid">
+        <mat-card class="h-card stat-card">
+          <mat-icon class="stat-icon" style="color: #58a6ff;">groups</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value tech-data">{{ data.stats.totalParticipants }}</span>
+            <span class="stat-label section-label">Participants</span>
+          </div>
+        </mat-card>
+
+        <mat-card class="h-card stat-card">
+          <mat-icon class="stat-icon" style="color: #3fb950;">workspaces</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value tech-data">{{ data.stats.totalTeams }}</span>
+            <span class="stat-label section-label">Teams Formed</span>
+          </div>
+        </mat-card>
+
+        <mat-card class="h-card stat-card">
+          <mat-icon class="stat-icon" style="color: var(--h-safety-orange);">publish</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value tech-data">{{ data.stats.totalSubmissions }}</span>
+            <span class="stat-label section-label">Projects Submitted</span>
+          </div>
+        </mat-card>
+
+        <mat-card class="h-card stat-card">
+          <mat-icon class="stat-icon" style="color: var(--h-primary-blue);">star</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value tech-data">{{ data.stats.averageScore | number:'1.1-1' }}</span>
+            <span class="stat-label section-label">Avg. Score</span>
+          </div>
+        </mat-card>
+      </div>
+
+      <div class="charts-grid mt-6">
+        <mat-card class="h-card chart-card">
+          <div class="section-label">Submission Timeline</div>
+          <div echarts [options]="submissionChartOption()" class="chart-container"></div>
+        </mat-card>
+
+        <mat-card class="h-card chart-card">
+          <div class="section-label">Participant Roles</div>
+          <div echarts [options]="roleChartOption()" class="chart-container"></div>
+        </mat-card>
+
+        <mat-card class="h-card chart-card">
+          <div class="section-label">Score Distribution</div>
+          <div echarts [options]="scoreChartOption()" class="chart-container"></div>
+        </mat-card>
+
+        <mat-card class="h-card chart-card">
+          <div class="section-label">Jury Activity</div>
+          <div echarts [options]="juryChartOption()" class="chart-container"></div>
+        </mat-card>
+      </div>
+    }
+  </div>
+</div>

@@ -21,6 +21,12 @@
                 }
 
                 @if (isCreator()) {
+                  <button mat-flat-button style="background: rgba(255,255,255,0.1); color: white;"
+                          [routerLink]="['/events', h.id, 'insights']"
+                          [queryParams]="{ slug: h.slug }" matTooltip="View advanced event analytics">
+                    <mat-icon>analytics</mat-icon> Event Insights
+                  </button>
+
                   <button mat-flat-button color="accent" class="h-edit-btn"
                           [routerLink]="['/events/constructor']" [queryParams]="{ id: h.id }">
                     <mat-icon>edit</mat-icon> Edit Event

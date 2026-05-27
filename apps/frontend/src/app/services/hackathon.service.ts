@@ -5,6 +5,7 @@ import {
   AddJuryDTO,
   CreateHackathonDTO,
   FullHackathonResponse,
+  HackathonInsightsResponse,
   HackathonsResponse,
   HackathonStatus,
   JurySubmissionsResponse,
@@ -132,6 +133,12 @@ export class HackathonService {
     return this.http.post<void>(
       `${this.baseUrl}/${id}/projects/${projectId}/comment`,
       payload,
+    );
+  }
+
+  getInsights(id: string): Observable<HackathonInsightsResponse> {
+    return this.http.get<HackathonInsightsResponse>(
+      `${this.baseUrl}/${id}/insights`,
     );
   }
 }
