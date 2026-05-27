@@ -22,6 +22,7 @@ import { SettingsSectionComponent } from '../../../settings/settings-section.com
 import { ConfirmDialogComponent } from '../../../../utils/confirm-dialog.component';
 import { TransferLeaderDialogComponent } from './transfer-leader-dialog.component';
 import { MatTooltip } from '@angular/material/tooltip';
+import { BreadcrumbComponent } from '../../../breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-team-settings',
@@ -41,6 +42,7 @@ import { MatTooltip } from '@angular/material/tooltip';
     SettingsFooterComponent,
     SettingsSectionComponent,
     MatTooltip,
+    BreadcrumbComponent,
   ],
   templateUrl: './team-settings.component.html',
   styleUrls: [

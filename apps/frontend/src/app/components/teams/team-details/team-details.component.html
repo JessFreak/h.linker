@@ -1,4 +1,13 @@
 <div class="h-page-layout team-details-container">
+  @if (team(); as t) {
+    <app-breadcrumb
+      [backRoute]="['/teams']"
+      [items]="[
+        { label: 'Teams', route: ['/teams'] },
+        { label: t.name }
+      ]">
+    </app-breadcrumb>
+  }
 
   <header class="team-header">
     <div class="title-group">

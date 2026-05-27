@@ -30,6 +30,7 @@ import {
   CountdownService,
   TimeLeft,
 } from '../../../services/countdown.service';
+import { BreadcrumbComponent } from '../../breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-hackathon-view',
@@ -44,6 +45,7 @@ import {
     HackathonWeightPreviewComponent,
     HackathonTimelineComponent,
     MatDialogModule,
+    BreadcrumbComponent,
   ],
   templateUrl: './hackathon-view.component.html',
   styleUrls: ['./hackathon-view.component.scss'],

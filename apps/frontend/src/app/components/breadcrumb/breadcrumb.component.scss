@@ -1,0 +1,70 @@
+.h-breadcrumb-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.back-btn {
+  color: rgba(255, 255, 255, 0.8) !important;
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white !important;
+  }
+}
+
+.breadcrumb-nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  min-width: 0;
+}
+
+.crumb-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+
+  .crumb-link {
+    color: rgba(255, 255, 255, 0.5);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s ease;
+    display: inline-block;
+    max-width: 160px;
+
+    &:hover {
+      color: var(--h-primary-blue);
+    }
+  }
+
+  .crumb-current {
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-block;
+    max-width: 160px;
+  }
+
+  .crumb-separator {
+    color: rgba(255, 255, 255, 0.2);
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+}

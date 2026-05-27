@@ -1,18 +1,27 @@
 <div class="h-submission-layout">
   <div class="h-container-narrow">
 
+    @if (hackathon(); as h) {
+      <app-breadcrumb
+        [backRoute]="['/events', h.slug, 'dashboard']"
+        [items]="[
+          { label: 'Events', route: ['/events'] },
+          { label: h.title, route: ['/events', h.slug] },
+          { label: 'Dashboard', route: ['/events', h.slug, 'dashboard'] },
+          { label: 'Submission' }
+        ]">
+      </app-breadcrumb>
+    }
+
     <header class="submission-header">
       <div class="header-left">
-        <button mat-icon-button class="back-btn" [routerLink]="['../']" matTooltip="Back to Dashboard">
-          <mat-icon>arrow_back</mat-icon>
-        </button>
         <div class="titles">
           <h1>Project Submission</h1>
-          <p class="h-text-secondary tech-data mt-2">
-            <mat-icon class="sm-icon">groups</mat-icon> {{ teamDetails()?.name }}
-            <span class="sep">•</span>
-            <mat-icon class="sm-icon">emoji_events</mat-icon> {{ hackathon()?.title }}
-          </p>
+          @if (teamDetails(); as team) {
+            <p class="h-text-secondary tech-data mt-2">
+              <mat-icon class="sm-icon">groups</mat-icon> Team: {{ team.name }}
+            </p>
+          }
         </div>
       </div>
     </header>

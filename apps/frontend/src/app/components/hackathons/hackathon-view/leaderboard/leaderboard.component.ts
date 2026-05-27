@@ -8,6 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FullHackathonResponse, LeaderboardItem } from '@h.linker/libs';
 import { HackathonService } from '../../../../services/hackathon.service';
+import { BreadcrumbComponent } from '../../../breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-leaderboard',
@@ -20,6 +21,7 @@ import { HackathonService } from '../../../../services/hackathon.service';
     MatCardModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
+    BreadcrumbComponent,
   ],
   templateUrl: './leaderboard.component.html',
   styleUrls: ['./leaderboard.component.scss'],

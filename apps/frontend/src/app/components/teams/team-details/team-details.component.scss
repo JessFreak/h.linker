@@ -1,9 +1,14 @@
 .team-details-container {
   grid-template-columns: 1fr 320px;
   grid-template-areas:
+    "breadcrumb breadcrumb"
     "header header"
     "main sidebar";
   align-items: start;
+}
+
+app-breadcrumb {
+  grid-area: breadcrumb;
 }
 
 .team-header {

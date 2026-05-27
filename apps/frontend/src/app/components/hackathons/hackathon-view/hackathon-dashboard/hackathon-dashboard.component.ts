@@ -33,6 +33,7 @@ import {
   CountdownService,
   TimeLeft,
 } from '../../../../services/countdown.service';
+import { BreadcrumbComponent } from '../../../breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-hackathon-dashboard',
@@ -47,6 +48,7 @@ import {
     MatCardModule,
     TeamMembersListComponent,
     HackathonWeightPreviewComponent,
+    BreadcrumbComponent,
   ],
   templateUrl: './hackathon-dashboard.component.html',
   styleUrls: ['./hackathon-dashboard.component.scss'],

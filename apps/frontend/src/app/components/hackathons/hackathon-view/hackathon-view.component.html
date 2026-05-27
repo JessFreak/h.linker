@@ -5,11 +5,22 @@
         <div class="h-container">
           <div class="h-header-content">
             <div class="h-top-actions">
-              <div class="h-badges">
-                <span class="h-status-badge" [class]="h.status.toLowerCase()">{{ h.status }}</span>
-                @for (cat of h.categories; track cat) {
-                  <span class="h-category-tag">{{ cat }}</span>
-                }
+              <div class="h-nav-and-badges-wrapper">
+
+                <app-breadcrumb
+                  [backRoute]="['/events']"
+                  [items]="[
+                    { label: 'Events', route: ['/events'] },
+                    { label: h.title }
+                  ]">
+                </app-breadcrumb>
+
+                <div class="h-badges">
+                  <span class="h-status-badge" [class]="h.status.toLowerCase()">{{ h.status }}</span>
+                  @for (cat of h.categories; track cat) {
+                    <span class="h-category-tag">{{ cat }}</span>
+                  }
+                </div>
               </div>
 
               <div class="h-action-buttons-group">

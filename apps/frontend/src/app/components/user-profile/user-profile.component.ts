@@ -13,6 +13,7 @@ import { DecimalPipe, NgOptimizedImage } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatTooltip } from '@angular/material/tooltip';
+import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-user-profile',
@@ -33,6 +34,7 @@ import { MatTooltip } from '@angular/material/tooltip';
     MatTooltip,
     MatTabLabel,
     DecimalPipe,
+    BreadcrumbComponent,
   ],
 })
 export class UserProfileComponent {

@@ -47,7 +47,6 @@ export class ProjectShowcaseComponent implements OnInit {
     });
   }
 
-  // Визначаємо колір бейджа для Топ-3
   getRankClass(index: number): string {
     if (index === 0) return 'rank-1';
     if (index === 1) return 'rank-2';

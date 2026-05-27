@@ -16,6 +16,7 @@ import { TeamUtils } from '../../../utils/team.utils';
 import { TeamActionsService } from '../../../utils/team-actions.service';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TeamMembersListComponent } from './team-members-list.component';
+import { BreadcrumbComponent } from '../../breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-team-details',
@@ -29,6 +30,7 @@ import { TeamMembersListComponent } from './team-members-list.component';
     RouterLink,
     MatTooltip,
     TeamMembersListComponent,
+    BreadcrumbComponent,
   ],
   templateUrl: './team-details.component.html',
   styleUrls: ['./team-details.component.scss', '../.rejected.scss'],

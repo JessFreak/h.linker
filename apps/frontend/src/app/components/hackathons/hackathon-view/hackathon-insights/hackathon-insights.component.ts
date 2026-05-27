@@ -1,18 +1,15 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTooltip } from '@angular/material/tooltip';
-
-// 1. Імпортуємо модуль та спеціальний токен конфігурації
 import { NgxEchartsModule, NGX_ECHARTS_CONFIG } from 'ngx-echarts';
-
 import { HackathonService } from '../../../../services/hackathon.service';
 import { HackathonInsightsResponse, InsightDataPoint } from '@h.linker/libs';
 import type { EChartsOption } from 'echarts';
+import { BreadcrumbComponent } from '../../../breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-hackathon-insights',
@@ -23,12 +20,10 @@ import type { EChartsOption } from 'echarts';
     MatIconModule,
     MatButtonModule,
     MatProgressSpinnerModule,
-    RouterLink,
-    MatTooltip,
-    NgxEchartsModule, // 2. Просто додаємо модуль сюди
+    NgxEchartsModule,
+    BreadcrumbComponent,
   ],
   providers: [
-    // 3. Напряму передаємо конфіг для echarts без жодних forRoot
     {
       provide: NGX_ECHARTS_CONFIG,
       useFactory: () => ({ echarts: () => import('echarts') }),
@@ -46,7 +41,6 @@ export class HackathonInsightsComponent implements OnInit {
   isLoading = signal(true);
   insights = signal<HackathonInsightsResponse | null>(null);
 
-  // Опції для графіків
   roleChartOption = signal<EChartsOption>({});
   submissionChartOption = signal<EChartsOption>({});
   juryChartOption = signal<EChartsOption>({});
@@ -79,7 +73,6 @@ export class HackathonInsightsComponent implements OnInit {
     };
     const splitLine = { lineStyle: { color: 'rgba(255, 255, 255, 0.05)' } };
 
-    // 1. Розподіл ролей (Doughnut)
     this.roleChartOption.set({
       tooltip: {
         trigger: 'item',
@@ -105,7 +98,6 @@ export class HackathonInsightsComponent implements OnInit {
       color: ['#4169A5', '#58a6ff', '#F08800', '#3fb950', '#8b949e'],
     });
 
-    // 2. Динаміка сабмітів (Line)
     this.submissionChartOption.set(
       this.createLineChart(
         charts.submissionTimeline,
@@ -116,7 +108,6 @@ export class HackathonInsightsComponent implements OnInit {
       ),
     );
 
-    // 3. Активність журі (Line)
     this.juryChartOption.set(
       this.createLineChart(
         charts.juryActivityTimeline,
@@ -127,7 +118,6 @@ export class HackathonInsightsComponent implements OnInit {
       ),
     );
 
-    // 4. Розподіл оцінок (Bar)
     this.scoreChartOption.set({
       tooltip: {
         trigger: 'axis',

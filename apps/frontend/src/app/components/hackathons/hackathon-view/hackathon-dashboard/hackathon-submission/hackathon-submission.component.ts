@@ -1,7 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,7 +14,7 @@ import { HackathonService } from '../../../../../services/hackathon.service';
 import { TeamService } from '../../../../../services/team.service';
 import { AuthService } from '../../../../../services/auth.service';
 import { NotificationService } from '../../../../../utils/notification.service';
-import { MatTooltip } from '@angular/material/tooltip';
+import { BreadcrumbComponent } from '../../../../breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-hackathon-submission',
@@ -27,9 +27,8 @@ import { MatTooltip } from '@angular/material/tooltip';
     MatButtonModule,
     MatIconModule,
     MatCheckboxModule,
-    RouterLink,
     TeamMembersListComponent,
-    MatTooltip,
+    BreadcrumbComponent,
   ],
   templateUrl: './hackathon-submission.component.html',
   styleUrls: ['./hackathon-submission.component.scss'],

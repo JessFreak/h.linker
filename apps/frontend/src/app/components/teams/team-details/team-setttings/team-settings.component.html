@@ -1,6 +1,14 @@
 <div class="h-page-layout settings-container">
   @if (team(); as currentTeam) {
     <aside class="settings-sidebar">
+      <app-breadcrumb
+        [backRoute]="['/teams', currentTeam.id]"
+        [items]="[
+          { label: 'Teams', route: ['/teams'] },
+          { label: currentTeam.name, route: ['/teams', currentTeam.id] },
+          { label: 'Settings' }
+        ]">
+      </app-breadcrumb>
       <div class="h-card mini-card">
         <div>
           <mat-icon>groups</mat-icon>

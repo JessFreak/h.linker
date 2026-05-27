@@ -1,5 +1,15 @@
 <div class="h-page-layout settings-container">
   <aside class="settings-sidebar">
+    @if (user(); as u) {
+      <app-breadcrumb
+        [backRoute]="['/users', u.username]"
+        [items]="[
+          { label: 'Users', route: ['/users'] },
+          { label: '@' + u.username, route: ['/users', u.username] },
+          { label: 'Settings' }
+        ]">
+      </app-breadcrumb>
+    }
     <div class="h-card mini-card">
       <div class="avatar-container">
         <img [ngSrc]="user()?.avatarUrl || '/default-avatar.png'"

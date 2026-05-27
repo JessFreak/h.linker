@@ -8,14 +8,20 @@
       <mat-spinner diameter="50"></mat-spinner>
       <p class="h-text-secondary">Calculating scores and ranks...</p>
     </div>
-  } @else if (hackathon()) {
+  } @else if (hackathon(); as h) {
+
+    <app-breadcrumb
+      [backRoute]="['/events', h.slug]"
+      [items]="[
+        { label: 'Events', route: ['/events'] },
+        { label: h.title, route: ['/events', h.slug] },
+        { label: 'Leaderboard' }
+      ]">
+    </app-breadcrumb>
 
     <header class="leaderboard-header">
-      <button mat-icon-button [routerLink]="['/events', hackathon()?.slug]" matTooltip="Back to Event">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
       <div>
-        <h1><span>{{ hackathon()?.title }}</span></h1>
+        <h1><span>{{ h.title }}</span></h1>
         <p class="h-text-secondary uppercase tech-data subtitle">Live Competition Leaderboard</p>
       </div>
     </header>
@@ -47,8 +53,8 @@
 
                 <h3 [routerLink]="['/teams', team.teamId]">{{ team.teamName }}</h3>
                 <span class="team-size-badge" matTooltip="Team size">
-                <mat-icon>groups</mat-icon> {{ team.memberCount }}
-              </span>
+                  <mat-icon>groups</mat-icon> {{ team.memberCount }}
+                </span>
 
                 <div class="score-display tech-data">
                   <span class="val">{{ team.score | number:'1.1-1' }}</span>

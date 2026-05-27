@@ -60,6 +60,7 @@ import {
 } from '@angular/material/autocomplete';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { AuthService } from '../../../services/auth.service';
+import { BreadcrumbComponent } from '../../breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-hackathon-constructor',
@@ -79,6 +80,7 @@ import { AuthService } from '../../../services/auth.service';
     MatAutocompleteModule,
     HackathonWeightPreviewComponent,
     RouterLink,
+    BreadcrumbComponent,
   ],
   templateUrl: './hackathon-constructor.component.html',
   styleUrls: ['./hackathon-constructor.component.scss'],
@@ -128,6 +130,7 @@ export class HackathonConstructorComponent implements OnInit {
   );
 
   hackathonId = signal<string | null>(null);
+  isLinearStepper = computed(() => !this.hackathonId());
   isSaving = signal(false);
   currentUser = toSignal(this.authService.user$);
 

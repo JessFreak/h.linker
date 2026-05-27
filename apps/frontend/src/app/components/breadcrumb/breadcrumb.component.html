@@ -1,0 +1,32 @@
+<div class="h-breadcrumb-wrapper">
+
+  @if (backRoute) {
+    <button mat-icon-button class="back-btn" [routerLink]="backRoute" [queryParams]="backQueryParams">
+      <mat-icon matTooltip='Go back'>arrow_back</mat-icon>
+    </button>
+  }
+
+  <nav class="breadcrumb-nav">
+    @for (item of items; track item.label; let isLast = $last) {
+      <div class="crumb-item">
+
+        @if (item.route) {
+          <a [routerLink]="item.route"
+             [queryParams]="item.queryParams"
+             class="crumb-link h-truncate"
+             [matTooltip]="item.label">
+            {{ item.label }}
+          </a>
+        } @else {
+          <span class="crumb-current h-truncate" [matTooltip]="item.label">
+            {{ item.label }}
+          </span>
+        }
+
+        @if (!isLast) {
+          <mat-icon class="crumb-separator">chevron_right</mat-icon>
+        }
+      </div>
+    }
+  </nav>
+</div>

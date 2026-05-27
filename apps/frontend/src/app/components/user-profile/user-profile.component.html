@@ -7,6 +7,13 @@
   @if (user(); as userData) {
     <div class="h-page-layout profile-layout">
       <aside class="sidebar">
+        <app-breadcrumb
+          [backRoute]="['/users']"
+          [items]="[
+            { label: 'Users', route: ['/users'] },
+            { label: '@' + userData.username }
+          ]">
+        </app-breadcrumb>
         <mat-card class="h-card user-main-card">
           <div class="avatar-wrapper">
             <img [ngSrc]="userData.avatarUrl || '/default-avatar.png'"

@@ -1,7 +1,18 @@
 <div class="h-constructor-layout">
+  <app-breadcrumb
+    [backRoute]="infoForm.value.slug ? ['/events', infoForm.value.slug] : ['/events']"
+    [items]="[
+      { label: 'Events', route: ['/events'] },
+      {
+        label: infoForm.value.title || 'New Event',
+        route: infoForm.value.slug ? ['/events', infoForm.value.slug] : undefined
+      },
+      { label: 'Constructor' }
+    ]"
+    style="margin-bottom: 32px; display: block;">
+  </app-breadcrumb>
   <mat-stepper #stepper
-               linear
-               class="h-main-stepper"
+               [linear]="isLinearStepper()" class="h-main-stepper"
                [selectedIndex]="currentStep()"
                (selectionChange)="onStepChange($event)">
 

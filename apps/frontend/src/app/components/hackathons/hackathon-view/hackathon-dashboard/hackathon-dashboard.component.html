@@ -2,6 +2,17 @@
   <div class="h-workspace-container">
     <header class="h-workspace-header">
       <div class="h-container">
+
+        <app-breadcrumb
+          [backRoute]="['/events', h.slug]"
+          [items]="[
+            { label: 'Events', route: ['/events'] },
+            { label: h.title, route: ['/events', h.slug] },
+            { label: 'Dashboard' }
+          ]"
+          style="margin-bottom: 32px; display: block;">
+        </app-breadcrumb>
+
         <div class="header-center-layout">
           <div class="deadline-info">
             <span class="h-text-secondary uppercase tech-data block" style="letter-spacing: 1px; margin-bottom: 16px;">Project Submission Deadline</span>

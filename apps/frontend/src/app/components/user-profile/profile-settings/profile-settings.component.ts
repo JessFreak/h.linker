@@ -58,6 +58,7 @@ import {
   map,
   switchMap,
 } from 'rxjs';
+import { BreadcrumbComponent } from '../../breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-profile-settings',
@@ -88,6 +89,7 @@ import {
     MatAutocomplete,
     MatOption,
     MatAutocompleteTrigger,
+    BreadcrumbComponent,
   ],
 })
 export class ProfileSettingsComponent implements OnInit {

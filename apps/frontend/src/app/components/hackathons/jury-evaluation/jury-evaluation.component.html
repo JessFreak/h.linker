@@ -12,8 +12,22 @@
         <button mat-icon-button [routerLink]="['/events', hackathon()?.slug]" matTooltip="Exit to Event">
           <mat-icon>arrow_back</mat-icon>
         </button>
+
         <div class="progress-info">
-          <span class="label">Scored</span>
+          <div class="jury-mini-breadcrumb">
+            <a [routerLink]="['/events']" class="crumb-link">Events</a>
+            <mat-icon class="crumb-icon">chevron_right</mat-icon>
+
+            <a [routerLink]="['/events', hackathon()?.slug]"
+               class="crumb-link h-truncate"
+               [matTooltip]="hackathon()?.title || ''">
+              {{ hackathon()?.title || 'Event' }}
+            </a>
+
+            <mat-icon class="crumb-icon">chevron_right</mat-icon>
+            <span class="crumb-current">Jury</span>
+          </div>
+
           <span class="count tech-data"><strong>{{ scoredCount() }}</strong> / {{ submissions().length }} <span class="h-text-secondary">teams</span></span>
         </div>
       </div>
