@@ -15,6 +15,7 @@ import { TeamService } from '../../../../../services/team.service';
 import { AuthService } from '../../../../../services/auth.service';
 import { NotificationService } from '../../../../../utils/notification.service';
 import { BreadcrumbComponent } from '../../../../breadcrumb/breadcrumb.component';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-hackathon-submission',
@@ -29,6 +30,7 @@ import { BreadcrumbComponent } from '../../../../breadcrumb/breadcrumb.component
     MatCheckboxModule,
     TeamMembersListComponent,
     BreadcrumbComponent,
+    MatTooltip,
   ],
   templateUrl: './hackathon-submission.component.html',
   styleUrls: ['./hackathon-submission.component.scss'],

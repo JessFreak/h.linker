@@ -18,7 +18,7 @@
             <span class="h-text-secondary uppercase tech-data block" style="letter-spacing: 1px; margin-bottom: 16px;">Project Submission Deadline</span>
 
             @if (!isTimeUp()) {
-              <div class="h-timer tech-data">
+              <div class="h-timer tech-data" matTooltip="Time left until submissions close permanently">
                 <div class="t-unit"><span class="val">{{ timeLeft().days }}</span><span class="lab">DAYS</span></div>
                 <span class="t-sep">:</span>
                 <div class="t-unit"><span class="val">{{ timeLeft().hrs }}</span><span class="lab">HRS</span></div>
@@ -29,7 +29,7 @@
               </div>
               <small class="h-text-secondary mt-2 block">{{ h.submissionDeadline | date:'EEEE, MMMM d, y • HH:mm' }} UTC+2</small>
             } @else {
-              <div class="time-up-badge">
+              <div class="time-up-badge" matTooltip="Submissions are closed">
                 <mat-icon>timer_off</mat-icon>
                 <span>DEADLINE HAS PASSED</span>
               </div>
@@ -43,7 +43,7 @@
           </div>
 
           <div class="action-zone"
-               [matTooltip]="h.status !== 'ACTIVE' ? 'Submissions are only allowed during the ACTIVE phase. Current stage: ' + h.status : ''"
+               [matTooltip]="h.status !== 'ACTIVE' ? 'Submissions are only allowed during the ACTIVE phase. Current stage: ' + h.status : 'Manage your project code and info'"
                matTooltipPosition="above">
             @if (isLeader()) {
               <button mat-flat-button color="primary" class="h-submit-btn" [disabled]="h.status !== 'ACTIVE'" [routerLink]="['submission']">
@@ -51,7 +51,7 @@
                 {{ registration()?.submission?.repoUrl ? 'EDIT SUBMISSION' : 'SUBMIT PROJECT' }}
               </button>
             } @else {
-              <div class="h-badge h-badge-leader">VIEW ONLY</div>
+              <div class="h-badge h-badge-leader" matTooltip="Only the team leader can submit or edit projects">VIEW ONLY</div>
             }
           </div>
         </div>
@@ -73,7 +73,7 @@
                   [members]="team.members || []"
                   [leaderId]="team.leaderId">
                 </app-team-members-list>
-                <button mat-stroked-button class="w-full mt-6" [routerLink]="['/teams', team.id]">
+                <button mat-stroked-button class="w-full mt-6" [routerLink]="['/teams', team.id]" matTooltip="Manage members and team info">
                   <mat-icon>settings</mat-icon> Team Settings
                 </button>
               </div>
@@ -83,11 +83,11 @@
           <mat-card class="h-card widget-card mt-6">
             <div class="widget-header"><span class="h-text-secondary uppercase">Your Score</span></div>
             <div class="score-row">
-              <span class="big-score">
+              <span class="big-score" matTooltip="Total weighted points accumulated from jury voting">
                 {{ (registration()?.submission?.finalScore || 0) | number:'1.1-1' }}<small>/{{ maxPossibleScore() }}</small>
               </span>
 
-              <div class="h-badge">
+              <div class="h-badge" [matTooltip]="currentRank() ? 'Your current place in global live standings' : 'Submit project and wait for evaluation'">
                 {{ currentRank() ? 'Rank #' + currentRank() : 'Unranked' }}
               </div>
             </div>
@@ -96,7 +96,7 @@
               <div class="detailed-scores mt-6">
                 <div class="section-label" style="font-size: 10px; margin-bottom: 12px;">SCORE BREAKDOWN</div>
                 @for (crit of registration()?.submission?.criteriaScores; track crit.criterionId) {
-                  <div class="score-breakdown-item">
+                  <div class="score-breakdown-item" [matTooltip]="'Normalized points for ' + crit.name">
                     <div class="sb-header">
                       <span class="sb-name">{{ crit.name }}</span>
                       <span class="sb-val tech-data">{{ crit.score | number:'1.1-1' }} / {{ crit.maxValue }}</span>
@@ -119,7 +119,7 @@
               <div class="submission-details-box">
                 <div class="h-flex-between mb-4">
                   <h2 class="m-0">{{ registration()?.submission?.title }}</h2>
-                  <a [href]="registration()?.submission?.repoUrl" target="_blank" class="h-text-secondary" matTooltip="Open Repository">
+                  <a [href]="registration()?.submission?.repoUrl" target="_blank" class="h-text-secondary" matTooltip="Open public GitHub repository in a new tab">
                     <mat-icon>open_in_new</mat-icon>
                   </a>
                 </div>
@@ -136,18 +136,18 @@
                   @if (currentReview(); as review) {
                     <div class="carousel-card-body">
                       <mat-icon class="quote-icon">format_quote</mat-icon>
-                      <p class="review-text h-text-secondary">{{ review.comment }}</p>
+                      <p class="review-text h-text-secondary" matTooltip="General summary comment from this expert">{{ review.comment }}</p>
 
                       @if (review.strengths || review.weaknesses) {
                         <div class="feedback-split">
                           @if (review.strengths) {
-                            <div class="feedback-block is-strength">
+                            <div class="feedback-block is-strength" matTooltip="What the judge liked most about your execution">
                               <span class="fb-label"><mat-icon>add_circle_outline</mat-icon> Strengths</span>
                               <p>{{ review.strengths }}</p>
                             </div>
                           }
                           @if (review.weaknesses) {
-                            <div class="feedback-block is-weakness">
+                            <div class="feedback-block is-weakness" matTooltip="Constructive points on what could be fixed or improved">
                               <span class="fb-label"><mat-icon>remove_circle_outline</mat-icon> Areas for Improvement</span>
                               <p>{{ review.weaknesses }}</p>
                             </div>
@@ -156,15 +156,17 @@
                       }
 
                       <div class="carousel-meta-footer mt-6">
-                        <span class="juror-author tech-data">Reviewed by &#64;{{ review.juror }}</span>
+                        <span class="juror-author tech-data" [routerLink]="['/users', review.juror]" matTooltip="Click to view jury profile">
+                          Reviewed by &#64;{{ review.juror }}
+                        </span>
 
                         @if (teamReviews().length > 1) {
                           <div class="carousel-nav-controls">
-                            <button mat-icon-button [disabled]="activeReviewIndex() === 0" (click)="prevReview()">
+                            <button mat-icon-button [disabled]="activeReviewIndex() === 0" (click)="prevReview()" matTooltip="Previous expert review">
                               <mat-icon>chevron_left</mat-icon>
                             </button>
-                            <span class="counter-indicator tech-data">{{ activeReviewIndex() + 1 }} / {{ teamReviews().length }}</span>
-                            <button mat-icon-button [disabled]="activeReviewIndex() === teamReviews().length - 1" (click)="nextReview()">
+                            <span class="counter-indicator tech-data" matTooltip="Active review index">{{ activeReviewIndex() + 1 }} / {{ teamReviews().length }}</span>
+                            <button mat-icon-button [disabled]="activeReviewIndex() === teamReviews().length - 1" (click)="nextReview()" matTooltip="Next expert review">
                               <mat-icon>chevron_right</mat-icon>
                             </button>
                           </div>
@@ -193,12 +195,12 @@
           <mat-card class="h-card widget-card">
             <div class="widget-header">
               <span class="h-text-secondary uppercase">Leaderboard</span>
-              <span class="live-dot">● LIVE</span>
+              <span class="live-dot" matTooltip="Scores update in real-time as judges vote">● LIVE</span>
             </div>
 
             <div class="l-list">
               @for (item of leaderboardItems().slice(0, 3); track item.teamId) {
-                <div class="l-item" [class.is-me]="item.teamId === teamDetails()?.id">
+                <div class="l-item" [class.is-me]="item.teamId === teamDetails()?.id" [matTooltip]="item.teamId === teamDetails()?.id ? 'Your team position' : 'Top competitor'">
                   <span class="l-rank">#{{ item.rank }}</span>
                   <span class="l-name">{{ item.teamName }}</span>
                   <span class="l-val tech-data">{{ item.score | number:'1.1-1' }}</span>
@@ -211,7 +213,7 @@
 
               @if (currentRank() && !isMyTeamInTop3()) {
                 <div class="l-item-divider">•••</div>
-                <div class="l-item is-disconnected">
+                <div class="l-item is-disconnected" matTooltip="Your exact standing outside the Top 3">
                   <span class="l-name">
                     <strong>Your Rank:</strong> #{{ currentRank() }} of {{ leaderboardItems().length }} teams
                   </span>
@@ -222,7 +224,7 @@
               }
             </div>
 
-            <button mat-button color="primary" class="w-full mt-4" [routerLink]="['/events', h.slug, 'leaderboard']">
+            <button mat-button color="primary" class="w-full mt-4" [routerLink]="['/events', h.slug, 'leaderboard']" matTooltip="See full competition scoreboard">
               View Full Standings <mat-icon>chevron_right</mat-icon>
             </button>
           </mat-card>

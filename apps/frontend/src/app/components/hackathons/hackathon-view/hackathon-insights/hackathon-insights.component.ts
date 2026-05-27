@@ -10,6 +10,7 @@ import { HackathonService } from '../../../../services/hackathon.service';
 import { HackathonInsightsResponse, InsightDataPoint } from '@h.linker/libs';
 import type { EChartsOption } from 'echarts';
 import { BreadcrumbComponent } from '../../../breadcrumb/breadcrumb.component';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-hackathon-insights',
@@ -22,6 +23,7 @@ import { BreadcrumbComponent } from '../../../breadcrumb/breadcrumb.component';
     MatProgressSpinnerModule,
     NgxEchartsModule,
     BreadcrumbComponent,
+    MatTooltip,
   ],
   providers: [
     {

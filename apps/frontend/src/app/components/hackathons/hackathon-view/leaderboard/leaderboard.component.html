@@ -38,8 +38,9 @@
           @for (team of podiumTeams(); track team.teamId) {
             <div class="podium-card h-card"
                  [class.first-place]="team.rank === 1"
-                 [class.second-place]="team.rank === 2"
-                 [class.third-place]="team.rank === 3">
+                 [class.class.second-place]="team.rank === 2"
+                 [class.third-place]="team.rank === 3"
+                 matTooltip="Click to view team profile and projects">
 
               <div class="podium-bg-number tech-data">{{ team.rank }}</div>
 
@@ -51,12 +52,12 @@
                   <span class="rank-badge tech-data">RANK #{{ team.rank }}</span>
                 </div>
 
-                <h3 [routerLink]="['/teams', team.teamId]">{{ team.teamName }}</h3>
+                <h3>{{ team.teamName }}</h3>
                 <span class="team-size-badge" matTooltip="Team size">
                   <mat-icon>groups</mat-icon> {{ team.memberCount }}
                 </span>
 
-                <div class="score-display tech-data">
+                <div class="score-display tech-data" matTooltip="Total score calculated from weighted judging criteria">
                   <span class="val">{{ team.score | number:'1.1-1' }}</span>
                   <span class="lbl">PTS</span>
                 </div>
@@ -70,7 +71,11 @@
         <div class="section-label">All Standings</div>
 
         @for (team of remainingTeams(); track team.teamId) {
-          <div class="leaderboard-row h-card" [class.in-podium]="team.rank <= 3" [routerLink]="['/teams', team.teamId]">
+          <div class="leaderboard-row h-card"
+               [class.in-podium]="team.rank <= 3"
+               [routerLink]="['/teams', team.teamId]"
+               matTooltip="Click to view full team dashboard">
+
             <div class="rank-col tech-data" [class.gold]="team.rank === 1" [class.silver]="team.rank === 2" [class.bronze]="team.rank === 3">
               {{ team.rank | number:'2.0-0' }}
             </div>
@@ -81,12 +86,9 @@
                 <mat-icon>groups</mat-icon> {{ team.memberCount }}
               </span>
 
-              @if (team.rank === 1) {
-                <span class="row-badge winner-badge uppercase">Leader</span>
-              }
             </div>
 
-            <div class="score-col tech-data">
+            <div class="score-col tech-data" matTooltip="Total score calculated from weighted judging criteria">
               <strong>{{ team.score | number:'1.1-1' }}</strong> <small class="h-text-secondary">PTS</small>
             </div>
           </div>

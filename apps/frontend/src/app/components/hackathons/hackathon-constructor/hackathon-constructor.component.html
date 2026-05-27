@@ -11,6 +11,7 @@
     ]"
     style="margin-bottom: 32px; display: block;">
   </app-breadcrumb>
+
   <mat-stepper #stepper
                [linear]="isLinearStepper()" class="h-main-stepper"
                [selectedIndex]="currentStep()"
@@ -51,27 +52,27 @@
 
           <form [formGroup]="infoForm" class="h-form-column">
             <div class="h-form-row">
-              <mat-form-field appearance="outline">
+              <mat-form-field appearance="outline" matTooltip="Enter a clear and recognizable name for your event">
                 <mat-label>Hackathon Title</mat-label>
                 <input matInput formControlName="title" placeholder="Global AI Hack 2026">
                 <mat-hint>Give your event a catchy and clear name</mat-hint>
               </mat-form-field>
 
-              <mat-form-field appearance="outline">
+              <mat-form-field appearance="outline" matTooltip="The unique identifier used in the page address url">
                 <mat-label>URL Slug</mat-label>
                 <input matInput formControlName="slug" placeholder="global-ai-hack-2026">
                 <mat-hint>Custom part of the URL (letters, numbers, hyphens)</mat-hint>
               </mat-form-field>
             </div>
 
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline" matTooltip="Detail the prize breakdown or total fund value">
               <mat-label>Prize Pool / Awards</mat-label>
               <mat-icon matPrefix>emoji_events</mat-icon>
               <input matInput formControlName="prize" placeholder="e.g. $10,000, MacBooks, or Internship opportunities">
               <mat-hint>Tell participants what they are fighting for</mat-hint>
             </mat-form-field>
 
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline" matTooltip="Provide information regarding the goals, rules, and expectations of the event">
               <mat-label>Short Description</mat-label>
               <textarea matInput formControlName="description" rows="3"
                         placeholder="Tell participants what this event is about..."></textarea>
@@ -88,7 +89,7 @@
           <button mat-flat-button color="primary"
                   (click)="saveIdentity(stepper)"
                   [disabled]="infoForm.invalid || isSaving()"
-                  matTooltip="Initialize or update general hackathon info">
+                  [matTooltip]="infoForm.invalid ? 'Complete all required fields and timeline settings to unlock saving' : 'Commit identity changes and go to the next step'">
             {{ isSaving() ? 'Saving...' : (hackathonId() ? 'Save and Continue' : 'Initialize Hackathon') }}
           </button>
         </div>
@@ -174,9 +175,9 @@
                            alt="Jury member avatar">
 
                       <div class="h-info-group">
-                <span class="h-username-link">
-                  {{member.firstName || member.username}} {{member.lastName || ''}}
-                </span>
+                        <span class="h-username-link">
+                          {{member.firstName || member.username}} {{member.lastName || ''}}
+                        </span>
                         <small class="h-text-secondary">&#64;{{member.username}}</small>
                       </div>
                     </div>
@@ -212,15 +213,15 @@
             <div formArrayName="criteria" class="criteria-list">
               @for (item of criteriaArray.controls; track item; let i = $index) {
                 <div [formGroup]="item" class="criterion-row">
-                  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                  <mat-form-field appearance="outline" subscriptSizing="dynamic" matTooltip="Criterion name (e.g., Code Quality)">
                     <input matInput formControlName="name" placeholder="e.g. Innovation">
                   </mat-form-field>
 
-                  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                  <mat-form-field appearance="outline" subscriptSizing="dynamic" matTooltip="Maximum raw score limit for this individual parameter">
                     <input matInput type="number" formControlName="maxValue" placeholder="10" min="1" class="text-center tech-data">
                   </mat-form-field>
 
-                  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                  <mat-form-field appearance="outline" subscriptSizing="dynamic" matTooltip="The percentage weight impact this rule holds in final score formula">
                     <input matInput type="number" formControlName="weight" placeholder="50" class="text-center tech-data">
                   </mat-form-field>
 
@@ -234,7 +235,7 @@
             </div>
 
             @if (totalWeight() !== 100) {
-              <div class="h-item-note mt-4" matTooltip="The sum of all weights must be exactly 100%">
+              <div class="h-item-note mt-4" matTooltip="Adjust criteria weights so their combined sum equals exactly 100%">
                 <mat-icon>warning</mat-icon>
                 <p>Total weight must be exactly <strong>100%</strong>. Current: {{ totalWeight() }}%</p>
               </div>
@@ -257,7 +258,7 @@
           <button mat-flat-button color="primary"
                   (click)="saveDetails(stepper)"
                   [disabled]="totalWeight() !== 100 || isSaving()"
-                  matTooltip="Verify all fields and proceed to status management">
+                  [matTooltip]="totalWeight() !== 100 ? 'Total criteria weight must sum up to exactly 100% to proceed' : 'Save categories and criteria configurations'">
             {{ isSaving() ? 'Saving...' : 'Save and Continue' }}
           </button>
         </div>
@@ -270,7 +271,7 @@
           <p class="h-text-secondary">Current stage determines participant actions and visibility.</p>
 
           <div [formGroup]="statusForm" class="h-status-manager">
-            <mat-form-field appearance="outline" class="w-full">
+            <mat-form-field appearance="outline" class="w-full" matTooltip="Select the lifecycle state to transition your hackathon">
               <mat-select formControlName="status">
                 <mat-select-trigger>
                   @let selected = getStatusDetail(statusForm.value.status);
@@ -283,7 +284,7 @@
                 </mat-select-trigger>
 
                 @for (opt of statusOptions; track opt.value) {
-                  <mat-option [value]="opt.value">
+                  <mat-option [value]="opt.value" [matTooltip]="opt.desc">
                     <div class="h-status-option">
                       <mat-icon>{{opt.icon}}</mat-icon>
                       <div class="h-status-text">
@@ -317,13 +318,13 @@
                   (click)="updateStatus()"
                   [disabled]="!hackathonId() || isSaving() || statusForm.pristine"
                   style="width: 100%; height: 50px; margin-top: 24px"
-                  matTooltip="Apply the selected lifecycle status">
+                  matTooltip="Apply and broadcast the chosen status change live">
             {{ isSaving() ? 'Saving...' : 'Apply Status Change' }}
           </button>
         </app-settings-section>
 
         <div class="h-actions">
-          <button mat-button matStepperPrevious [disabled]="isSaving()">Back</button>
+          <button mat-button matStepperPrevious [disabled]="isSaving()" matTooltip="Return to configurations panel">Back</button>
 
           @if (hackathonId()) {
             <button mat-flat-button color="primary"

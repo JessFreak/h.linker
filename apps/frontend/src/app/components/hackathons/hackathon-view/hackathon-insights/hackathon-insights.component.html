@@ -6,7 +6,7 @@
         [backRoute]="slug ? ['/events', slug] : ['/events']"
         [items]="[
           { label: 'Events', route: ['/events'] },
-          { label: slug || 'Event Page', route: slug ? ['/events', slug] : ['/events'] },
+          { label: slug ? '@' + slug : 'Event Page', route: slug ? ['/events', slug] : ['/events'] },
           { label: 'Insights' }
         ]">
       </app-breadcrumb>
@@ -25,7 +25,7 @@
     } @else if (insights(); as data) {
 
       <div class="stats-grid">
-        <mat-card class="h-card stat-card">
+        <mat-card class="h-card stat-card" matTooltip="Total number of users registered for this event">
           <mat-icon class="stat-icon" style="color: #58a6ff;">groups</mat-icon>
           <div class="stat-info">
             <span class="stat-value tech-data">{{ data.stats.totalParticipants }}</span>
@@ -33,7 +33,7 @@
           </div>
         </mat-card>
 
-        <mat-card class="h-card stat-card">
+        <mat-card class="h-card stat-card" matTooltip="Total number of approved and active teams">
           <mat-icon class="stat-icon" style="color: #3fb950;">workspaces</mat-icon>
           <div class="stat-info">
             <span class="stat-value tech-data">{{ data.stats.totalTeams }}</span>
@@ -41,7 +41,7 @@
           </div>
         </mat-card>
 
-        <mat-card class="h-card stat-card">
+        <mat-card class="h-card stat-card" matTooltip="Projects with public repository URL submitted before the deadline">
           <mat-icon class="stat-icon" style="color: var(--h-safety-orange);">publish</mat-icon>
           <div class="stat-info">
             <span class="stat-value tech-data">{{ data.stats.totalSubmissions }}</span>
@@ -49,7 +49,7 @@
           </div>
         </mat-card>
 
-        <mat-card class="h-card stat-card">
+        <mat-card class="h-card stat-card" matTooltip="Average total score calculated across all evaluated submissions">
           <mat-icon class="stat-icon" style="color: var(--h-primary-blue);">star</mat-icon>
           <div class="stat-info">
             <span class="stat-value tech-data">{{ data.stats.averageScore | number:'1.1-1' }}</span>
@@ -59,22 +59,22 @@
       </div>
 
       <div class="charts-grid mt-6">
-        <mat-card class="h-card chart-card">
+        <mat-card class="h-card chart-card" matTooltip="Tracks the hourly/daily volume of project submissions">
           <div class="section-label">Submission Timeline</div>
           <div echarts [options]="submissionChartOption()" class="chart-container"></div>
         </mat-card>
 
-        <mat-card class="h-card chart-card">
+        <mat-card class="h-card chart-card" matTooltip="Percentage distribution of participants stacks (Frontend, Backend, Design etc.)">
           <div class="section-label">Participant Roles</div>
           <div echarts [options]="roleChartOption()" class="chart-container"></div>
         </mat-card>
 
-        <mat-card class="h-card chart-card">
+        <mat-card class="h-card chart-card" matTooltip="Shows how many projects fall into specific score brackets">
           <div class="section-label">Score Distribution</div>
           <div echarts [options]="scoreChartOption()" class="chart-container"></div>
         </mat-card>
 
-        <mat-card class="h-card chart-card">
+        <mat-card class="h-card chart-card" matTooltip="Tracks the number of submissions evaluated by each individual jury member">
           <div class="section-label">Jury Activity</div>
           <div echarts [options]="juryChartOption()" class="chart-container"></div>
         </mat-card>

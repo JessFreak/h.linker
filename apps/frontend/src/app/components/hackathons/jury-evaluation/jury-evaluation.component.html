@@ -28,7 +28,9 @@
             <span class="crumb-current">Jury</span>
           </div>
 
-          <span class="count tech-data"><strong>{{ scoredCount() }}</strong> / {{ submissions().length }} <span class="h-text-secondary">teams</span></span>
+          <span class="count tech-data" matTooltip="Your evaluation progress across all submitted projects">
+            <strong>{{ scoredCount() }}</strong> / {{ submissions().length }} <span class="h-text-secondary">teams</span>
+          </span>
         </div>
       </div>
 
@@ -40,7 +42,8 @@
                [class.active]="idx === currentIndex()"
                (click)="selectTeam(idx)"
                (keydown.enter)="selectTeam(idx)"
-               (keydown.space)="$event.preventDefault(); selectTeam(idx)">
+               (keydown.space)="$event.preventDefault(); selectTeam(idx)"
+               [matTooltip]="'Switch to ' + team.teamName">
             <div class="team-name">{{ team.teamName }}</div>
             <div class="team-status h-text-secondary">
               @if (idx === currentIndex()) {
@@ -76,7 +79,8 @@
 
           <div class="project-actions">
             @if (currentSub()?.githubRepoUrl) {
-              <a mat-flat-button class="github-btn" [href]="currentSub()?.githubRepoUrl" target="_blank">
+              <a mat-flat-button class="github-btn" [href]="currentSub()?.githubRepoUrl" target="_blank"
+                 matTooltip="Open the team's public repository in a new tab to inspect code">
                 <mat-icon>code</mat-icon> Open GitHub Repository <mat-icon class="suffix">open_in_new</mat-icon>
               </a>
             }
@@ -95,7 +99,9 @@
               @for (score of otherJuryScores(); track score.name) {
                 <div class="other-score-item">
 
-                  <div class="h-user-redirect-group" [routerLink]="['/users', score.name]" style="display: flex; align-items: center; gap: 16px; flex: 1;">
+                  <div class="h-user-redirect-group" [routerLink]="['/users', score.name]"
+                       style="display: flex; align-items: center; gap: 16px; flex: 1;"
+                       matTooltip="View judge profile">
                     @if (score.avatarUrl) {
                       <img [src]="score.avatarUrl" class="juror-avatar" style="object-fit: cover;" alt="Avatar">
                     } @else {
@@ -112,7 +118,8 @@
                     </div>
                   </div>
 
-                  <div class="score-val tech-data" [class.h-text-secondary]="!score.score">
+                  <div class="score-val tech-data" [class.h-text-secondary]="!score.score"
+                       [matTooltip]="score.score ? 'Final normalized score from this juror' : 'This judge has not voted yet'">
                     {{ score.score ? (score.score | number:'1.1-1') : 'Pending...' }}
                   </div>
                 </div>
@@ -144,7 +151,7 @@
                   </mat-slider>
                   <span class="range-val h-text-secondary">{{ crit.maxValue }}</span>
 
-                  <div class="score-input-box tech-data">
+                  <div class="score-input-box tech-data" matTooltip="Current assigned points">
                     {{ evalForm.get(crit.id)?.value || '-' }}
                   </div>
                 </div>
@@ -177,7 +184,7 @@
           </div>
         </div>
 
-        <div class="calc-footer">
+        <div class="calc-footer" matTooltip="Formula: Sum of (Score / MaxValue * Weight)">
           <div class="calc-left">
             <div class="calc-label h-text-secondary">CALCULATED SCORE</div>
             <div class="calc-formula tech-data">{{ getMathFormula() }}</div>
@@ -189,7 +196,7 @@
 
           <div class="calc-right">
             @for (crit of hackathon()?.criteria; track crit.id) {
-              <div class="mini-crit-bar">
+              <div class="mini-crit-bar" [matTooltip]="crit.name + ' absolute progress'">
                 <span class="name">{{ crit.name | slice:0:15 }}</span>
                 <mat-progress-bar mode="determinate" [value]="((evalForm.get(crit.id)?.value || 0) / crit.maxValue) * 100"></mat-progress-bar>
                 <span class="val tech-data">{{ evalForm.get(crit.id)?.value || 0 }}</span>
@@ -201,24 +208,27 @@
     </main>
 
     <footer class="jury-footer">
-      <div class="footer-left h-text-secondary">
+      <div class="footer-left h-text-secondary" matTooltip="Database synchronization status">
         <mat-icon style="font-size: 16px; width: 16px; height: 16px;">fiber_manual_record</mat-icon>
         <span>{{ draftStatus() }}</span>
       </div>
 
       <div class="footer-center">
-        <button mat-button class="nav-btn h-text-secondary" [disabled]="currentIndex() === 0" (click)="prevTeam()">
+        <button mat-button class="nav-btn h-text-secondary" [disabled]="currentIndex() === 0" (click)="prevTeam()"
+                matTooltip="Go to previous submission without saving">
           <mat-icon>arrow_back</mat-icon> Prev Team
         </button>
         <span class="h-text-secondary mx-4">-</span>
-        <button mat-button class="nav-btn h-text-secondary" [disabled]="currentIndex() === submissions().length - 1" (click)="nextTeam()">
+        <button mat-button class="nav-btn h-text-secondary" [disabled]="currentIndex() === submissions().length - 1" (click)="nextTeam()"
+                matTooltip="Go to next submission without saving">
           Next Team <mat-icon>arrow_forward</mat-icon>
         </button>
       </div>
 
       <div class="footer-right">
-        <button mat-button class="mr-4 h-text-secondary">Save as Draft</button>
-        <button mat-flat-button color="primary" class="save-next-btn" (click)="onSaveAndNext()">
+        <button mat-button class="mr-4 h-text-secondary" matTooltip="Keep changes as a draft layout">Save as Draft</button>
+        <button mat-flat-button color="primary" class="save-next-btn" (click)="onSaveAndNext()"
+                matTooltip="Commit evaluation scores and automatically switch to the next team">
           Save & Next Team <mat-icon>arrow_forward</mat-icon>
         </button>
       </div>

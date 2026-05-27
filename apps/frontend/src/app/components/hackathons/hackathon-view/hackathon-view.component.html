@@ -16,9 +16,11 @@
                 </app-breadcrumb>
 
                 <div class="h-badges">
-                  <span class="h-status-badge" [class]="h.status.toLowerCase()">{{ h.status }}</span>
+                  <span class="h-status-badge" [class]="h.status.toLowerCase()" [matTooltip]="'Current event stage: ' + h.status">
+                    {{ h.status }}
+                  </span>
                   @for (cat of h.categories; track cat) {
-                    <span class="h-category-tag">{{ cat }}</span>
+                    <span class="h-category-tag" [matTooltip]="'Focus area: ' + cat">{{ cat }}</span>
                   }
                 </div>
               </div>
@@ -26,7 +28,8 @@
               <div class="h-action-buttons-group">
                 @if (isJury()) {
                   <button mat-flat-button color="primary" class="h-jury-mode-btn"
-                          [routerLink]="['/events', h.slug, 'jury']">
+                          [routerLink]="['/events', h.slug, 'jury']"
+                          matTooltip="Open expert evaluation board">
                     <mat-icon>gavel</mat-icon> Jury Workspace
                   </button>
                 }
@@ -39,7 +42,8 @@
                   </button>
 
                   <button mat-flat-button color="accent" class="h-edit-btn"
-                          [routerLink]="['/events/constructor']" [queryParams]="{ id: h.id }">
+                          [routerLink]="['/events/constructor']" [queryParams]="{ id: h.id }"
+                          matTooltip="Modify event configuration, rules or timeline">
                     <mat-icon>edit</mat-icon> Edit Event
                   </button>
                 }
@@ -49,9 +53,20 @@
             <h1 class="h-title">{{ h.title }}</h1>
 
             <div class="h-quick-stats tech-data">
-              <div class="stat-item"><mat-icon>calendar_today</mat-icon><span>{{ h.startDate | date:'MMM d' }} – {{ h.endDate | date:'MMM d, y' }}</span></div>
-              <div class="stat-item"><mat-icon>groups</mat-icon><span>{{ h.stats?.participations || 0 }} Registered</span></div>
-              <div class="stat-item"><mat-icon>emoji_events</mat-icon><span>{{ h.prize || 'Pride & Glory' }}</span></div>
+              <div class="stat-item" matTooltip="Hackathon duration window">
+                <mat-icon>calendar_today</mat-icon>
+                <span>{{ h.startDate | date:'MMM d' }} – {{ h.endDate | date:'MMM d, y' }}</span>
+              </div>
+
+              <div class="stat-item" matTooltip="Total teams officially registered">
+                <mat-icon>groups</mat-icon>
+                <span>{{ h.stats?.participations || 0 }} Registered</span>
+              </div>
+
+              <div class="stat-item" matTooltip="Main prize pool reward">
+                <mat-icon>emoji_events</mat-icon>
+                <span>{{ h.prize || 'Pride & Glory' }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -74,7 +89,10 @@
                 @if (h.prize) {
                   <section class="info-block">
                     <h3>Awards & Prizes</h3>
-                    <div class="prize-card"><mat-icon>workspace_premium</mat-icon><p>{{ h.prize }}</p></div>
+                    <div class="prize-card" matTooltip="Top reward for the winning team">
+                      <mat-icon>workspace_premium</mat-icon>
+                      <p>{{ h.prize }}</p>
+                    </div>
                   </section>
                 }
                 @if (h.criteria && h.criteria.length > 0) {
@@ -99,7 +117,7 @@
                 <div class="h-jury-grid">
                   @for (j of h.jury; track j.id) {
                     <div class="h-jury-card">
-                      <div class="h-user-redirect-group" [routerLink]="['/users', j.username]" matTooltip="View profile">
+                      <div class="h-user-redirect-group" [routerLink]="['/users', j.username]" matTooltip="View expert profile">
                         <img [src]="j.avatarUrl || 'https://ui-avatars.com/api/?name=' + j.username" class="h-avatar-sm" alt="Jury avatar">
                         <div class="jury-info">
                           <span class="h-username-link">{{ j.username }}</span>
@@ -118,7 +136,7 @@
           <div class="h-card sidebar-widget sticky-widget">
 
             @if (!isTimeUp()) {
-              <div class="timer-display tech-data">
+              <div class="timer-display tech-data" matTooltip="Time remaining until registration closes">
                 <div class="time-box"><span class="val">{{ timeLeft().days }}</span><span class="lab">DAYS</span></div>
                 <span class="sep">:</span>
                 <div class="time-box"><span class="val">{{ timeLeft().hrs }}</span><span class="lab">HRS</span></div>
@@ -126,7 +144,7 @@
                 <div class="time-box"><span class="val">{{ timeLeft().min }}</span><span class="lab">MIN</span></div>
               </div>
             } @else {
-              <div class="time-up-badge" style="margin-bottom: 24px; width: 100%; box-sizing: border-box; padding: 16px 0;">
+              <div class="time-up-badge" style="margin-bottom: 24px; width: 100%; box-sizing: border-box; padding: 16px 0;" matTooltip="New teams cannot register anymore">
                 <mat-icon>timer_off</mat-icon>
                 <span style="font-size: 14px;">REGISTRATION CLOSED</span>
               </div>
@@ -136,16 +154,20 @@
 
             @if (regStatus?.isRegistered) {
               <div class="registration-confirmed">
-                <div class="h-item-note success-note" style="margin-bottom: 16px;">
+                <div class="h-item-note success-note" style="margin-bottom: 16px;" matTooltip="Your participation status is fully verified">
                   <mat-icon>check_circle</mat-icon>
                   <p>Your team <strong>{{ regStatus?.team?.name }}</strong> is registered!</p>
                 </div>
 
-                <button mat-flat-button color="accent" class="w-full h-12" [routerLink]="['/events', h.slug, 'dashboard']">
+                <button mat-flat-button color="accent" class="w-full h-12"
+                        [routerLink]="['/events', h.slug, 'dashboard']"
+                        matTooltip="Open your workspace, submit code and view grades">
                   <mat-icon>dashboard</mat-icon> Participation Dashboard
                 </button>
 
-                <button mat-stroked-button class="w-full h-12 mt-3" [routerLink]="['/events', h.slug, 'leaderboard']">
+                <button mat-stroked-button class="w-full h-12 mt-3"
+                        [routerLink]="['/events', h.slug, 'leaderboard']"
+                        matTooltip="Track live score updates and ranks">
                   <mat-icon>leaderboard</mat-icon> View Live Leaderboard
                 </button>
               </div>
@@ -154,16 +176,20 @@
                       color="primary"
                       class="w-full h-12"
                       [disabled]="h.status !== Status.REGISTRATION || isTimeUp()"
-                      (click)="onRegister()">
+                      (click)="onRegister()"
+                      [matTooltip]="h.status !== Status.REGISTRATION ? 'Registration is only allowed during the REGISTRATION phase' : 'Join this competition with your active team'">
                 <mat-icon>app_registration</mat-icon>
                 Register for Event
               </button>
 
-              <button [routerLink]="['/teams']" mat-stroked-button class="w-full h-12 mt-3">
+              <button [routerLink]="['/teams']" mat-stroked-button class="w-full h-12 mt-3"
+                      matTooltip="Browse existing teams or form a new one to participate">
                 Find a Team
               </button>
 
-              <button mat-button color="primary" class="w-full h-12 mt-2" [routerLink]="['/events', h.slug, 'leaderboard']">
+              <button mat-button color="primary" class="w-full h-12 mt-2"
+                      [routerLink]="['/events', h.slug, 'leaderboard']"
+                      matTooltip="See current standings and scores">
                 <mat-icon>leaderboard</mat-icon> Live Standings
               </button>
             }
