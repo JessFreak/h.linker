@@ -263,20 +263,28 @@ export class HackathonService {
     // submission timeline
     const subTimelineCount: Record<string, number> = {};
     submissions.forEach((p) => {
-      const date = p.updatedAt.toISOString().split('T')[0];
-      subTimelineCount[date] = (subTimelineCount[date] || 0) + 1;
+      const iso = p.updatedAt.toISOString();
+      const hourKey = iso.substring(0, 13).replace('T', ' ') + ':00';
+
+      subTimelineCount[hourKey] = (subTimelineCount[hourKey] || 0) + 1;
     });
-    const submissionTimeline = Object.entries(subTimelineCount).map(([label, value]) => ({ label, value })).sort((a, b) => a.label.localeCompare(b.label));
+    const submissionTimeline = Object.entries(subTimelineCount)
+      .map(([label, value]) => ({ label, value }))
+      .sort((a, b) => a.label.localeCompare(b.label));
 
     // jury activity
     const juryTimelineCount: Record<string, number> = {};
     participations.forEach((p) => {
       p.scores.forEach((s) => {
-        const date = s.createdAt.toISOString().split('T')[0];
-        juryTimelineCount[date] = (juryTimelineCount[date] || 0) + 1;
+        const iso = s.createdAt.toISOString();
+        const hourKey = iso.substring(0, 13).replace('T', ' ') + ':00';
+
+        juryTimelineCount[hourKey] = (juryTimelineCount[hourKey] || 0) + 1;
       });
     });
-    const juryActivityTimeline = Object.entries(juryTimelineCount).map(([label, value]) => ({ label, value })).sort((a, b) => a.label.localeCompare(b.label));
+    const juryActivityTimeline = Object.entries(juryTimelineCount)
+      .map(([label, value]) => ({ label, value }))
+      .sort((a, b) => a.label.localeCompare(b.label));
 
     // score distribution
     const scoreRanges = { '0-2': 0, '2-4': 0, '4-6': 0, '6-8': 0, '8-10': 0 };
