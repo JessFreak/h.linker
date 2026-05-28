@@ -40,6 +40,14 @@ export class ParticipationRepository {
     });
   }
 
+  async checkExistsById(id: string): Promise<boolean> {
+    const participation = await this.prisma.participation.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+    return !!participation;
+  }
+
   async create(hackathonId: string, teamId: string): Promise<void> {
     await this.prisma.participation.create({
       data: {

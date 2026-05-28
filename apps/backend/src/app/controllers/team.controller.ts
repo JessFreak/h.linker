@@ -9,6 +9,7 @@ import {
   HttpCode,
   HttpStatus,
   Query,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { TeamService } from '../services/team.service';
 import { TeamMapper } from '../utils/mappers/team.mapper';
@@ -24,6 +25,8 @@ import {
 import { User, UserTeamStatus } from '@prisma/client';
 import { Access } from '../../config/security/decorators/access';
 import { UserRequest } from '../../config/security/decorators/user-request';
+import { TeamByIdPipe } from '../utils/pipes/team-by-id.pipe';
+import { UserByIdPipe } from '../utils/pipes/user-by-id.pipe';
 
 @Controller('teams')
 export class TeamController {
@@ -55,7 +58,9 @@ export class TeamController {
   }
 
   @Get(':id')
-  async getById(@Param('id') id: string): Promise<TeamResponse> {
+  async getById(
+    @Param('id', ParseUUIDPipe, TeamByIdPipe) id: string,
+  ): Promise<TeamResponse> {
     const team = await this.teamService.findById(id);
     return TeamMapper.getTeamResponse(team);
   }
@@ -63,7 +68,7 @@ export class TeamController {
   @Access()
   @Patch(':id')
   async update(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe, TeamByIdPipe) id: string,
     @Body() dto: UpdateTeamDTO,
   ): Promise<TeamResponse> {
     const team = await this.teamService.updateById(id, dto);
@@ -73,7 +78,9 @@ export class TeamController {
   @Access()
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id') id: string): Promise<void> {
+  async remove(
+    @Param('id', ParseUUIDPipe, TeamByIdPipe) id: string,
+  ): Promise<void> {
     return this.teamService.delete(id);
   }
 
@@ -81,7 +88,7 @@ export class TeamController {
   @Post(':id/apply')
   async applyToTeam(
     @UserRequest() user: User,
-    @Param('id') teamId: string,
+    @Param('id', ParseUUIDPipe, TeamByIdPipe) teamId: string,
     @Body() dto: JoinRequestDTO,
   ): Promise<TeamResponse> {
     const team = await this.teamService.joinRequest(teamId, user.id, dto);
@@ -91,7 +98,7 @@ export class TeamController {
   @Access()
   @Post(':id/invite')
   async inviteUser(
-    @Param('id') teamId: string,
+    @Param('id', ParseUUIDPipe, TeamByIdPipe) teamId: string,
     @Body() dto: InviteUserDTO,
   ): Promise<TeamResponse> {
     const team = await this.teamService.inviteUser(teamId, dto);
@@ -101,8 +108,8 @@ export class TeamController {
   @Access()
   @Delete(':id/members/:userId')
   async removeMember(
-    @Param('id') teamId: string,
-    @Param('userId') userId: string,
+    @Param('id', ParseUUIDPipe, TeamByIdPipe) teamId: string,
+    @Param('userId', ParseUUIDPipe, UserByIdPipe) userId: string,
   ): Promise<TeamResponse> {
     const team = await this.teamService.removeMember(teamId, userId);
     return TeamMapper.getTeamResponse(team);
@@ -111,8 +118,8 @@ export class TeamController {
   @Access()
   @Patch(':id/members/:userId/status')
   async respondToRequest(
-    @Param('id') teamId: string,
-    @Param('userId') userId: string,
+    @Param('id', ParseUUIDPipe, TeamByIdPipe) teamId: string,
+    @Param('userId', ParseUUIDPipe, UserByIdPipe) userId: string,
     @Body('status') status: UserTeamStatus,
   ): Promise<TeamResponse> {
     const team = await this.teamService.respondToMemberRequest(
@@ -126,8 +133,8 @@ export class TeamController {
   @Access()
   @Patch(':id/leader')
   async changeLeader(
-    @Param('id') id: string,
-    @Query('newLeaderId') newLeaderId: string,
+    @Param('id', ParseUUIDPipe, TeamByIdPipe) id: string,
+    @Query('newLeaderId', ParseUUIDPipe, UserByIdPipe) newLeaderId: string,
   ): Promise<TeamResponse> {
     const team = await this.teamService.changeLeader(id, newLeaderId);
     return TeamMapper.getTeamResponse(team);
@@ -136,7 +143,7 @@ export class TeamController {
   @Access()
   @Delete(':id/leave')
   async leave(
-    @Param('id') teamId: string,
+    @Param('id', ParseUUIDPipe, TeamByIdPipe) teamId: string,
     @UserRequest() user: User,
   ): Promise<TeamResponse> {
     const team = await this.teamService.removeMember(teamId, user.id);

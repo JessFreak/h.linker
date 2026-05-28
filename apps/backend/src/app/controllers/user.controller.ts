@@ -21,6 +21,7 @@ import { FullUser } from '../database/entities/user.entity';
 import { ConfigType } from '@nestjs/config';
 import { GithubService } from '../services/github.service';
 import config from '../../config/config';
+import { UserByUsernamePipe } from '../utils/pipes/user-by-username.pipe';
 
 @Controller('users')
 export class UserController {
@@ -38,7 +39,7 @@ export class UserController {
 
   @Get(':username')
   async getByUsername(
-    @Param('username') username: string,
+    @Param('username', UserByUsernamePipe) username: string,
   ): Promise<FullUserResponse> {
     const user = (await this.userService.findByUsername(
       username,

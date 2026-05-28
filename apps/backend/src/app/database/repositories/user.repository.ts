@@ -27,6 +27,22 @@ export class UserRepository {
     },
   };
 
+  async checkExistsByUsername(username: string): Promise<boolean> {
+    const user = await this.prisma.user.findUnique({
+      where: { username },
+      select: { id: true },
+    });
+    return !!user;
+  }
+
+  async checkExistsById(id: string): Promise<boolean> {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+    return !!user;
+  }
+
   async create(data: Prisma.UserUncheckedCreateInput): Promise<User> {
     return this.prisma.user.create({ data });
   }

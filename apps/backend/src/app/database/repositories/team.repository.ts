@@ -23,9 +23,15 @@ export class TeamRepository {
     },
   };
 
-  async create(
-    data: Prisma.TeamUncheckedCreateInput,
-  ): Promise<FullTeam> {
+  async checkExistsById(id: string): Promise<boolean> {
+    const team = await this.prisma.team.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+    return !!team;
+  }
+
+  async create(data: Prisma.TeamUncheckedCreateInput): Promise<FullTeam> {
     return this.prisma.team.create({
       data: {
         name: data.name,

@@ -35,6 +35,10 @@ import { HackathonService } from '../services/hackathon.service';
 import { UserRequest } from '../../config/security/decorators/user-request';
 import { HackathonMapper } from '../utils/mappers/hackathon.mapper';
 import { ParticipationMapper } from '../utils/mappers/participation.mapper';
+import { HackathonByIdPipe } from '../utils/pipes/hackathon-by-id.pipe';
+import { HackathonBySlugPipe } from '../utils/pipes/hackathon-by-slug.pipe';
+import { UserByIdPipe } from '../utils/pipes/user-by-id.pipe';
+import { ParticipationByIdPipe } from '../utils/pipes/participation-by-id.pipe';
 
 @Controller('hackathons')
 export class HackathonController {
@@ -48,14 +52,16 @@ export class HackathonController {
 
   @Get(':id')
   async getById(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseUUIDPipe, HackathonByIdPipe) id: string,
   ): Promise<FullHackathonResponse> {
     const hackathon = await this.hackathonService.getById(id);
     return HackathonMapper.getHackathonResponse(hackathon);
   }
 
   @Get('s/:slug')
-  async getBySlug(@Param('slug') slug: string): Promise<FullHackathonResponse> {
+  async getBySlug(
+    @Param('slug', HackathonBySlugPipe) slug: string,
+  ): Promise<FullHackathonResponse> {
     const hackathon = await this.hackathonService.getBySlug(slug);
     return HackathonMapper.getHackathonResponse(hackathon);
   }
@@ -73,7 +79,7 @@ export class HackathonController {
   @Patch(':id')
   @Access('ADMIN')
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseUUIDPipe, HackathonByIdPipe) id: string,
     @Body() dto: UpdateHackathonDTO,
   ): Promise<FullHackathonResponse> {
     const hackathon = await this.hackathonService.update(id, dto);
@@ -83,7 +89,7 @@ export class HackathonController {
   @Patch(':id/status')
   @Access('ADMIN')
   async updateStatus(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseUUIDPipe, HackathonByIdPipe) id: string,
     @Body() dto: UpdateHackathonStatusDTO,
   ): Promise<FullHackathonResponse> {
     const hackathon = await this.hackathonService.updateStatus(id, dto.status);
@@ -93,7 +99,7 @@ export class HackathonController {
   @Put(':id/criteria')
   @Access('ADMIN')
   async setCriteria(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseUUIDPipe, HackathonByIdPipe) id: string,
     @Body() dto: SetCriteriaDTO,
   ): Promise<void> {
     await this.hackathonService.setCriteria(id, dto.criteria);
@@ -102,7 +108,7 @@ export class HackathonController {
   @Put(':id/categories')
   @Access('ADMIN')
   async setCategories(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseUUIDPipe, HackathonByIdPipe) id: string,
     @Body() dto: SetCategoriesDTO,
   ): Promise<void> {
     await this.hackathonService.setCategories(id, dto.categories);
@@ -111,7 +117,7 @@ export class HackathonController {
   @Post(':id/jury')
   @Access('ADMIN')
   async addJury(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseUUIDPipe, HackathonByIdPipe) id: string,
     @Body() dto: AddJuryDTO,
   ): Promise<void> {
     await this.hackathonService.addJuryMember(id, dto.userId);
@@ -120,22 +126,24 @@ export class HackathonController {
   @Delete(':id/jury/:userId')
   @Access('ADMIN')
   async removeJury(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Param('userId', ParseUUIDPipe) userId: string,
+    @Param('id', ParseUUIDPipe, HackathonByIdPipe) id: string,
+    @Param('userId', ParseUUIDPipe, UserByIdPipe) userId: string,
   ): Promise<void> {
     await this.hackathonService.removeJuryMember(id, userId);
   }
 
   @Delete(':id')
   @Access('ADMIN')
-  async remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
+  async remove(
+    @Param('id', ParseUUIDPipe, HackathonByIdPipe) id: string,
+  ): Promise<void> {
     await this.hackathonService.deleteById(id);
   }
 
   @Get(':id/registration-status')
   @Access()
   async getRegistrationStatus(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe, HackathonByIdPipe) id: string,
     @UserRequest() user: UserResponse,
   ): Promise<UserRegistrationStatusResponse> {
     const registration = await this.hackathonService.findUserRegistration(
@@ -149,13 +157,10 @@ export class HackathonController {
   @Get(':id/reviews')
   @Access()
   async getMySubmissionReviews(
-    @Param('id') hackathonId: string,
+    @Param('id', ParseUUIDPipe, HackathonByIdPipe) id: string,
     @UserRequest() user: UserResponse,
   ): Promise<TeamReviewsResponse> {
-    const reviews = await this.hackathonService.findTeamReviews(
-      hackathonId,
-      user.id,
-    );
+    const reviews = await this.hackathonService.findTeamReviews(id, user.id);
 
     return ParticipationMapper.getTeamReviewsResponse(reviews);
   }
@@ -164,7 +169,7 @@ export class HackathonController {
   @Access()
   @HttpCode(HttpStatus.OK)
   async registerTeam(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe, HackathonByIdPipe) id: string,
     @Body('teamId') teamId: string,
     @UserRequest() user: UserResponse,
   ): Promise<void> {
@@ -175,7 +180,7 @@ export class HackathonController {
   @Access()
   @HttpCode(HttpStatus.OK)
   async submitProject(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe, HackathonByIdPipe) id: string,
     @Body() dto: SubmitProjectDto,
     @UserRequest() user: UserResponse,
   ): Promise<void> {
@@ -184,7 +189,9 @@ export class HackathonController {
 
   @Get(':id/leaderboard')
   @HttpCode(HttpStatus.OK)
-  async getLeaderboard(@Param('id') id: string): Promise<LeaderboardResponse> {
+  async getLeaderboard(
+    @Param('id', ParseUUIDPipe, HackathonByIdPipe) id: string,
+  ): Promise<LeaderboardResponse> {
     const data = await this.hackathonService.getLeaderboard(id);
     return ParticipationMapper.getLeaderboardResponse(data);
   }
@@ -192,7 +199,7 @@ export class HackathonController {
   @Get(':id/submissions')
   @Access('JURY')
   async getSubmissions(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe, HackathonByIdPipe) id: string,
     @UserRequest() user: UserResponse,
   ): Promise<JurySubmissionsResponse> {
     const participations =
@@ -207,14 +214,14 @@ export class HackathonController {
   @Access('JURY')
   @HttpCode(HttpStatus.OK)
   async setScore(
-    @Param('id') hackathonId: string,
+    @Param('id', ParseUUIDPipe, HackathonByIdPipe) id: string,
     @Param('projectId') participationId: string,
     @Body() dto: SetScoresDto,
     @UserRequest() user: UserResponse,
   ): Promise<void> {
     await this.hackathonService.setTeamScores(
       user.id,
-      hackathonId,
+      id,
       participationId,
       dto.scores,
     );
@@ -224,14 +231,14 @@ export class HackathonController {
   @Access('JURY')
   @HttpCode(HttpStatus.OK)
   async addComment(
-    @Param('id') hackathonId: string,
-    @Param('projectId') participationId: string,
+    @Param('id', ParseUUIDPipe, HackathonByIdPipe) id: string,
+    @Param('projectId', ParseUUIDPipe, ParticipationByIdPipe) participationId: string,
     @Body() dto: AddCommentDto,
     @UserRequest() user: UserResponse,
   ): Promise<void> {
     await this.hackathonService.setTeamComment(
       user.id,
-      hackathonId,
+      id,
       participationId,
       dto,
     );
@@ -240,7 +247,7 @@ export class HackathonController {
   @Get(':id/insights')
   @Access('ADMIN')
   async getInsights(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id', ParseUUIDPipe, HackathonByIdPipe) id: string,
   ): Promise<HackathonInsightsResponse> {
     return this.hackathonService.getInsights(id);
   }

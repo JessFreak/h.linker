@@ -40,6 +40,22 @@ export class HackathonRepository {
     });
   }
 
+  async checkExistsById(id: string): Promise<boolean> {
+    const hackathon = await this.prisma.hackathon.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+    return !!hackathon;
+  }
+
+  async checkExistsBySlug(slug: string): Promise<boolean> {
+    const hackathon = await this.prisma.hackathon.findUnique({
+      where: { slug },
+      select: { id: true },
+    });
+    return !!hackathon;
+  }
+
   async getById(id: string): Promise<FullHackathon | null> {
     return this.prisma.hackathon.findUnique({
       where: { id },
