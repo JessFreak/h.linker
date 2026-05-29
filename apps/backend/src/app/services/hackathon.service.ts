@@ -9,7 +9,9 @@ import {
   CreateHackathonDTO,
   CriterionDTO,
   HackathonInsightsResponse,
+  HackathonQueryDTO,
   HackathonStatus,
+  PageResponse,
   SubmitProjectDto,
   UpdateHackathonDTO,
 } from '@h.linker/libs';
@@ -25,6 +27,7 @@ import {
   ReviewWithJuryData,
 } from '../database/entities/participation.entity';
 import { EvaluationRepository } from '../database/repositories/evaluation.repository';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class HackathonService {
@@ -44,8 +47,24 @@ export class HackathonService {
     return this.hackathonRepository.create({ ...dto, creatorId });
   }
 
-  async getAll(): Promise<FullHackathon[]> {
-    return this.hackathonRepository.getAll();
+  async getAll(query: HackathonQueryDTO): Promise<PageResponse<FullHackathon>> {
+    const { search, status, order } = query;
+
+    const where: Prisma.HackathonWhereInput = {
+      ...(status && { status }),
+      ...(search && {
+        OR: [
+          { title: { contains: search, mode: 'insensitive' } },
+          { description: { contains: search, mode: 'insensitive' } },
+        ],
+      }),
+    };
+
+    const orderBy: Prisma.HackathonOrderByWithRelationInput = {
+      registrationStartDate: order ?? 'desc',
+    };
+
+    return this.hackathonRepository.findAllPaged(query, where, orderBy);
   }
 
   async getById(id: string): Promise<FullHackathon> {
@@ -246,10 +265,15 @@ export class HackathonService {
     const participations = hackathon.participations;
 
     const totalTeams = participations.length;
-    const totalParticipants = participations.reduce((acc, p) => acc + p.team.members.length, 0);
+    const totalParticipants = participations.reduce(
+      (acc, p) => acc + p.team.members.length,
+      0,
+    );
     const submissions = participations.filter((p) => p.githubRepoUrl);
     const totalSubmissions = submissions.length;
-    const avgScore = submissions.reduce((acc, p) => acc + p.finalScore, 0) / (totalSubmissions || 1);
+    const avgScore =
+      submissions.reduce((acc, p) => acc + p.finalScore, 0) /
+      (totalSubmissions || 1);
 
     // role distribution
     const roleCount: Record<string, number> = {};
@@ -258,7 +282,9 @@ export class HackathonService {
         roleCount[m.roleName] = (roleCount[m.roleName] || 0) + 1;
       });
     });
-    const roleDistribution = Object.entries(roleCount).map(([label, value]) => ({ label, value }));
+    const roleDistribution = Object.entries(roleCount).map(
+      ([label, value]) => ({ label, value }),
+    );
 
     // submission timeline
     const subTimelineCount: Record<string, number> = {};
@@ -295,11 +321,23 @@ export class HackathonService {
       else if (p.finalScore <= 8) scoreRanges['6-8']++;
       else scoreRanges['8-10']++;
     });
-    const scoreDistribution = Object.entries(scoreRanges).map(([label, value]) => ({ label, value }));
+    const scoreDistribution = Object.entries(scoreRanges).map(
+      ([label, value]) => ({ label, value }),
+    );
 
     return {
-      stats: { totalTeams, totalParticipants, totalSubmissions, averageScore: Number(avgScore.toFixed(1)) },
-      charts: { roleDistribution, submissionTimeline, juryActivityTimeline, scoreDistribution },
+      stats: {
+        totalTeams,
+        totalParticipants,
+        totalSubmissions,
+        averageScore: Number(avgScore.toFixed(1)),
+      },
+      charts: {
+        roleDistribution,
+        submissionTimeline,
+        juryActivityTimeline,
+        scoreDistribution,
+      },
     };
   }
 }

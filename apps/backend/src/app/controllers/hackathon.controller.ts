@@ -10,6 +10,7 @@ import {
   ParseUUIDPipe,
   HttpStatus,
   HttpCode,
+  Query,
 } from '@nestjs/common';
 import { Access } from '../../config/security/decorators/access';
 import {
@@ -18,9 +19,10 @@ import {
   CreateHackathonDTO,
   FullHackathonResponse,
   HackathonInsightsResponse,
-  HackathonsResponse,
+  HackathonQueryDTO,
   JurySubmissionsResponse,
   LeaderboardResponse,
+  PageResponse,
   SetCategoriesDTO,
   SetCriteriaDTO,
   SetScoresDto,
@@ -45,9 +47,19 @@ export class HackathonController {
   constructor(private readonly hackathonService: HackathonService) {}
 
   @Get()
-  async getAll(): Promise<HackathonsResponse> {
-    const hackathons = await this.hackathonService.getAll();
-    return HackathonMapper.getHackathonsResponse(hackathons);
+  async getAll(
+    @Query() query: HackathonQueryDTO,
+  ): Promise<PageResponse<FullHackathonResponse>> {
+    const pagedResult = await this.hackathonService.getAll(query);
+
+    const mappedData = pagedResult.data.map((h) =>
+      HackathonMapper.getHackathonResponse(h),
+    );
+
+    return new PageResponse<FullHackathonResponse>(
+      mappedData,
+      pagedResult.meta,
+    );
   }
 
   @Get(':id')
@@ -232,7 +244,8 @@ export class HackathonController {
   @HttpCode(HttpStatus.OK)
   async addComment(
     @Param('id', ParseUUIDPipe, HackathonByIdPipe) id: string,
-    @Param('projectId', ParseUUIDPipe, ParticipationByIdPipe) participationId: string,
+    @Param('projectId', ParseUUIDPipe, ParticipationByIdPipe)
+    participationId: string,
     @Body() dto: AddCommentDto,
     @UserRequest() user: UserResponse,
   ): Promise<void> {

@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Prisma } from '@prisma/client';
 import { FullHackathon } from '../entities/hackathon.entity';
+import { BaseQueryDTO, PageResponse } from '@h.linker/libs';
+import { Paginator } from '../../utils/prisma-pagination.util';
+
 
 @Injectable()
 export class HackathonRepository {
@@ -32,6 +35,25 @@ export class HackathonRepository {
       data,
       include: this.hackathonFullInclude,
     });
+  }
+
+  async findAllPaged(
+    query: BaseQueryDTO,
+    where?: Prisma.HackathonWhereInput,
+    orderBy?: Prisma.HackathonOrderByWithRelationInput,
+  ): Promise<PageResponse<FullHackathon>> {
+    return Paginator.paginate<FullHackathon>(
+      ({ skip, take }) =>
+        this.prisma.hackathon.findMany({
+          where,
+          orderBy,
+          include: this.hackathonFullInclude,
+          skip,
+          take,
+        }),
+      () => this.prisma.hackathon.count({ where }),
+      query,
+    );
   }
 
   async getAll(): Promise<FullHackathon[]> {
