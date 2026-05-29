@@ -1,12 +1,14 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   FullUserResponse,
+  PageResponse,
   UpdateUserDTO,
+  UserQueryDTO,
   UserResponse,
-  UsersResponse,
 } from '@h.linker/libs';
+import { HttpUtils } from '../utils/http.utils';
 
 @Injectable({
   providedIn: 'root',
@@ -23,11 +25,13 @@ export class UserService {
     return this.http.get<FullUserResponse>(`${this.baseUrl}/${username}`);
   }
 
-  getAll(q?: string): Observable<UsersResponse> {
-    let params = new HttpParams();
-    if (q) {
-      params = params.set('q', q);
-    }
-    return this.http.get<UsersResponse>(this.baseUrl, { params });
+  getAll(
+    query: Partial<UserQueryDTO> = {},
+  ): Observable<PageResponse<UserResponse>> {
+    const params = HttpUtils.buildQueryParams(query);
+
+    return this.http.get<PageResponse<UserResponse>>(this.baseUrl, {
+      params,
+    });
   }
 }

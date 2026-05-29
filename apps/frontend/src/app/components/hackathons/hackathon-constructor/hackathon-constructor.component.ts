@@ -122,7 +122,10 @@ export class HackathonConstructorComponent implements OnInit {
       distinctUntilChanged(),
       switchMap((val) =>
         val && val.length >= 2
-          ? this.userService.getAll(val).pipe(map((res) => res.users))
+          ?
+            this.userService
+              .getAll({ search: val })
+              .pipe(map((res) => res.data))
           : of([]),
       ),
     ),

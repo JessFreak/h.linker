@@ -42,8 +42,8 @@ import {
     MatTooltipModule,
     MatSelect,
     MatOption,
-    MatDatepickerModule, // Додано
-    MatNativeDateModule, // Додано
+    MatDatepickerModule,
+    MatNativeDateModule,
   ],
   templateUrl: './hackathon-explore.component.html',
   styleUrls: ['./hackathon-explore.component.scss'],
@@ -91,6 +91,8 @@ export class HackathonExploreComponent {
     ),
     { initialValue: [] as string[] },
   );
+
+  expandedHackathons = signal<Set<string>>(new Set());
 
   toggleCategory(category: string, isChecked: boolean) {
     const currentCategories = this.filterForm.value.categories ?? [];
@@ -147,5 +149,23 @@ export class HackathonExploreComponent {
       ...q,
       order: q.order === Order.DESC ? Order.ASC : Order.DESC,
     }));
+  }
+
+  toggleCategories(hackathonId: string, event: Event) {
+    event.stopPropagation();
+    event.preventDefault();
+    this.expandedHackathons.update((prev) => {
+      const next = new Set(prev);
+      if (next.has(hackathonId)) {
+        next.delete(hackathonId);
+      } else {
+        next.add(hackathonId);
+      }
+      return next;
+    });
+  }
+
+  isExpanded(hackathonId: string): boolean {
+    return this.expandedHackathons().has(hackathonId);
   }
 }

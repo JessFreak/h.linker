@@ -1,29 +1,31 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { toSignal, toObservable } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { RouterLink } from '@angular/router';
-import { UserResponse } from '@h.linker/libs';
-import { UserService } from '../../../services/user.service';
-import { AuthService } from '../../../services/auth.service';
-import { CategoryService } from '../../../services/category.service';
-import { NotificationService } from '../../../utils/notification.service';
 import { MatDialog } from '@angular/material/dialog';
-import { InviteUserDialogComponent } from './invite-user-dialog/invite-user-dialog.component';
-import { TeamService } from '../../../services/team.service';
-import { MatTooltip } from '@angular/material/tooltip';
-import { MatFormField, MatInput } from '@angular/material/input';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import {
   debounceTime,
   distinctUntilChanged,
   map,
   startWith,
   switchMap,
-} from 'rxjs';
+} from 'rxjs/operators';
+import { UserResponse, UserQueryDTO, Order } from '@h.linker/libs';
+
+import { UserService } from '../../../services/user.service';
+import { AuthService } from '../../../services/auth.service';
+import { CategoryService } from '../../../services/category.service';
+import { TeamService } from '../../../services/team.service';
+import { NotificationService } from '../../../utils/notification.service';
+import { InviteUserDialogComponent } from './invite-user-dialog/invite-user-dialog.component';
 
 @Component({
   selector: 'app-users',
@@ -37,14 +39,14 @@ import {
     MatCheckboxModule,
     RouterLink,
     NgOptimizedImage,
-    MatTooltip,
-    MatFormField,
-    MatInput,
+    MatTooltipModule,
+    MatFormFieldModule,
+    MatInputModule,
   ],
   templateUrl: './users.component.html',
   styleUrls: ['../discovery-shared.scss', './users.component.scss'],
 })
-export class UsersComponent implements OnInit {
+export class UsersComponent {
   private userService = inject(UserService);
   private authService = inject(AuthService);
   private teamService = inject(TeamService);
@@ -52,12 +54,38 @@ export class UsersComponent implements OnInit {
   private notify = inject(NotificationService);
   private dialog = inject(MatDialog);
 
-  categorySearchCtrl = new FormControl('');
   currentUser = toSignal(this.authService.user$);
-  allUsers = signal<UserResponse[]>([]);
 
-  searchQuery = signal('');
-  showOnlyWithGithub = signal(false);
+  filterForm = new FormGroup({
+    search: new FormControl(''),
+    connectedGithub: new FormControl(false),
+    categories: new FormControl<string[]>([]),
+  });
+
+  categorySearchCtrl = new FormControl('');
+
+  queryState = signal<Partial<UserQueryDTO>>({
+    page: 1,
+    take: 9,
+    order: Order.ASC,
+  });
+
+  pageResponse = toSignal(
+    toObservable(this.queryState).pipe(
+      debounceTime(200),
+      switchMap((query) => this.userService.getAll(query)),
+    ),
+  );
+
+  users = computed(() => {
+    const list = this.pageResponse()?.data || [];
+    const currentId = this.currentUser()?.id;
+    return list.filter((u) => u.id !== currentId);
+  });
+
+  meta = computed(() => this.pageResponse()?.meta);
+
+  readonly Order = Order;
 
   allCategories = toSignal(
     this.categorySearchCtrl.valueChanges.pipe(
@@ -70,62 +98,78 @@ export class UsersComponent implements OnInit {
     { initialValue: [] as string[] },
   );
 
-  filteredUsers = computed(() => {
-    let list = this.allUsers();
-    const currentId = this.currentUser()?.id;
-
-    list = list.filter((u) => u.id !== currentId);
-
-    if (this.showOnlyWithGithub()) {
-      list = list.filter((u) => !!u.githubId);
-    }
-
-    const query = this.searchQuery().toLowerCase();
-    if (query) {
-      list = list.filter(
-        (u) =>
-          u.username.toLowerCase().includes(query) ||
-          u.skills.some((s) => s.toLowerCase().includes(query)),
-      );
-    }
-
-    return list;
-  });
-
   expandedUsers = signal<Set<string>>(new Set());
 
-  ngOnInit() {
-    this.loadUsers();
+  toggleCategory(category: string, isChecked: boolean) {
+    const currentCategories = this.filterForm.value.categories ?? [];
+    if (isChecked) {
+      this.filterForm.patchValue({
+        categories: [...currentCategories, category],
+      });
+    } else {
+      this.filterForm.patchValue({
+        categories: currentCategories.filter((c) => c !== category),
+      });
+    }
   }
 
-  loadUsers() {
-    this.userService.getAll().subscribe({
-      next: (res) => this.allUsers.set(res.users),
-      error: () => this.notify.error('Failed to load developers'),
+  isCategorySelected(category: string): boolean {
+    return (this.filterForm.value.categories ?? []).includes(category);
+  }
+
+  applyFilters() {
+    const filters = this.filterForm.value;
+
+    this.queryState.update((q) => ({
+      ...q,
+      page: 1,
+      search: filters.search || undefined,
+      connectedGithub: filters.connectedGithub ? true : undefined,
+      categories: filters.categories?.length ? filters.categories : undefined,
+    }));
+  }
+
+  resetFilters() {
+    this.filterForm.reset({
+      search: '',
+      connectedGithub: false,
+      categories: [],
     });
+    this.applyFilters();
   }
 
-  onSearch(event: Event) {
-    const value = (event.target as HTMLInputElement).value;
-    this.searchQuery.set(value);
+  changePage(newPage: number) {
+    this.queryState.update((q) => ({ ...q, page: newPage }));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  toggleSort() {
+    this.queryState.update((q) => ({
+      ...q,
+      order: q.order === Order.DESC ? Order.ASC : Order.DESC,
+    }));
   }
 
   toggleSkills(userId: string, event: Event) {
     event.stopPropagation();
     this.expandedUsers.update((prev) => {
       const next = new Set(prev);
-      if (next.has(userId)) {
-        next.delete(userId);
-      } else {
-        next.add(userId);
-      }
+      if (next.has(userId)) next.delete(userId);
+      else next.add(userId);
       return next;
     });
   }
 
+  isExpanded(userId: string): boolean {
+    return this.expandedUsers().has(userId);
+  }
+
   openInviteDialog(user: UserResponse) {
     const currentUser = this.currentUser();
-    if (!currentUser) return;
+    if (!currentUser) {
+      this.notify.info('Please sign in to invite developers to your team');
+      return;
+    }
 
     const dialogRef = this.dialog.open(InviteUserDialogComponent, {
       width: '550px',
@@ -154,9 +198,5 @@ export class UsersComponent implements OnInit {
         });
       }
     });
-  }
-
-  isExpanded(userId: string): boolean {
-    return this.expandedUsers().has(userId);
   }
 }

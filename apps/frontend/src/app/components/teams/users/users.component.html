@@ -1,15 +1,15 @@
 <div class="h-page-layout">
-  <aside>
+  <aside [formGroup]="filterForm">
     <div class="filter-header">
       <h2>Find Talent</h2>
-      <button mat-button color="primary" class="reset-link">Reset</button>
+      <button mat-button color="primary" class="reset-link" (click)="resetFilters()">Reset</button>
     </div>
 
     <div class="filter-section">
       <h3>Query</h3>
-      <mat-form-field appearance="outline" class="h-filter-search" subscriptSizing="dynamic" matTooltip="Search by full name, @username or specific technical skills">
+      <mat-form-field appearance="outline" class="h-filter-search" subscriptSizing="dynamic" matTooltip="Search by full name or @username">
         <mat-icon matPrefix>search</mat-icon>
-        <input matInput type="text" placeholder="Search by name..." (input)="onSearch($event)">
+        <input matInput type="text" formControlName="search" placeholder="Search by name...">
       </mat-form-field>
     </div>
 
@@ -22,7 +22,11 @@
 
       <div class="filter-group scrollable-filters">
         @for (cat of allCategories(); track cat) {
-          <mat-checkbox color="primary">{{ cat }}</mat-checkbox>
+          <mat-checkbox color="primary"
+                        [checked]="isCategorySelected(cat)"
+                        (change)="toggleCategory(cat, $event.checked)">
+            {{ cat }}
+          </mat-checkbox>
         } @empty {
           <div class="h-empty-search">
             <small class="h-text-secondary">No matching categories found.</small>
@@ -36,29 +40,38 @@
       <div class="filter-group">
         <mat-checkbox
           color="primary"
-          [checked]="showOnlyWithGithub()"
-          (change)="showOnlyWithGithub.set(!showOnlyWithGithub())"
+          formControlName="connectedGithub"
           matTooltip="Show only developers who have linked their GitHub profile">
           Connected GitHub
         </mat-checkbox>
       </div>
     </div>
 
-    <button mat-flat-button color="primary" class="apply-btn">
+    <button mat-flat-button color="primary" class="apply-btn" (click)="applyFilters()">
       Apply Filters
     </button>
   </aside>
 
   <main class="discovery-grid">
-    <div class="header">
-      <h1 class="mat-headline-2">Developers</h1>
-      <span class="count-label h-text-secondary" [matTooltip]="filteredUsers().length + ' developers currently match your filters'">
-        {{ filteredUsers().length }} specialists found
-      </span>
+    <div class="header" style="display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <h1 class="mat-headline-2" style="margin: 0;">Developers</h1>
+        <span class="count-label h-text-secondary" [matTooltip]="(meta()?.itemCount ?? 0) + ' developers currently match your filters'">
+          {{ meta()?.itemCount ?? 0 }} specialists found
+        </span>
+      </div>
+
+      <div class="results-sort">
+        <span class="h-text-secondary" style="margin-right: 8px;">Sort by Name:</span>
+        <button mat-button (click)="toggleSort()">
+          {{ queryState().order === Order.ASC ? 'A-Z' : 'Z-A' }}
+          <mat-icon>{{ queryState().order === Order.ASC ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
+        </button>
+      </div>
     </div>
 
-    <div class="grid">
-      @for (user of filteredUsers(); track user.id) {
+    <div class="grid" style="margin-top: 24px;">
+      @for (user of users(); track user.id) {
         <div class="h-card discovery-card user-card">
           <div class="card-header">
             <div class="user-meta-group">
@@ -122,11 +135,32 @@
           </div>
         </div>
       } @empty {
-        <div class="empty-state">
-          <mat-icon class="h-text-secondary">person_search</mat-icon>
-          <p class="h-text-secondary">No developers match your search. Try broadening your criteria!</p>
+        <div class="empty-state" style="text-align: center; padding: 60px 0;">
+          <mat-icon class="h-text-secondary" style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px;">person_search</mat-icon>
+          <h2 class="h-text-secondary" style="margin: 0;">No developers match your search</h2>
+          <p class="h-text-secondary">Try broadening your criteria!</p>
         </div>
       }
     </div>
+
+    @if ((meta()?.pageCount ?? 0) > 1) {
+      <div class="h-pagination-controls mt-8">
+        <button mat-stroked-button
+                [disabled]="!meta()?.hasPreviousPage"
+                (click)="changePage((meta()?.page ?? 2) - 1)">
+          <mat-icon>chevron_left</mat-icon> Prev
+        </button>
+
+        <div class="page-indicator tech-data h-text-secondary">
+          Page <span style="color: white; font-weight: bold;">{{ meta()?.page ?? 1 }}</span> of {{ meta()?.pageCount ?? 1 }}
+        </div>
+
+        <button mat-stroked-button
+                [disabled]="!meta()?.hasNextPage"
+                (click)="changePage((meta()?.page ?? 0) + 1)">
+          Next <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+    }
   </main>
 </div>

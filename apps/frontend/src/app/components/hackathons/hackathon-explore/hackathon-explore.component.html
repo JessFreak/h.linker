@@ -117,9 +117,26 @@
               <div class="meta-item"><mat-icon>emoji_events</mat-icon> {{ h.prize || 'TBA' }}</div>
             </div>
 
-            <div class="card-tags">
-              @for (tag of h.categories; track tag) {
-                <span class="mini-tag">{{ tag }}</span>
+            <div class="skills-mini-list">
+              @let expanded = isExpanded(h.id);
+              @let visibleCategories = expanded ? h.categories : h.categories.slice(0, 3);
+
+              @for (tag of visibleCategories; track tag) {
+                <span class="skill-tag">{{ tag }}</span>
+              }
+
+              @if (h.categories.length > 3) {
+                <span class="skill-tag more"
+                      style="cursor: pointer;"
+                      role="button"
+                      tabindex="0"
+                      [class.active]="expanded"
+                      [matTooltip]="expanded ? 'Collapse list' : 'Show all ' + h.categories.length + ' categories'"
+                      (click)="toggleCategories(h.id, $event)"
+                      (keydown.enter)="toggleCategories(h.id, $event)"
+                      (keydown.space)="toggleCategories(h.id, $event); $event.preventDefault()">
+                  {{ expanded ? 'show less' : '+' + (h.categories.length - 3) }}
+                </span>
               }
             </div>
           </div>
