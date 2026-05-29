@@ -13,6 +13,8 @@ import {
   CreateTeamDTO,
   InviteUserDTO,
   JoinRequestDTO,
+  PageResponse,
+  TeamQueryDTO,
   UpdateTeamDTO,
 } from '@h.linker/libs';
 import { Prisma, UserTeamStatus } from '@prisma/client';
@@ -32,13 +34,26 @@ export class TeamService {
     return this.teamRepository.findById(id);
   }
 
-  async getAll(leaderId?: string): Promise<FullTeam[]> {
-    const where: Prisma.TeamWhereInput = {};
-    if (leaderId) {
-      where.leaderId = leaderId;
-    }
+  async getAll(query: TeamQueryDTO): Promise<PageResponse<FullTeam>> {
+    const { search, leaderId, memberId, hackathonId, order } = query;
 
-    return this.teamRepository.find(where);
+    const where: Prisma.TeamWhereInput = {
+      ...(leaderId && { leaderId }),
+      ...(memberId && { members: { some: { userId: memberId } } }),
+      ...(hackathonId && { participations: { some: { hackathonId } } }),
+      ...(search && {
+        OR: [
+          { name: { contains: search, mode: 'insensitive' } },
+          { description: { contains: search, mode: 'insensitive' } },
+        ],
+      }),
+    };
+
+    const orderBy: Prisma.TeamOrderByWithRelationInput = {
+      name: order ?? 'asc',
+    };
+
+    return this.teamRepository.findAllPaged(query, where, orderBy);
   }
 
   async updateById(id: string, dto: UpdateTeamDTO): Promise<FullTeam> {
@@ -68,10 +83,7 @@ export class TeamService {
     return this.teamRepository.findById(teamId);
   }
 
-  async inviteUser(
-    teamId: string,
-    dto: InviteUserDTO,
-  ): Promise<FullTeam> {
+  async inviteUser(teamId: string, dto: InviteUserDTO): Promise<FullTeam> {
     await this.validateConnection(teamId, dto.userId);
 
     await this.memberRepository.upsertConnection({
@@ -128,10 +140,7 @@ export class TeamService {
     return this.teamRepository.findById(teamId);
   }
 
-  async changeLeader(
-    id: string,
-    newLeaderId: string,
-  ): Promise<FullTeam> {
+  async changeLeader(id: string, newLeaderId: string): Promise<FullTeam> {
     return this.teamRepository.updateById(id, { leaderId: newLeaderId });
   }
 

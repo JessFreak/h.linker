@@ -17,10 +17,11 @@ import {
   CreateTeamDTO,
   UpdateTeamDTO,
   TeamResponse,
-  TeamsResponse,
   JoinRequestDTO,
   InviteUserDTO,
   UserInvitationsResponse,
+  TeamQueryDTO,
+  PageResponse,
 } from '@h.linker/libs';
 import { User, UserTeamStatus } from '@prisma/client';
 import { Access } from '../../config/security/decorators/access';
@@ -43,9 +44,15 @@ export class TeamController {
   }
 
   @Get()
-  async getAll(@Query('leaderId') leaderId: string): Promise<TeamsResponse> {
-    const teams = await this.teamService.getAll(leaderId);
-    return TeamMapper.getTeamsResponse(teams);
+  async getAll(
+    @Query() query: TeamQueryDTO,
+  ): Promise<PageResponse<TeamResponse>> {
+    const pagedResult = await this.teamService.getAll(query);
+    const mappedData = pagedResult.data.map((team) =>
+      TeamMapper.getTeamResponse(team),
+    );
+
+    return new PageResponse<TeamResponse>(mappedData, pagedResult.meta);
   }
 
   @Access()

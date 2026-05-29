@@ -5,6 +5,8 @@ import {
   FullTeam,
   UserInvitationWithTeam,
 } from '../entities/team.entity';
+import { BaseQueryDTO, PageResponse } from '@h.linker/libs';
+import { Paginator } from '../../utils/prisma-pagination.util';
 
 @Injectable()
 export class TeamRepository {
@@ -56,6 +58,25 @@ export class TeamRepository {
       where,
       include: this.include,
     });
+  }
+
+  async findAllPaged(
+    query: BaseQueryDTO,
+    where?: Prisma.TeamWhereInput,
+    orderBy?: Prisma.TeamOrderByWithRelationInput,
+  ): Promise<PageResponse<FullTeam>> {
+    return Paginator.paginate<FullTeam>(
+      ({ skip, take }) =>
+        this.prisma.team.findMany({
+          where,
+          orderBy,
+          include: this.include,
+          skip,
+          take,
+        }),
+      () => this.prisma.team.count({ where }),
+      query,
+    );
   }
 
   async findById(id: string): Promise<FullTeam> {
