@@ -1,15 +1,16 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   AddJuryDTO,
   CreateHackathonDTO,
   FullHackathonResponse,
   HackathonInsightsResponse,
-  HackathonsResponse,
+  HackathonQueryDTO,
   HackathonStatus,
   JurySubmissionsResponse,
   LeaderboardResponse,
+  PageResponse,
   SetCategoriesDTO,
   SetCriteriaDTO,
   SubmitProjectDto,
@@ -25,8 +26,20 @@ export class HackathonService {
   private http = inject(HttpClient);
   private readonly baseUrl = '/api/hackathons';
 
-  getAll(): Observable<HackathonsResponse> {
-    return this.http.get<HackathonsResponse>(this.baseUrl);
+  getAll(
+    query: Partial<HackathonQueryDTO> = {},
+  ): Observable<PageResponse<FullHackathonResponse>> {
+    let params = new HttpParams();
+
+    Object.entries(query).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        params = params.set(key, value.toString());
+      }
+    });
+
+    return this.http.get<PageResponse<FullHackathonResponse>>(this.baseUrl, {
+      params,
+    });
   }
 
   getById(id: string): Observable<FullHackathonResponse> {

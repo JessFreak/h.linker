@@ -370,3 +370,29 @@ html, body {
     height: 24px;
   }
 }
+
+.h-pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  padding: 24px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+
+  button {
+    min-width: 100px;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+
+    &:not([disabled]):hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--h-primary-blue);
+      color: white;
+    }
+  }
+
+  .page-indicator {
+    font-size: 14px;
+    letter-spacing: 0.5px;
+  }
+}

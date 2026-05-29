@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSliderModule } from '@angular/material/slider';
@@ -10,9 +10,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatOption, MatSelect } from '@angular/material/select';
 import { HackathonService } from '../../../services/hackathon.service';
 import { CategoryService } from '../../../services/category.service';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toSignal, toObservable } from '@angular/core/rxjs-interop';
+import { HackathonQueryDTO, Order, HackathonStatus } from '@h.linker/libs';
 import {
   map,
   debounceTime,
@@ -36,6 +38,8 @@ import {
     MatInputModule,
     MatFormFieldModule,
     MatTooltipModule,
+    MatSelect,
+    MatOption,
   ],
   templateUrl: './hackathon-explore.component.html',
   styleUrls: ['./hackathon-explore.component.scss'],
@@ -44,12 +48,32 @@ export class HackathonExploreComponent {
   private hackathonService = inject(HackathonService);
   private categoryService = inject(CategoryService);
 
+  filterForm = new FormGroup({
+    search: new FormControl(''),
+    status: new FormControl<HackathonStatus | ''>(''),
+    categories: new FormControl<string[]>([]),
+  });
+
   categorySearchCtrl = new FormControl('');
 
-  hackathons = toSignal(
-    this.hackathonService.getAll().pipe(map((res) => res.hackathons)),
-    { initialValue: [] },
+  queryState = signal<Partial<HackathonQueryDTO>>({
+    page: 1,
+    take: 10,
+    order: Order.DESC,
+  });
+
+  pageResponse = toSignal(
+    toObservable(this.queryState).pipe(
+      debounceTime(200),
+      switchMap((query) => this.hackathonService.getAll(query)),
+    ),
   );
+
+  hackathons = computed(() => this.pageResponse()?.data || []);
+  meta = computed(() => this.pageResponse()?.meta);
+
+  readonly HackathonStatus = HackathonStatus;
+  readonly Order = Order;
 
   allCategories = toSignal(
     this.categorySearchCtrl.valueChanges.pipe(
@@ -61,4 +85,49 @@ export class HackathonExploreComponent {
     ),
     { initialValue: [] as string[] },
   );
+
+  toggleCategory(category: string, isChecked: boolean) {
+    const currentCategories = this.filterForm.value.categories ?? [];
+    if (isChecked) {
+      this.filterForm.patchValue({
+        categories: [...currentCategories, category],
+      });
+    } else {
+      this.filterForm.patchValue({
+        categories: currentCategories.filter((c) => c !== category),
+      });
+    }
+  }
+
+  isCategorySelected(category: string): boolean {
+    return (this.filterForm.value.categories ?? []).includes(category);
+  }
+
+  applyFilters() {
+    const filters = this.filterForm.value;
+    this.queryState.update((q) => ({
+      ...q,
+      page: 1,
+      search: filters.search || undefined,
+      status: (filters.status as HackathonStatus) || undefined,
+      // categories: selectedCategories
+    }));
+  }
+
+  resetFilters() {
+    this.filterForm.reset({ search: '', status: '', categories: [] });
+    this.applyFilters();
+  }
+
+  changePage(newPage: number) {
+    this.queryState.update((q) => ({ ...q, page: newPage }));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  toggleSort() {
+    this.queryState.update((q) => ({
+      ...q,
+      order: q.order === Order.DESC ? Order.ASC : Order.DESC,
+    }));
+  }
 }
