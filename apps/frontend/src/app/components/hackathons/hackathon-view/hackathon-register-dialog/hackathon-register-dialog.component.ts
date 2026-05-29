@@ -16,6 +16,7 @@ import { MatInputModule } from '@angular/material/input';
 import { RouterLink } from '@angular/router';
 import { TeamService } from '../../../../services/team.service';
 import { TeamResponse } from '@h.linker/libs';
+import { NotificationService } from '../../../../utils/notification.service';
 
 @Component({
   selector: 'app-hackathon-register-dialog',
@@ -59,6 +60,7 @@ export class HackathonRegisterDialogComponent implements OnInit {
   private fb = inject(FormBuilder);
   private teamService = inject(TeamService);
   private dialogRef = inject(MatDialogRef<HackathonRegisterDialogComponent>);
+  private notify = inject(NotificationService);
   data = inject(MAT_DIALOG_DATA);
 
   myTeams = signal<TeamResponse[]>([]);
@@ -69,13 +71,18 @@ export class HackathonRegisterDialogComponent implements OnInit {
   });
 
   ngOnInit() {
-    this.teamService.getAll(this.data.currentUserId).subscribe({
-      next: (res) => {
-        this.myTeams.set(res.teams);
-        this.isLoading.set(false);
-      },
-      error: () => this.isLoading.set(false),
-    });
+    this.teamService
+      .getAll({ leaderId: this.data.currentUserId, take: 100 })
+      .subscribe({
+        next: (res) => {
+          this.myTeams.set(res.data);
+          this.isLoading.set(false);
+        },
+        error: () => {
+          this.notify.error('Failed to load your teams.');
+          this.isLoading.set(false);
+        },
+      });
   }
 
   onSubmit() {

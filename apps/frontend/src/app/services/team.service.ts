@@ -3,13 +3,14 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   TeamResponse,
-  TeamsResponse,
   CreateTeamDTO,
   UpdateTeamDTO,
   JoinRequestDTO,
   InviteUserDTO,
   MemberStatus,
   UserInvitationsResponse,
+  TeamQueryDTO,
+  PageResponse,
 } from '@h.linker/libs';
 
 @Injectable({ providedIn: 'root' })
@@ -17,14 +18,24 @@ export class TeamService {
   private http = inject(HttpClient);
   private readonly baseUrl = '/api/teams';
 
-  getAll(leaderId?: string): Observable<TeamsResponse> {
+  getAll(
+    query: Partial<TeamQueryDTO> = {},
+  ): Observable<PageResponse<TeamResponse>> {
     let params = new HttpParams();
 
-    if (leaderId) {
-      params = params.set('leaderId', leaderId);
-    }
+    Object.entries(query).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        if (Array.isArray(value)) {
+          value.forEach((v) => {
+            params = params.append(key, v.toString());
+          });
+        } else {
+          params = params.set(key, value.toString());
+        }
+      }
+    });
 
-    return this.http.get<TeamsResponse>(this.baseUrl, { params });
+    return this.http.get<PageResponse<TeamResponse>>(this.baseUrl, { params });
   }
 
   getById(id: string): Observable<TeamResponse> {

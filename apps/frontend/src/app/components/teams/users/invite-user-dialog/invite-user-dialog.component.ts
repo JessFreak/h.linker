@@ -17,6 +17,7 @@ import { forkJoin } from 'rxjs';
 import { TeamService } from '../../../../services/team.service';
 import { RoleService } from '../../../../services/role.service';
 import { MatInputModule } from '@angular/material/input';
+import { NotificationService } from '../../../../utils/notification.service';
 
 @Component({
   selector: 'app-invite-user-dialog',
@@ -68,6 +69,7 @@ export class InviteUserDialogComponent implements OnInit {
   private teamService = inject(TeamService);
   private roleService = inject(RoleService);
   private dialogRef = inject(MatDialogRef<InviteUserDialogComponent>);
+  private notify = inject(NotificationService);
   data = inject(MAT_DIALOG_DATA);
 
   myTeams = signal<TeamResponse[]>([]);
@@ -82,15 +84,21 @@ export class InviteUserDialogComponent implements OnInit {
 
   ngOnInit() {
     forkJoin({
-      teams: this.teamService.getAll(this.data.currentUserId),
+      teams: this.teamService.getAll({
+        leaderId: this.data.currentUserId,
+        take: 100,
+      }),
       roles: this.roleService.getAll(),
     }).subscribe({
       next: (res) => {
-        this.myTeams.set(res.teams.teams);
+        this.myTeams.set(res.teams.data);
         this.roles.set(res.roles.roles);
         this.isLoading.set(false);
       },
-      error: () => this.isLoading.set(false),
+      error: () => {
+        this.notify.error('Failed to load data for invitation.');
+        this.isLoading.set(false);
+      },
     });
   }
 

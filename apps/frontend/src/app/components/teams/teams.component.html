@@ -1,7 +1,16 @@
 <div class="h-page-layout">
-  <aside>
+  <aside [formGroup]="filterForm">
     <div class="filter-header">
       <h2>Discovery Filters</h2>
+      <button mat-button color="primary" class="reset-link" (click)="resetFilters()">Reset</button>
+    </div>
+
+    <div class="filter-section">
+      <h3>Search Teams</h3>
+      <mat-form-field appearance="outline" class="w-full" subscriptSizing="dynamic">
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput formControlName="search" placeholder="Name or description...">
+      </mat-form-field>
     </div>
 
     <div class="filter-section">
@@ -9,8 +18,7 @@
       <div class="filter-group">
         <mat-checkbox
           color="primary"
-          [checked]="showOnlyMyTeams()"
-          (change)="toggleMyTeams()"
+          formControlName="myTeams"
           matTooltip="Show only teams where you are already a member"
           matTooltipPosition="right">
           My Teams
@@ -18,8 +26,7 @@
 
         <mat-checkbox
           color="primary"
-          [checked]="showOnlyIAMLeader()"
-          (change)="toggleLeaderTeams()"
+          formControlName="iAmLeader"
           matTooltip="Show only teams owned by you"
           matTooltipPosition="right">
           I am Leader
@@ -29,12 +36,14 @@
 
     <button mat-flat-button
             color="primary"
-            class="apply-btn">
+            class="apply-btn"
+            (click)="applyFilters()">
       Apply Filters
     </button>
 
     <button mat-flat-button
             class="create-btn apply-btn"
+            style="margin-top: 16px;"
             (click)="openCreateDialog()"
             matTooltip="Start a new team and invite developers"
             matTooltipPosition="right">
@@ -43,15 +52,25 @@
   </aside>
 
   <main class="discovery-grid">
-    <div class="header">
-      <h1 class="mat-headline-2">Teams</h1>
-      <span class="count-label h-text-secondary" [matTooltip]="filteredTeams().length + ' teams currently visible'">
-        {{ filteredTeams().length }} teams match criteria
-      </span>
+    <div class="header" style="display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <h1 class="mat-headline-2" style="margin: 0;">Teams</h1>
+        <span class="count-label h-text-secondary" [matTooltip]="(meta()?.itemCount ?? 0) + ' teams total'">
+          {{ meta()?.itemCount ?? 0 }} teams match criteria
+        </span>
+      </div>
+
+      <div class="results-sort">
+        <span class="h-text-secondary" style="margin-right: 8px;">Sort:</span>
+        <button mat-button (click)="toggleSort()">
+          {{ queryState().order === Order.DESC ? 'Z-A' : 'A-Z' }}
+          <mat-icon>{{ queryState().order === Order.DESC ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
+        </button>
+      </div>
     </div>
 
-    <div class="grid">
-      @for (team of filteredTeams(); track team.id) {
+    <div class="grid" style="margin-top: 24px;">
+      @for (team of teams(); track team.id) {
         <div class="h-card discovery-card">
           <div class="card-header">
             <h3 class="mat-headline-3">{{ team.name }}</h3>
@@ -108,11 +127,32 @@
           </div>
         </div>
       } @empty {
-        <div class="empty-state">
-          <mat-icon class="h-text-secondary">search_off</mat-icon>
-          <p class="h-text-secondary">No teams found. Try changing filters or create your own!</p>
+        <div class="empty-state" style="text-align: center; padding: 60px 0;">
+          <mat-icon class="h-text-secondary" style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px;">search_off</mat-icon>
+          <h2 class="h-text-secondary" style="margin: 0;">No teams found</h2>
+          <p class="h-text-secondary">Try changing filters or create your own!</p>
         </div>
       }
     </div>
+
+    @if ((meta()?.pageCount ?? 0) > 1) {
+      <div class="h-pagination-controls mt-8">
+        <button mat-stroked-button
+                [disabled]="!meta()?.hasPreviousPage"
+                (click)="changePage((meta()?.page ?? 2) - 1)">
+          <mat-icon>chevron_left</mat-icon> Prev
+        </button>
+
+        <div class="page-indicator tech-data h-text-secondary">
+          Page <span style="color: white; font-weight: bold;">{{ meta()?.page ?? 1 }}</span> of {{ meta()?.pageCount ?? 1 }}
+        </div>
+
+        <button mat-stroked-button
+                [disabled]="!meta()?.hasNextPage"
+                (click)="changePage((meta()?.page ?? 0) + 1)">
+          Next <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+    }
   </main>
 </div>

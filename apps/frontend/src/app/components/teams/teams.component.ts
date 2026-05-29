@@ -1,15 +1,19 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toSignal, toObservable } from '@angular/core/rxjs-interop';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
-import { TeamResponse } from '@h.linker/libs';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { debounceTime, switchMap } from 'rxjs/operators';
+import { TeamResponse, TeamQueryDTO, Order } from '@h.linker/libs';
 import { CreateTeamDialogComponent } from './create-team-dialog.component';
 import { TeamService } from '../../services/team.service';
 import { AuthService } from '../../services/auth.service';
-import { Router, RouterLink } from '@angular/router';
 import { NotificationService } from '../../utils/notification.service';
 import { TeamUtils } from '../../utils/team.utils';
 import { TeamActionsService } from '../../utils/team-actions.service';
@@ -24,61 +28,83 @@ import { MatTooltip } from '@angular/material/tooltip';
     MatButtonModule,
     MatCheckboxModule,
     MatIconModule,
+    MatInputModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
     RouterLink,
     MatTooltip,
   ],
   templateUrl: './teams.component.html',
   styleUrls: ['./discovery-shared.scss', './.rejected.scss'],
 })
-export class TeamsComponent implements OnInit {
+export class TeamsComponent {
   private teamService = inject(TeamService);
   private authService = inject(AuthService);
   private dialog = inject(MatDialog);
   private notify = inject(NotificationService);
   private teamActions = inject(TeamActionsService);
-  private readonly router = inject(Router);
-
-  teams: TeamResponse[] = [];
+  private router = inject(Router);
 
   currentUser = toSignal(this.authService.user$);
 
-  allTeams = signal<TeamResponse[]>([]);
-
-  showOnlyMyTeams = signal(false);
-  showOnlyIAMLeader = signal(false);
-
-  filteredTeams = computed(() => {
-    let list = this.allTeams();
-    const user = this.currentUser();
-
-    if (this.showOnlyMyTeams()) {
-      list = list.filter((t) => t.members?.some((m) => m.id === user?.id));
-    }
-
-    if (this.showOnlyIAMLeader()) {
-      list = list.filter((t) => t.leaderId === user?.id);
-    }
-
-    return list;
+  filterForm = new FormGroup({
+    search: new FormControl(''),
+    myTeams: new FormControl(false),
+    iAmLeader: new FormControl(false),
   });
 
-  ngOnInit() {
-    this.loadTeams();
+  queryState = signal<Partial<TeamQueryDTO>>({
+    page: 1,
+    take: 9,
+    order: Order.DESC,
+  });
+
+  pageResponse = toSignal(
+    toObservable(this.queryState).pipe(
+      debounceTime(200),
+      switchMap((query) => this.teamService.getAll(query)),
+    ),
+  );
+
+  teams = computed(() => this.pageResponse()?.data || []);
+  meta = computed(() => this.pageResponse()?.meta);
+
+  readonly Order = Order;
+
+  applyFilters() {
+    const filters = this.filterForm.value;
+    const user = this.currentUser();
+
+    if ((filters.myTeams || filters.iAmLeader) && !user) {
+      this.notify.info('Please sign in to use personal filters');
+      this.filterForm.patchValue({ myTeams: false, iAmLeader: false });
+      return;
+    }
+
+    this.queryState.update((q) => ({
+      ...q,
+      page: 1,
+      search: filters.search || undefined,
+      leaderId: filters.iAmLeader && user ? user.id : undefined,
+      memberId: filters.myTeams && user ? user.id : undefined,
+    }));
   }
 
-  loadTeams() {
-    this.teamService.getAll().subscribe((res) => {
-      const data = res.teams;
-      this.allTeams.set(data);
-    });
+  resetFilters() {
+    this.filterForm.reset({ search: '', myTeams: false, iAmLeader: false });
+    this.applyFilters();
   }
 
-  toggleMyTeams() {
-    this.showOnlyMyTeams.set(!this.showOnlyMyTeams());
+  changePage(newPage: number) {
+    this.queryState.update((q) => ({ ...q, page: newPage }));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  toggleLeaderTeams() {
-    this.showOnlyIAMLeader.set(!this.showOnlyIAMLeader());
+  toggleSort() {
+    this.queryState.update((q) => ({
+      ...q,
+      order: q.order === Order.DESC ? Order.ASC : Order.DESC,
+    }));
   }
 
   openCreateDialog() {
@@ -95,7 +121,7 @@ export class TeamsComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.notify.success('Successfully created team');
-        this.teamService.create(result).subscribe(() => this.loadTeams());
+        this.queryState.update((q) => ({ ...q }));
       }
     });
   }
@@ -108,7 +134,9 @@ export class TeamsComponent implements OnInit {
       return;
     }
 
-    this.teamActions.openApplyDialog(team, () => this.loadTeams());
+    this.teamActions.openApplyDialog(team, () =>
+      this.queryState.update((q) => ({ ...q })),
+    );
   }
 
   isMember(team: TeamResponse): boolean {
