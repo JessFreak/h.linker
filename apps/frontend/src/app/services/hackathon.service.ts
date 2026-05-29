@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   AddJuryDTO,
@@ -18,6 +18,7 @@ import {
   UpdateHackathonDTO,
   UserRegistrationStatusResponse,
 } from '@h.linker/libs';
+import { HttpUtils } from '../utils/http.utils';
 
 @Injectable({
   providedIn: 'root',
@@ -29,19 +30,7 @@ export class HackathonService {
   getAll(
     query: Partial<HackathonQueryDTO> = {},
   ): Observable<PageResponse<FullHackathonResponse>> {
-    let params = new HttpParams();
-
-    Object.entries(query).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== '') {
-        if (Array.isArray(value)) {
-          value.forEach((v) => {
-            params = params.append(key, v.toString());
-          });
-        } else {
-          params = params.set(key, value.toString());
-        }
-      }
-    });
+    const params = HttpUtils.buildQueryParams(query);
 
     return this.http.get<PageResponse<FullHackathonResponse>>(this.baseUrl, {
       params,

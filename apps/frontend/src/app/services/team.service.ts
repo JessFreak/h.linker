@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   TeamResponse,
@@ -12,6 +12,7 @@ import {
   TeamQueryDTO,
   PageResponse,
 } from '@h.linker/libs';
+import { HttpUtils } from '../utils/http.utils';
 
 @Injectable({ providedIn: 'root' })
 export class TeamService {
@@ -21,21 +22,11 @@ export class TeamService {
   getAll(
     query: Partial<TeamQueryDTO> = {},
   ): Observable<PageResponse<TeamResponse>> {
-    let params = new HttpParams();
+    const params = HttpUtils.buildQueryParams(query);
 
-    Object.entries(query).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== '') {
-        if (Array.isArray(value)) {
-          value.forEach((v) => {
-            params = params.append(key, v.toString());
-          });
-        } else {
-          params = params.set(key, value.toString());
-        }
-      }
+    return this.http.get<PageResponse<TeamResponse>>(this.baseUrl, {
+      params,
     });
-
-    return this.http.get<PageResponse<TeamResponse>>(this.baseUrl, { params });
   }
 
   getById(id: string): Observable<TeamResponse> {
