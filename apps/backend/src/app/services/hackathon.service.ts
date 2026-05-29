@@ -48,10 +48,28 @@ export class HackathonService {
   }
 
   async getAll(query: HackathonQueryDTO): Promise<PageResponse<FullHackathon>> {
-    const { search, status, order } = query;
+    const { search, status, order, categories, startDateFrom, startDateTo } =
+      query;
 
     const where: Prisma.HackathonWhereInput = {
       ...(status && { status }),
+
+      ...(categories &&
+        categories.length > 0 && {
+          categories: {
+            some: {
+              category: { in: categories },
+            },
+          },
+        }),
+
+      ...((startDateFrom || startDateTo) && {
+        startDate: {
+          ...(startDateFrom && { gte: startDateFrom }),
+          ...(startDateTo && { lte: startDateTo }),
+        },
+      }),
+
       ...(search && {
         OR: [
           { title: { contains: search, mode: 'insensitive' } },
