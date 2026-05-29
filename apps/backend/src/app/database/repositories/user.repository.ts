@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Prisma, User, UserTeamStatus } from '@prisma/client';
 import { FullUser, UserWithSkills } from '../entities/user.entity';
+import { BaseQueryDTO, PageResponse } from '@h.linker/libs';
+import { Paginator } from '../../utils/prisma-pagination.util';
 
 @Injectable()
 export class UserRepository {
@@ -45,6 +47,25 @@ export class UserRepository {
 
   async create(data: Prisma.UserUncheckedCreateInput): Promise<User> {
     return this.prisma.user.create({ data });
+  }
+
+  async findAllPaged(
+    query: BaseQueryDTO,
+    where?: Prisma.UserWhereInput,
+    orderBy?: Prisma.UserOrderByWithRelationInput,
+  ): Promise<PageResponse<UserWithSkills>> {
+    return Paginator.paginate<UserWithSkills>(
+      ({ skip, take }) =>
+        this.prisma.user.findMany({
+          where,
+          orderBy,
+          include: { skills: true },
+          skip,
+          take,
+        }),
+      () => this.prisma.user.count({ where }),
+      query,
+    );
   }
 
   async find(where: Prisma.UserWhereInput): Promise<UserWithSkills[]> {

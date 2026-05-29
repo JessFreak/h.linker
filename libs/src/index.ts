@@ -9,6 +9,7 @@ export * from './lib/dtos/jury.dto';
 export * from './lib/dtos/queries/base-query.dto';
 export * from './lib/dtos/queries/hackathon-query.dto';
 export * from './lib/dtos/queries/team-query.dto';
+export * from './lib/dtos/queries/user-query.dto';
 
 export * from './lib/responses/page.response';
 export * from './lib/responses/user.response';

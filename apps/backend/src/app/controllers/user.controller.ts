@@ -12,9 +12,10 @@ import { Access } from '../../config/security/decorators/access';
 import { UserRequest } from '../../config/security/decorators/user-request';
 import {
   FullUserResponse,
+  PageResponse,
   UpdateUserDTO,
+  UserQueryDTO,
   UserResponse,
-  UsersResponse,
 } from '@h.linker/libs';
 import { UserMapper } from '../utils/mappers/user.mapper';
 import { FullUser } from '../database/entities/user.entity';
@@ -32,9 +33,16 @@ export class UserController {
   ) {}
 
   @Get()
-  async getAllUsers(@Query('q') query?: string): Promise<UsersResponse> {
-    const users = await this.userService.getAll(query);
-    return UserMapper.getUsersResponse(users);
+  async getAll(
+    @Query() query: UserQueryDTO,
+  ): Promise<PageResponse<UserResponse>> {
+    const pagedResult = await this.userService.getAll(query);
+
+    const mappedData = pagedResult.data.map((user) =>
+      UserMapper.getUserResponse(user),
+    );
+
+    return new PageResponse<UserResponse>(mappedData, pagedResult.meta);
   }
 
   @Get(':username')

@@ -1,6 +1,11 @@
 import { NotRegisteredException } from '../utils/exceptions/not-registered.exception';
 import { AlreadyExistsException } from '../utils/exceptions/already-exists.exception';
-import { RegisterDTO, UpdateUserDTO } from '@h.linker/libs';
+import {
+  PageResponse,
+  RegisterDTO,
+  UpdateUserDTO,
+  UserQueryDTO,
+} from '@h.linker/libs';
 import { ExternalUser } from '../utils/external-users';
 import * as bcrypt from 'bcryptjs';
 import { UserRepository } from '../database/repositories/user.repository';
@@ -40,21 +45,35 @@ export class UserService {
     return user;
   }
 
-  async getAll(searchQuery?: string) {
-    let where: Prisma.UserWhereInput = {};
+  async getAll(query: UserQueryDTO): Promise<PageResponse<UserWithSkills>> {
+    const { search, categories, connectedGithub, order } = query;
 
-    if (searchQuery && searchQuery.trim().length > 0) {
-      const q = searchQuery.trim();
-      where = {
+    const where: Prisma.UserWhereInput = {
+      ...(categories &&
+        categories.length > 0 && {
+          skills: {
+            some: { category: { in: categories } },
+          },
+        }),
+
+      ...(connectedGithub && {
+        githubId: { not: null },
+      }),
+
+      ...(search && {
         OR: [
-          { username: { contains: q, mode: 'insensitive' } },
-          { firstName: { contains: q, mode: 'insensitive' } },
-          { lastName: { contains: q, mode: 'insensitive' } },
+          { username: { contains: search, mode: 'insensitive' } },
+          { firstName: { contains: search, mode: 'insensitive' } },
+          { lastName: { contains: search, mode: 'insensitive' } },
         ],
-      };
-    }
+      }),
+    };
 
-    return this.userRepository.find(where);
+    const orderBy: Prisma.UserOrderByWithRelationInput = {
+      username: order ?? 'asc',
+    };
+
+    return this.userRepository.findAllPaged(query, where, orderBy);
   }
 
   async findByGithubId(githubId: string): Promise<User> {
