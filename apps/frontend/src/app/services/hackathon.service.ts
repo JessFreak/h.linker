@@ -33,7 +33,13 @@ export class HackathonService {
 
     Object.entries(query).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== '') {
-        params = params.set(key, value.toString());
+        if (Array.isArray(value)) {
+          value.forEach((v) => {
+            params = params.append(key, v.toString());
+          });
+        } else {
+          params = params.set(key, value.toString());
+        }
       }
     });
 

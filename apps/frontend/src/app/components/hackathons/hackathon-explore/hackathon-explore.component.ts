@@ -11,6 +11,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatOption, MatSelect } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 import { HackathonService } from '../../../services/hackathon.service';
 import { CategoryService } from '../../../services/category.service';
 import { toSignal, toObservable } from '@angular/core/rxjs-interop';
@@ -40,6 +42,8 @@ import {
     MatTooltipModule,
     MatSelect,
     MatOption,
+    MatDatepickerModule, // Додано
+    MatNativeDateModule, // Додано
   ],
   templateUrl: './hackathon-explore.component.html',
   styleUrls: ['./hackathon-explore.component.scss'],
@@ -52,6 +56,8 @@ export class HackathonExploreComponent {
     search: new FormControl(''),
     status: new FormControl<HackathonStatus | ''>(''),
     categories: new FormControl<string[]>([]),
+    startDateFrom: new FormControl<Date | null>(null),
+    startDateTo: new FormControl<Date | null>(null),
   });
 
   categorySearchCtrl = new FormControl('');
@@ -110,12 +116,24 @@ export class HackathonExploreComponent {
       page: 1,
       search: filters.search || undefined,
       status: (filters.status as HackathonStatus) || undefined,
-      // categories: selectedCategories
+      categories: filters.categories?.length ? filters.categories : undefined,
+      startDateFrom: filters.startDateFrom
+        ? (filters.startDateFrom.toISOString() as unknown as Date)
+        : undefined,
+      startDateTo: filters.startDateTo
+        ? (filters.startDateTo.toISOString() as unknown as Date)
+        : undefined,
     }));
   }
 
   resetFilters() {
-    this.filterForm.reset({ search: '', status: '', categories: [] });
+    this.filterForm.reset({
+      search: '',
+      status: '',
+      categories: [],
+      startDateFrom: null,
+      startDateTo: null,
+    });
     this.applyFilters();
   }
 

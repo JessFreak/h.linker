@@ -33,6 +33,18 @@
     </div>
 
     <div class="filter-section">
+      <h3>Event Dates</h3>
+      <mat-form-field appearance="outline" class="w-full h-filter-search" subscriptSizing="dynamic">
+        <mat-date-range-input [rangePicker]="picker">
+          <input matStartDate formControlName="startDateFrom" placeholder="Start date">
+          <input matEndDate formControlName="startDateTo" placeholder="End date">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
+    </div>
+
+    <div class="filter-section">
       <h3>Categories & Tech</h3>
 
       <mat-form-field appearance="outline" class="h-filter-search" subscriptSizing="dynamic">
