@@ -1,0 +1,38 @@
+<div class="bg-glow-blue"></div>
+<div class="bg-glow-orange"></div>
+
+<div class="h-not-found-layout">
+  <div class="h-card not-found-card">
+    <div class="glitch-wrapper">
+      <h1 class="error-code tech-data">404</h1>
+    </div>
+
+    <h2 class="error-title">Page Not Found</h2>
+
+    <div class="error-desc-container">
+      @if (errorMessage) {
+        <p class="h-text-secondary error-desc">
+          The server responded with the following issue:
+        </p>
+        <div class="specific-error-box tech-data">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ errorMessage }}</span>
+        </div>
+      } @else {
+        <p class="h-text-secondary error-desc">
+          We couldn't find the page you were looking for. The hackathon, team, or user profile might have been removed, renamed, or didn't exist in the first place.
+        </p>
+      }
+    </div>
+
+    <div class="actions">
+      <button mat-flat-button color="primary" [routerLink]="['/events']">
+        <mat-icon>explore</mat-icon> Browse Events
+      </button>
+
+      <button mat-stroked-button [routerLink]="['/teams']">
+        <mat-icon>groups</mat-icon> Find a Team
+      </button>
+    </div>
+  </div>
+</div>

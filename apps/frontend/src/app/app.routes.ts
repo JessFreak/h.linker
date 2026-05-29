@@ -20,6 +20,7 @@ import { ProjectShowcaseComponent } from './components/project-showcase/project-
 import {
   HackathonInsightsComponent
 } from './components/hackathons/hackathon-view/hackathon-insights/hackathon-insights.component';
+import { NotFoundComponent } from './components/not-found/not-found.component';
 
 export const appRoutes: Route[] = [
   { path: '', component: MainPageComponent, pathMatch: 'full' },
@@ -67,5 +68,6 @@ export const appRoutes: Route[] = [
     canActivate: [authGuard],
   },
   { path: 'showcase', component: ProjectShowcaseComponent },
-  { path: '**', redirectTo: '' },
+  { path: '404', component: NotFoundComponent },
+  { path: '**', redirectTo: '404' },
 ];

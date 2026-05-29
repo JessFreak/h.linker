@@ -1,0 +1,125 @@
+:host {
+  position: relative;
+  min-height: calc(100vh - 64px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.bg-glow-blue {
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, rgba(65, 105, 165, 0.15) 0%, rgba(13, 17, 23, 0) 70%);
+  filter: blur(80px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.bg-glow-orange {
+  position: absolute;
+  bottom: -10%;
+  right: -10%;
+  width: 40vw;
+  height: 40vw;
+  background: radial-gradient(circle, rgba(240, 136, 0, 0.1) 0%, rgba(13, 17, 23, 0) 70%);
+  filter: blur(90px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.h-not-found-layout {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 600px;
+  padding: 20px;
+}
+
+.not-found-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 60px 40px !important;
+  background: rgba(48, 54, 61, 0.6) !important;
+  backdrop-filter: blur(10px);
+}
+
+.error-code {
+  font-size: clamp(100px, 15vw, 140px);
+  font-weight: 900;
+  line-height: 1;
+  margin: 0;
+
+  background: linear-gradient(135deg, var(--h-safety-orange) 0%, var(--h-primary-blue) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  letter-spacing: -5px;
+}
+
+.error-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 16px 0;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+
+.error-desc {
+  font-size: 16px;
+  line-height: 1.6;
+  max-width: 420px;
+  margin-bottom: 40px;
+}
+
+.actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  button {
+    height: 48px;
+    padding: 0 24px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 8px;
+  }
+}
+
+.error-desc-container {
+  margin-bottom: 40px;
+  max-width: 420px;
+}
+
+.error-desc {
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.specific-error-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 16px;
+  background: rgba(248, 81, 73, 0.05);
+  border: 1px solid rgba(248, 81, 73, 0.2);
+  border-left: 4px solid #f85149;
+  border-radius: 8px;
+  color: #f0f6fc;
+  font-size: 14px;
+  text-align: left;
+  line-height: 1.5;
+
+  mat-icon {
+    color: #f85149;
+    flex-shrink: 0;
+  }
+}
