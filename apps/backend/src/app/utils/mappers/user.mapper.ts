@@ -11,7 +11,7 @@ import { TeamMapper } from './team.mapper';
 import { ParticipationMapper } from './participation.mapper';
 
 export class UserMapper {
-  static getUserResponse(user: UserWithSkills): UserResponse {
+  static getUserResponse(user: UserWithSkills & { matchPercentage?: number }): UserResponse {
     if (!user) return null;
     return {
       id: user.id,
@@ -24,6 +24,7 @@ export class UserMapper {
       githubId: user.githubId,
       githubUsername: user.githubUsername,
       skills: user.skills?.map((uc) => uc.category) || [],
+      matchPercentage: user.matchPercentage,
     };
   }
 

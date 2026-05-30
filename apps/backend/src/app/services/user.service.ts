@@ -1,10 +1,10 @@
 import { NotRegisteredException } from '../utils/exceptions/not-registered.exception';
 import { AlreadyExistsException } from '../utils/exceptions/already-exists.exception';
 import {
-  PageResponse,
   RegisterDTO,
   UpdateUserDTO,
   UserQueryDTO,
+  UserResponse,
 } from '@h.linker/libs';
 import { ExternalUser } from '../utils/external-users';
 import * as bcrypt from 'bcryptjs';
@@ -45,21 +45,19 @@ export class UserService {
     return user;
   }
 
-  async getAll(query: UserQueryDTO): Promise<PageResponse<UserWithSkills>> {
-    const { search, categories, connectedGithub, order } = query;
+  async getAll(query: UserQueryDTO, currentUser?: UserResponse) {
+    const { search, categories, connectedGithub, order, isRecommended } = query;
 
     const where: Prisma.UserWhereInput = {
+      ...(currentUser && { id: { not: currentUser.id } }),
+
       ...(categories &&
         categories.length > 0 && {
-          skills: {
-            some: { category: { in: categories } },
-          },
+          skills: { some: { category: { in: categories } } },
         }),
-
       ...(connectedGithub && {
         githubId: { not: null },
       }),
-
       ...(search && {
         OR: [
           { username: { contains: search, mode: 'insensitive' } },
@@ -68,6 +66,14 @@ export class UserService {
         ],
       }),
     };
+
+    if (isRecommended && currentUser?.id) {
+      const userSkills = (currentUser.skills || []).map((s: any) =>
+        typeof s === 'string' ? s : s.category,
+      );
+
+      return this.userRepository.findRecommendedPaged(query, where, userSkills);
+    }
 
     const orderBy: Prisma.UserOrderByWithRelationInput = {
       username: order ?? 'asc',

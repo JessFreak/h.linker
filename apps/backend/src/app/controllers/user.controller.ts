@@ -33,10 +33,12 @@ export class UserController {
   ) {}
 
   @Get()
+  @Access()
   async getAll(
     @Query() query: UserQueryDTO,
+    @UserRequest() currentUser?: UserResponse,
   ): Promise<PageResponse<UserResponse>> {
-    const pagedResult = await this.userService.getAll(query);
+    const pagedResult = await this.userService.getAll(query, currentUser);
 
     const mappedData = pagedResult.data.map((user) =>
       UserMapper.getUserResponse(user),

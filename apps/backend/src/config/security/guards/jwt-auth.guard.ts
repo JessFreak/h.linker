@@ -6,6 +6,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { UserRepository } from '../../../app/database/repositories/user.repository';
+import { UserMapper } from '../../../app/utils/mappers/user.mapper';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -32,8 +33,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         throw new UnauthorizedException('User not found');
       }
 
-      delete user.password;
-      request.user = user;
+      request.user = UserMapper.getUserResponse(user);
 
       return true;
     } catch (error) {

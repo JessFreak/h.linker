@@ -12,6 +12,7 @@ export interface UserResponse {
   bio: string | null;
   avatarUrl: string | null;
   skills: string[];
+  matchPercentage?: number;
 }
 
 export interface UsersResponse {
