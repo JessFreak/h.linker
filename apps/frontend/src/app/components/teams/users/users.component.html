@@ -40,6 +40,12 @@
       <div class="filter-group">
         <mat-checkbox
           color="primary"
+          formControlName="isRecommended"
+          matTooltip="Sort developers by how well their skills match yours">
+          Recommended for Me
+        </mat-checkbox>
+        <mat-checkbox
+          color="primary"
           formControlName="connectedGithub"
           matTooltip="Show only developers who have linked their GitHub profile">
           Connected GitHub
@@ -73,6 +79,7 @@
     <div class="grid" style="margin-top: 24px;">
       @for (user of users(); track user.id) {
         <div class="h-card discovery-card user-card">
+
           <div class="card-header">
             <div class="user-meta-group">
               <img [ngSrc]="user.avatarUrl || 'default-avatar.png'"
@@ -83,11 +90,22 @@
               </div>
             </div>
 
-            @if (user.githubId) {
-              <mat-icon class="github-status-icon"
-                        matTooltip="GitHub account verified and linked"
-                        matTooltipPosition="above">verified</mat-icon>
-            }
+            <div class="header-actions">
+              @if (user.matchPercentage !== undefined) {
+                <span class="match-badge tech-data"
+                      [class.high-match]="user.matchPercentage >= 70"
+                      matTooltip="Skill match percentage with your profile">
+                  <mat-icon>radar</mat-icon>
+                  {{ user.matchPercentage | number:'1.0-0' }}%
+                </span>
+              }
+
+              @if (user.githubId) {
+                <mat-icon class="github-status-icon"
+                          matTooltip="GitHub account verified and linked"
+                          matTooltipPosition="above">verified</mat-icon>
+              }
+            </div>
           </div>
 
           <p class="h-text-secondary card-description">

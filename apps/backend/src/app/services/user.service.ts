@@ -68,11 +68,7 @@ export class UserService {
     };
 
     if (isRecommended && currentUser?.id) {
-      const userSkills = (currentUser.skills || []).map((s: any) =>
-        typeof s === 'string' ? s : s.category,
-      );
-
-      return this.userRepository.findRecommendedPaged(query, where, userSkills);
+      return this.userRepository.findRecommendedPaged(query, where, currentUser.skills || []);
     }
 
     const orderBy: Prisma.UserOrderByWithRelationInput = {

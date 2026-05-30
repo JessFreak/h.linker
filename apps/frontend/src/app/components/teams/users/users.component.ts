@@ -59,6 +59,7 @@ export class UsersComponent {
   filterForm = new FormGroup({
     search: new FormControl(''),
     connectedGithub: new FormControl(false),
+    isRecommended: new FormControl(false),
     categories: new FormControl<string[]>([]),
   });
 
@@ -119,12 +120,21 @@ export class UsersComponent {
 
   applyFilters() {
     const filters = this.filterForm.value;
+    const user = this.currentUser();
+
+    // Захист: вимагаємо авторизацію для персональних рекомендацій
+    if (filters.isRecommended && !user) {
+      this.notify.info('Please sign in to get personalized recommendations.');
+      this.filterForm.patchValue({ isRecommended: false });
+      return;
+    }
 
     this.queryState.update((q) => ({
       ...q,
       page: 1,
       search: filters.search || undefined,
       connectedGithub: filters.connectedGithub ? true : undefined,
+      isRecommended: filters.isRecommended ? true : undefined,
       categories: filters.categories?.length ? filters.categories : undefined,
     }));
   }
@@ -133,6 +143,7 @@ export class UsersComponent {
     this.filterForm.reset({
       search: '',
       connectedGithub: false,
+      isRecommended: false,
       categories: [],
     });
     this.applyFilters();
