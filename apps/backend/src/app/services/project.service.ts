@@ -1,31 +1,41 @@
 import { Injectable } from '@nestjs/common';
 import { ParticipationRepository } from '../database/repositories/participation.repository';
-import { ShowcaseParticipationData } from '../database/entities/project.entity';
+import { Prisma } from '@prisma/client';
+import { ProjectQueryDTO } from '@h.linker/libs';
 
 @Injectable()
 export class ProjectService {
   constructor(private participationRepository: ParticipationRepository) {}
 
-  async getTopShowcaseProjects(): Promise<ShowcaseParticipationData[]> {
-    const rawProjects =
-      await this.participationRepository.getTopShowcaseProjects();
+  async getShowcaseProjects(query: ProjectQueryDTO) {
+    const { search, hackathonId, categories } = query;
 
-    return rawProjects
-      .sort((a, b) => {
-        const maxA = a.hackathon.criteria.reduce(
-          (acc, c) => acc + c.maxValue * (c.weight / 100),
-          0,
-        );
-        const maxB = b.hackathon.criteria.reduce(
-          (acc, c) => acc + c.maxValue * (c.weight / 100),
-          0,
-        );
+    const where: Prisma.ParticipationWhereInput = {
+      githubRepoUrl: { not: null },
+      finalScore: { gt: 0 },
+      hackathon: {
+        status: 'FINISHED',
+        ...(categories &&
+          categories.length > 0 && {
+            categories: {
+              some: { category: { in: categories } },
+            },
+          }),
+      },
+      ...(hackathonId && { hackathonId }),
 
-        const percentA = maxA > 0 ? (a.finalScore / maxA) * 100 : 0;
-        const percentB = maxB > 0 ? (b.finalScore / maxB) * 100 : 0;
+      ...(search && {
+        OR: [
+          { projectTitle: { contains: search, mode: 'insensitive' } },
+          { projectDescription: { contains: search, mode: 'insensitive' } },
+          { team: { name: { contains: search, mode: 'insensitive' } } },
+        ],
+      }),
+    };
 
-        return percentB - percentA;
-      })
-      .slice(0, 20);
+    return this.participationRepository.findShowcasePagedByPercentage(
+      query,
+      where,
+    );
   }
 }

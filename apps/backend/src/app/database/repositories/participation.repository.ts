@@ -1,17 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { HackathonStatus, Prisma, UserTeamStatus } from '@prisma/client';
+import { Prisma, UserTeamStatus } from '@prisma/client';
 import {
   LeaderboardRow,
   ParticipationWithScoresAndReviews,
   ParticipationWithTeam,
   ReviewWithJuryData,
 } from '../entities/participation.entity';
-import { ShowcaseParticipationData } from '../entities/project.entity';
+import { BaseQueryDTO, PageMetaResponse, PageResponse } from '@h.linker/libs';
 
 @Injectable()
 export class ParticipationRepository {
   constructor(private readonly prisma: PrismaService) {}
+
+  private readonly showcaseInclude = {
+    team: {
+      include: {
+        members: {
+          where: { status: 'ACCEPTED' },
+        },
+      },
+    },
+    hackathon: {
+      include: {
+        criteria: true,
+        categories: { include: { cat: true } },
+      },
+    },
+  } satisfies Prisma.ParticipationInclude;
 
   async findUserParticipation(
     hackathonId: string,
@@ -157,30 +173,58 @@ export class ParticipationRepository {
     });
   }
 
-  async getTopShowcaseProjects(): Promise<ShowcaseParticipationData[]> {
-    return this.prisma.participation.findMany({
-      where: {
-        githubRepoUrl: { not: null },
-        finalScore: { gt: 0 },
+  async findShowcasePagedByPercentage(
+    query: BaseQueryDTO,
+    where: Prisma.ParticipationWhereInput,
+  ) {
+    const page = query.page ?? 1;
+    const take = query.take ?? 10;
+    const skip = (page - 1) * take;
+
+    const lightweightParticipations = await this.prisma.participation.findMany({
+      where,
+      select: {
+        id: true,
+        finalScore: true,
         hackathon: {
-          status: HackathonStatus.FINISHED,
-        },
-      },
-      include: {
-        team: {
-          include: {
-            members: {
-              where: { status: UserTeamStatus.ACCEPTED },
+          select: {
+            criteria: {
+              select: { weight: true, maxValue: true },
             },
-          },
-        },
-        hackathon: {
-          include: {
-            criteria: true,
-            categories: true,
           },
         },
       },
     });
+
+    const calculated = lightweightParticipations.map((p) => {
+      const maxScore = p.hackathon.criteria.reduce(
+        (acc, c) => acc + c.maxValue * (c.weight / 100),
+        0,
+      );
+      const percentage = maxScore > 0 ? (p.finalScore / maxScore) * 100 : 0;
+
+      return { id: p.id, percentage };
+    });
+
+    const isAsc = query.order === 'asc';
+    calculated.sort((a, b) =>
+      isAsc ? a.percentage - b.percentage : b.percentage - a.percentage,
+    );
+
+    const paginatedIds = calculated.slice(skip, skip + take).map((c) => c.id);
+
+    const rawData = await this.prisma.participation.findMany({
+      where: { id: { in: paginatedIds } },
+      include: this.showcaseInclude,
+    });
+
+    const sortedData = paginatedIds
+      .map((id) => rawData.find((d) => d.id === id))
+      .filter((d): d is NonNullable<typeof d> => d !== undefined);
+
+    const itemCount = lightweightParticipations.length;
+    const meta = new PageMetaResponse({ page, take, itemCount });
+
+    return new PageResponse(sortedData, meta);
   }
 }
