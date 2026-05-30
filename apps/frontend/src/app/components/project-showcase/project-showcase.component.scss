@@ -5,10 +5,11 @@
 
 .showcase-header {
   text-align: center;
-  padding: 60px 20px 40px;
+  padding: 40px 20px;
   background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 100%);
   border-bottom: 1px solid rgba(255,255,255,0.02);
   margin-bottom: 40px;
+  border-radius: 16px;
 
   h1 { margin-bottom: 8px; font-weight: 800; }
 
@@ -27,16 +28,18 @@
   }
 }
 
-.h-container {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
 .showcase-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 800px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .project-card {
@@ -45,6 +48,7 @@
   display: flex;
   flex-direction: column;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  height: 100%;
 
   &.clickable-card {
     cursor: pointer;
@@ -195,6 +199,7 @@
       align-items: center;
       padding-top: 20px;
       border-top: 1px dashed rgba(255,255,255,0.1);
+      margin-top: auto;
 
       .absolute-score {
         font-size: 16px;

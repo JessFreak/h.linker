@@ -1,40 +1,82 @@
-<div class="showcase-layout">
-  <header class="showcase-header">
-    <h1 class="mat-headline-1">Project Showcase</h1>
-    <p class="h-text-secondary">Discover top-tier solutions from past hackathons</p>
-
-    <div class="stats-row tech-data mt-4">
-      <span matTooltip="Total number of showcased projects">Top {{ projects().length }} projects</span>
-      <span class="sep">•</span>
-      <span matTooltip="Projects are sorted by their normalized percentage score">Ranked by Jury Score</span>
-      <span class="sep">•</span>
-      <span matTooltip="All projects include links to their public repositories">Open source code</span>
+<div class="h-page-layout">
+  <aside [formGroup]="filterForm">
+    <div class="filter-header">
+      <h2>Project Filters</h2>
+      <button mat-button color="primary" class="reset-link" (click)="resetFilters()">Reset</button>
     </div>
-  </header>
 
-  @if (isLoading()) {
-    <div class="h-loader-full" style="display: flex; flex-direction: column; align-items: center; margin-top: 80px;">
-      <mat-spinner diameter="50"></mat-spinner>
-      <p class="h-text-secondary mt-4">Loading top projects...</p>
+    <div class="filter-section">
+      <h3>Query</h3>
+      <mat-form-field appearance="outline" class="h-filter-search" subscriptSizing="dynamic" matTooltip="Search by project or team name">
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput type="text" formControlName="search" placeholder="Search projects...">
+      </mat-form-field>
     </div>
-  } @else {
-    <div class="showcase-grid h-container">
+
+    <div class="filter-section">
+      <h3>Categories & Tech</h3>
+      <mat-form-field appearance="outline" class="h-filter-search" subscriptSizing="dynamic">
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput [formControl]="categorySearchCtrl" placeholder="Search tech...">
+      </mat-form-field>
+
+      <div class="filter-group scrollable-filters">
+        @for (cat of allCategories(); track cat) {
+          <mat-checkbox color="primary"
+                        [checked]="isCategorySelected(cat)"
+                        (change)="toggleCategory(cat, $event.checked)">
+            {{ cat }}
+          </mat-checkbox>
+        } @empty {
+          <div class="h-empty-search">
+            <small class="h-text-secondary">No matching categories found.</small>
+          </div>
+        }
+      </div>
+    </div>
+
+    <button mat-flat-button color="primary" class="apply-btn" (click)="applyFilters()">
+      Apply Filters
+    </button>
+  </aside>
+
+  <main class="h-main showcase-layout">
+    <header class="showcase-header">
+      <h1 class="mat-headline-1">Project Showcase</h1>
+      <p class="h-text-secondary">Discover top-tier solutions from past hackathons</p>
+
+      <div class="stats-row tech-data mt-4">
+        <span [matTooltip]="'Total projects matched: ' + (meta()?.itemCount ?? 0)">
+          {{ meta()?.itemCount ?? 0 }} projects found
+        </span>
+        <span class="sep">•</span>
+        <span matTooltip="Projects are sorted by their normalized percentage score">Ranked by Jury Score</span>
+        <span class="sep">•</span>
+        <span matTooltip="All projects include links to their public repositories">Open source code</span>
+      </div>
+    </header>
+
+    <div class="results-sort" style="display: flex; justify-content: flex-end; margin-bottom: 24px;">
+      <span class="h-text-secondary" style="margin-right: 8px;">Sort by Score:</span>
+      <button mat-button (click)="toggleSort()">
+        {{ queryState().order === Order.DESC ? 'Highest First' : 'Lowest First' }}
+        <mat-icon>{{ queryState().order === Order.DESC ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
+      </button>
+    </div>
+
+    <div class="showcase-grid">
       @for (project of projects(); track project.participationId; let i = $index) {
         <mat-card class="h-card project-card clickable-card" [routerLink]="['/events', project.hackathonSlug]">
-
-          <div class="card-banner" [style.background-image]="project.hackathonImageUrl ? 'url(' + project.hackathonImageUrl + ')' : null">
+          <div class="card-banner" [style.background-image]="project.hackathonImageUrl ? 'url(' + project.hackathonImageUrl + ')' : 'none'">
             <div class="banner-overlay"></div>
 
             <div class="banner-top-bar">
-              <span class="hackathon-tag h-truncate" [matTooltip]="'Hackathon title'">
+              <span class="hackathon-tag h-truncate" matTooltip="Hackathon title">
                 {{ project.hackathonTitle }}
               </span>
 
-              <div class="rank-badge tech-data" [class]="getRankClass(i)" [matTooltip]="'Ranked #' + (i + 1) + ' among all showcase projects'">
-                @if (i === 0) { 🏆 1st }
-                @else if (i === 1) { 🥈 2nd }
-                @else if (i === 2) { 🥉 3rd }
-                @else { #{{ i + 1 }} }
+              <div class="rank-badge tech-data" [class]="getRankClass(i)" matTooltip="Current rank based on sort order">
+                {{ getRankDisplay(i) }}
               </div>
             </div>
 
@@ -45,7 +87,7 @@
 
           <div class="card-content">
             <div class="content-header">
-              <h2 class="project-title h-truncate" [matTooltip]="'Project title'">
+              <h2 class="project-title h-truncate" matTooltip="Project title">
                 {{ project.projectTitle }}
               </h2>
               <div class="score-box" matTooltip="Overall success rate">
@@ -60,7 +102,7 @@
               <span style="opacity: 0.5;">({{ project.memberCount }} members)</span>
             </div>
 
-            <p class="project-desc h-text-secondary" [matTooltip]="'Project description'">
+            <p class="project-desc h-text-secondary" matTooltip="Project description">
               {{ (project.projectDescription | slice:0:120) || 'No description provided.' }}
               {{ project.projectDescription.length > 120 ? '...' : '' }}
             </p>
@@ -92,9 +134,29 @@
         <div class="empty-state" style="grid-column: 1 / -1; text-align: center; padding: 80px 0;">
           <mat-icon style="font-size: 64px; width: 64px; height: 64px; color: rgba(255,255,255,0.1);">lightbulb_off</mat-icon>
           <h2 class="mt-4">No projects found</h2>
-          <p class="h-text-secondary">Finished hackathons with public projects will appear here.</p>
+          <p class="h-text-secondary">Try adjusting your filters or search query.</p>
         </div>
       }
     </div>
-  }
+
+    @if ((meta()?.pageCount ?? 0) > 1) {
+      <div class="h-pagination-controls mt-8">
+        <button mat-stroked-button
+                [disabled]="!meta()?.hasPreviousPage"
+                (click)="changePage((meta()?.page ?? 2) - 1)">
+          <mat-icon>chevron_left</mat-icon> Prev
+        </button>
+
+        <div class="page-indicator tech-data h-text-secondary">
+          Page <span style="color: white; font-weight: bold;">{{ meta()?.page ?? 1 }}</span> of {{ meta()?.pageCount ?? 1 }}
+        </div>
+
+        <button mat-stroked-button
+                [disabled]="!meta()?.hasNextPage"
+                (click)="changePage((meta()?.page ?? 0) + 1)">
+          Next <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+    }
+  </main>
 </div>
