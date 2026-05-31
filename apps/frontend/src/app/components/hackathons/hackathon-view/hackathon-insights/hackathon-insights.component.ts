@@ -147,8 +147,8 @@ export class HackathonInsightsComponent implements OnInit {
     data: InsightDataPoint[],
     seriesName: string,
     color: string,
-    textStyle: any,
-    splitLine: any,
+    textStyle: { color: string; fontFamily: string },
+    splitLine: { lineStyle: { color: string } },
   ): EChartsOption {
     return {
       tooltip: {

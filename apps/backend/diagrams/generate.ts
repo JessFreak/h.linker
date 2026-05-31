@@ -5,6 +5,7 @@ import {
   MethodDeclaration,
   PropertyDeclaration,
   ObjectLiteralExpression,
+  ArrayLiteralExpression,
 } from 'ts-morph';
 import * as fs from 'fs';
 
@@ -64,10 +65,12 @@ function extractModuleDependencies(decorator: Decorator) {
 
     [importsProperty, providersProperty, controllersProperty].forEach(
       (property) => {
-        if (property) {
-          const initializer = (property as any).getInitializer();
+        if (property && 'getInitializer' in property) {
+          const initializer = property.getInitializer() as
+            | ArrayLiteralExpression
+            | undefined;
           if (initializer) {
-            initializer.getElements().forEach((element: any) => {
+            initializer.getElements().forEach((element) => {
               const depName = element.getText();
               const sanitizedDep = sanitizeDependency(depName);
               if (sanitizedDep) dependencies.push(sanitizedDep);
@@ -110,10 +113,8 @@ function generateUML(projectPath: string, outputFilePath: string) {
 
       for (const method of methods) {
         const params = method.parameters
-          //.map((param) => `${param.name}: ${param.type}`)
           .map((param) => `${param.name}`)
           .join(', ');
-        //plantUML.push(`  + ${method.name}(${params}): ${method.returnType}`);
         plantUML.push(`  + ${method.name}(${params})`);
       }
 
@@ -123,10 +124,9 @@ function generateUML(projectPath: string, outputFilePath: string) {
 
       plantUML.push('}');
 
-      if (decorators.includes('Module')) {
-        const dependencies = extractModuleDependencies(
-          cls.getDecorator('Module')!,
-        );
+      const moduleDecorator = cls.getDecorator('Module');
+      if (decorators.includes('Module') && moduleDecorator) {
+        const dependencies = extractModuleDependencies(moduleDecorator);
         modules.push({ name: className, dependencies });
       }
     }
@@ -143,6 +143,5 @@ function generateUML(projectPath: string, outputFilePath: string) {
   fs.writeFileSync(outputFilePath, plantUML.join('\n'));
   console.log(`Saved to ${outputFilePath}`);
 }
-
 
 generateUML('../src', 'diagram.puml');
