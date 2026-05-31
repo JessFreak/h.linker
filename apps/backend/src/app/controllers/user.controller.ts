@@ -24,7 +24,7 @@ import { ConfigType } from '@nestjs/config';
 import { GithubService } from '../services/github.service';
 import config from '../../config/config';
 import { UserByUsernamePipe } from '../utils/pipes/user-by-username.pipe';
-import { OptionalJwtAuthGuard } from '../../config/security/decorators/optional-jwt-auth.guard';
+import { OptionalJwtAuthGuard } from '../../config/security/guards/optional-jwt-auth.guard';
 
 @Controller('users')
 export class UserController {
