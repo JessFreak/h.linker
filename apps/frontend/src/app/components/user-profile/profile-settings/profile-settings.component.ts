@@ -209,7 +209,6 @@ export class ProfileSettingsComponent implements OnInit {
     this.teamService.getMyInvitations().subscribe({
       next: (res) => {
         this.invitations.set(res.invitations);
-        console.log(res);
       },
       error: () => this.notify.error('Failed to load invitations'),
     });
