@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { PrismaModule } from './modules/prisma.module';
 import { UserModule } from './modules/user.module';
 import { AuthModule } from './modules/auth.module';
@@ -25,7 +23,5 @@ import { HackathonModule } from './modules/hackathon.module';
     TeamModule,
     HackathonModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
