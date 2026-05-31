@@ -46,10 +46,18 @@ export class UserService {
   }
 
   async getAll(query: UserQueryDTO, currentUser?: UserResponse) {
-    const { search, categories, connectedGithub, order, isRecommended } = query;
+    // Дістаємо новий прапорець excludeSelf
+    const {
+      search,
+      categories,
+      connectedGithub,
+      order,
+      isRecommended,
+      excludeSelf,
+    } = query;
 
     const where: Prisma.UserWhereInput = {
-      ...(currentUser && { id: { not: currentUser.id } }),
+      ...(excludeSelf && currentUser && { id: { not: currentUser.id } }),
 
       ...(categories &&
         categories.length > 0 && {
@@ -68,7 +76,11 @@ export class UserService {
     };
 
     if (isRecommended && currentUser?.id) {
-      return this.userRepository.findRecommendedPaged(query, where, currentUser.skills || []);
+      return this.userRepository.findRecommendedPaged(
+        query,
+        where,
+        currentUser.skills || [],
+      );
     }
 
     const orderBy: Prisma.UserOrderByWithRelationInput = {

@@ -19,6 +19,11 @@ export class UserQueryDTO extends BaseQueryDTO {
   isRecommended?: boolean;
 
   @IsOptional()
+  @Transform(({ value }) => value === 'true' || value === true)
+  @IsBoolean()
+  excludeSelf?: boolean;
+
+  @IsOptional()
   @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
   @IsArray()
   @IsString({ each: true })
