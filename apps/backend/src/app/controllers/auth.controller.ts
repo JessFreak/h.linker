@@ -24,7 +24,6 @@ import { Access } from '../../config/security/decorators/access';
 import { ConfigType } from '@nestjs/config';
 import config from '../../config/config';
 import { GithubOauthGuard } from '../../config/security/guards/github-oauth.guard';
-import { UserMapper } from '../utils/mappers/user.mapper';
 import { JwtAuthGuard } from '../../config/security/guards/jwt-auth.guard';
 import { GithubConnectGuard } from '../../config/security/guards/github-connect.guard';
 
@@ -80,7 +79,7 @@ export class AuthController {
   @Get('github/connect/callback')
   @UseGuards(JwtAuthGuard, GithubConnectGuard)
   async githubConnectCallback(@Res() res: Response): Promise<Response> {
-   if (res.headersSent) return;
+    if (res.headersSent) return;
 
     res.redirect(
       `${this.configService.clientUrl}/profile/settings?connect=success`,
@@ -114,8 +113,8 @@ export class AuthController {
 
   @Access()
   @Get('me')
-  getMe(@UserRequest() user: User): UserResponse {
-    return UserMapper.getUserResponse(user);
+  getMe(@UserRequest() user: UserResponse): UserResponse {
+    return user;
   }
 
   @Access()
