@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { Access } from '../../config/security/decorators/access';
@@ -23,6 +24,7 @@ import { ConfigType } from '@nestjs/config';
 import { GithubService } from '../services/github.service';
 import config from '../../config/config';
 import { UserByUsernamePipe } from '../utils/pipes/user-by-username.pipe';
+import { OptionalJwtAuthGuard } from '../../config/security/decorators/optional-jwt-auth.guard';
 
 @Controller('users')
 export class UserController {
@@ -33,7 +35,7 @@ export class UserController {
   ) {}
 
   @Get()
-  @Access()
+  @UseGuards(OptionalJwtAuthGuard)
   async getAll(
     @Query() query: UserQueryDTO,
     @UserRequest() currentUser?: UserResponse,
