@@ -153,11 +153,14 @@ export class JuryEvaluationComponent implements OnInit, OnDestroy {
               this.selectTeam(0);
             }
           },
-          error: () => {
-            this.notificationService.error(
-              'Failed to load participant submissions',
-            );
+          error: (err) => {
+            if (err.status === 403) {
+              this.notificationService.error('Access denied. You are not a jury member for this event.');
+            } else {
+              this.notificationService.error('Failed to load participant submissions.');
+            }
             this.isLoading.set(false);
+            this.router.navigate(['/events', slug]);
           },
         });
       },
