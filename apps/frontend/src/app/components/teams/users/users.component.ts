@@ -69,6 +69,7 @@ export class UsersComponent {
     page: 1,
     take: 9,
     order: Order.ASC,
+    excludeSelf: true,
   });
 
   pageResponse = toSignal(
@@ -78,11 +79,7 @@ export class UsersComponent {
     ),
   );
 
-  users = computed(() => {
-    const list = this.pageResponse()?.data || [];
-    const currentId = this.currentUser()?.id;
-    return list.filter((u) => u.id !== currentId);
-  });
+  users = computed(() => this.pageResponse()?.data || []);
 
   meta = computed(() => this.pageResponse()?.meta);
 
@@ -122,7 +119,6 @@ export class UsersComponent {
     const filters = this.filterForm.value;
     const user = this.currentUser();
 
-    // Захист: вимагаємо авторизацію для персональних рекомендацій
     if (filters.isRecommended && !user) {
       this.notify.info('Please sign in to get personalized recommendations.');
       this.filterForm.patchValue({ isRecommended: false });
@@ -136,6 +132,7 @@ export class UsersComponent {
       connectedGithub: filters.connectedGithub ? true : undefined,
       isRecommended: filters.isRecommended ? true : undefined,
       categories: filters.categories?.length ? filters.categories : undefined,
+      excludeSelf: true,
     }));
   }
 

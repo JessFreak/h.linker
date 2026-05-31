@@ -7,19 +7,25 @@
   transition: transform 0.3s ease;
 
   .hero-image {
+    position: relative;
     height: 100%;
-    background-size: cover;
-    background-position: center;
     background-color: #1c2128;
+  }
+
+  .hero-img-bg {
+    object-fit: cover;
+    z-index: 1;
     transition: transform 0.5s ease;
   }
 
   &:hover {
     transform: translateY(-4px);
-    .hero-image { transform: scale(1.02); }
+    .hero-img-bg { transform: scale(1.02); }
   }
 
   .hero-overlay {
+    position: relative;
+    z-index: 2;
     height: 100%;
     padding: 20px;
     background: linear-gradient(to right, var(--h-bg-deep-navy) 20%, transparent);
@@ -28,7 +34,7 @@
     justify-content: space-between;
 
     .hero-status { width: fit-content; background: #3fb950; color: black; font-size: 11px; }
-    h1 { font-size: 32px; margin: 12px 0 8px; }
+    .hero-title { font-size: 32px; margin: 12px 0 8px; font-weight: bold; }
     .hero-btn {
       background: white;
       color: black;
@@ -76,20 +82,24 @@
     border-color: var(--h-primary-blue) !important;
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(65, 105, 165, 0.2);
 
-    .card-banner { filter: brightness(1.2); }
+    .card-img-bg { filter: brightness(1.2); }
     h3 { color: var(--h-primary-blue); }
   }
 
   .card-banner {
-    height: 160px;
-    background-size: cover;
-    background-position: center;
     position: relative;
+    height: 160px;
     background-color: #1c2128;
-    transition: filter 0.3s ease;
+
+    .card-img-bg {
+      object-fit: cover;
+      z-index: 1;
+      transition: filter 0.3s ease;
+    }
 
     .h-status-tag {
       position: absolute;
+      z-index: 2;
       top: 12px;
       right: 12px;
       padding: 4px 10px;

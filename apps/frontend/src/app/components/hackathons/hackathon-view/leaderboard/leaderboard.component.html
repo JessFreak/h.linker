@@ -1,7 +1,7 @@
 <div class="bg-glow-blue"></div>
 <div class="bg-glow-orange"></div>
 
-<div class="h-leaderboard-container">
+<main class="h-leaderboard-container">
 
   @if (isLoading()) {
     <div class="leaderboard-loader">
@@ -9,6 +9,8 @@
       <p class="h-text-secondary">Calculating scores and ranks...</p>
     </div>
   } @else if (hackathon(); as h) {
+
+    <h1 class="sr-only">Leaderboard for {{ h.title }}</h1>
 
     <app-breadcrumb
       [backRoute]="['/events', h.slug]"
@@ -21,7 +23,7 @@
 
     <header class="leaderboard-header">
       <div>
-        <h1><span>{{ h.title }}</span></h1>
+        <h2 class="event-title"><span>{{ h.title }}</span></h2>
         <p class="h-text-secondary uppercase tech-data subtitle">Live Competition Leaderboard</p>
       </div>
     </header>
@@ -40,9 +42,13 @@
                  [class.first-place]="team.rank === 1"
                  [class.class.second-place]="team.rank === 2"
                  [class.third-place]="team.rank === 3"
+                 [routerLink]="['/teams', team.teamId]"
+                 role="link"
+                 tabindex="0"
+                 [attr.aria-label]="'Rank ' + team.rank + ': Team ' + team.teamName + ' with ' + (team.score | number:'1.1-1') + ' points'"
                  matTooltip="Click to view team profile and projects">
 
-              <div class="podium-bg-number tech-data">{{ team.rank }}</div>
+              <div class="podium-bg-number tech-data" aria-hidden="true">{{ team.rank }}</div>
 
               <div class="podium-inner">
                 <div class="podium-crown">
@@ -53,7 +59,7 @@
                 </div>
 
                 <h3>{{ team.teamName }}</h3>
-                <span class="team-size-badge" matTooltip="Team size">
+                <span class="team-size-badge" matTooltip="Team size" [attr.aria-label]="team.memberCount + ' team members'">
                   <mat-icon>groups</mat-icon> {{ team.memberCount }}
                 </span>
 
@@ -74,6 +80,9 @@
           <div class="leaderboard-row h-card"
                [class.in-podium]="team.rank <= 3"
                [routerLink]="['/teams', team.teamId]"
+               role="link"
+               tabindex="0"
+               [attr.aria-label]="'Rank ' + team.rank + ': Team ' + team.teamName + ', Score ' + (team.score | number:'1.1-1') + ' points'"
                matTooltip="Click to view full team dashboard">
 
             <div class="rank-col tech-data" [class.gold]="team.rank === 1" [class.silver]="team.rank === 2" [class.bronze]="team.rank === 3">
@@ -82,13 +91,12 @@
 
             <div class="team-col">
               <span class="team-name">{{ team.teamName }}</span>
-              <span class="team-size-badge" matTooltip="Team size">
+              <span class="team-size-badge" matTooltip="Team size" [attr.aria-label]="team.memberCount + ' team members'">
                 <mat-icon>groups</mat-icon> {{ team.memberCount }}
               </span>
-
             </div>
 
-            <div class="score-col tech-data" matTooltip="Total score calculated from weighted judging criteria">
+            <div class="score-col tech-data">
               <strong>{{ team.score | number:'1.1-1' }}</strong> <small class="h-text-secondary">PTS</small>
             </div>
           </div>
@@ -102,4 +110,4 @@
 
     }
   }
-</div>
+</main>

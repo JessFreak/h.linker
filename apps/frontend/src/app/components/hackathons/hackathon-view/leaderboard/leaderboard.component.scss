@@ -35,7 +35,7 @@
   z-index: 1;
   max-width: 960px;
   margin: 0 auto;
-  padding: 40px 20px 60px; // Верхній відступ зменшено, бо загальний breadcrumb дає свій margin-bottom
+  padding: 40px 20px 60px;
 }
 
 .leaderboard-loader {
@@ -48,11 +48,11 @@
 }
 
 .leaderboard-header {
-  margin-bottom: 40px; // Спрощено: залишено тільки нижній відступ для відокремлення від подіуму
+  margin-bottom: 40px;
   position: relative;
   z-index: 1;
 
-  h1 {
+  .event-title {
     font-size: clamp(2rem, 5vw, 2.5rem);
     font-weight: 800;
     margin: 0;
@@ -68,7 +68,7 @@
 
   .subtitle {
     margin-top: 4px;
-    color: var(--h-primary-blue) !important;
+    color: #58a6ff !important;
     font-weight: 600;
     letter-spacing: 1.5px !important;
   }
@@ -107,7 +107,7 @@
 
       .podium-bg-number {
         transform: scale(1.1) translate(-45%, -45%);
-        opacity: 0.22 !important;
+        opacity: 0.18 !important;
       }
     }
 
@@ -131,7 +131,7 @@
       font-size: 160px;
       font-weight: 900;
       color: #fff;
-      opacity: 0.12;
+      opacity: 0.06;
       line-height: 1;
       z-index: 1;
       pointer-events: none;
@@ -144,7 +144,7 @@
       margin: 16px 0 12px;
       color: #fff;
       letter-spacing: -0.3px;
-      &:hover { color: var(--h-primary-blue); }
+      &:hover { color: #58a6ff; }
     }
 
     .podium-crown {
@@ -164,26 +164,26 @@
     .score-display {
       margin-top: auto;
       .val { font-size: 34px; font-weight: 800; color: #fff; line-height: 1; }
-      .lbl { font-size: 11px; opacity: 0.3; margin-left: 4px; font-weight: 700; }
+      .lbl { font-size: 11px; color: rgba(255, 255, 255, 0.5); margin-left: 4px; font-weight: 700; }
     }
 
     &.third-place {
       height: 180px;
-      border-top: 3px solid #8b949e !important;
-      .rank-badge { color: #8b949e; }
-      .podium-bg-number { color: #8b949e; opacity: 0.10; }
+      border-top: 3px solid #b1bac4 !important;
+      .rank-badge { color: #b1bac4; }
+      .podium-bg-number { color: #b1bac4; opacity: 0.05; }
     }
 
     &.second-place {
       height: 210px;
       border-top: 3px solid #58a6ff !important;
       .rank-badge { color: #58a6ff; }
-      .podium-bg-number { color: #58a6ff; opacity: 0.10; }
+      .podium-bg-number { color: #58a6ff; opacity: 0.05; }
     }
 
     &.first-place {
       height: 250px;
-      border: 1px solid rgba(240, 136, 0, 0.3) !important;
+      border: 1px solid rgba(240, 136, 0, 0.4) !important;
       border-top: 4px solid var(--h-safety-orange) !important;
       box-shadow: 0 0 30px rgba(240, 136, 0, 0.05);
       background: linear-gradient(180deg, rgba(240, 136, 0, 0.04) 0%, rgba(0,0,0,0) 100%), var(--h-surface-gray) !important;
@@ -192,7 +192,7 @@
       .podium-crown mat-icon { color: var(--h-safety-orange); filter: drop-shadow(0 0 4px rgba(240,136,0,0.4)); }
       .rank-badge { color: var(--h-safety-orange); }
       .score-display .val { color: var(--h-safety-orange); text-shadow: 0 0 15px rgba(240, 136, 0, 0.3); }
-      .podium-bg-number { color: var(--h-safety-orange); opacity: 0.15; }
+      .podium-bg-number { color: var(--h-safety-orange); opacity: 0.10; }
     }
   }
 }
@@ -227,11 +227,11 @@
   .rank-col {
     font-size: 16px;
     font-weight: 800;
-    color: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.4);
 
     &.gold { color: var(--h-safety-orange); }
     &.silver { color: #58a6ff; }
-    &.bronze { color: #8b949e; }
+    &.bronze { color: #b1bac4; }
   }
 
   .team-col {
@@ -239,24 +239,12 @@
     align-items: center;
     gap: 12px;
     .team-name { font-size: 15px; font-weight: 600; color: rgba(255, 255, 255, 0.95); }
-    .row-badge {
-      font-size: 9px;
-      font-weight: 800;
-      padding: 2px 6px;
-      border-radius: 4px;
-      letter-spacing: 0.5px;
-      &.winner-badge {
-        background: rgba(240, 136, 0, 0.12);
-        color: var(--h-safety-orange);
-        border: 1px solid rgba(240, 136, 0, 0.2);
-      }
-    }
   }
 
   .score-col {
     font-size: 16px;
     strong { color: #fff; font-weight: 700; }
-    small { font-weight: 600; margin-left: 2px; opacity: 0.4; }
+    small { font-weight: 600; margin-left: 2px; color: rgba(255, 255, 255, 0.6) !important; } /* ПОКРАЩЕНО КОНТРАСТ */
   }
 }
 
@@ -267,7 +255,7 @@
   gap: 16px;
   padding: 60px !important;
   text-align: center;
-  mat-icon { font-size: 48px; width: 48px; height: 48px; opacity: 0.2; }
+  mat-icon { font-size: 48px; width: 48px; height: 48px; opacity: 0.4; }
 }
 
 .uppercase { text-transform: uppercase; }
@@ -283,7 +271,8 @@
   border-radius: 12px;
   font-size: 13px;
   letter-spacing: 0.3px;
-  mat-icon { font-size: 18px; width: 18px; height: 18px; opacity: 0.6; color: var(--h-primary-blue); }
+  color: rgba(255, 255, 255, 0.7);
+  mat-icon { font-size: 18px; width: 18px; height: 18px; opacity: 0.8; color: #58a6ff; }
 }
 
 .team-size-badge {
@@ -291,10 +280,10 @@
   align-items: center;
   gap: 4px;
   font-size: 11px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.1);
   padding: 2px 6px;
   border-radius: 6px;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.8);
   font-weight: 500;
 
   mat-icon {

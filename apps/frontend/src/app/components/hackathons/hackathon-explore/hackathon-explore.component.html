@@ -1,4 +1,6 @@
 <div class="h-page-layout">
+  <h1 class="sr-only">Hackathons Explorer Platform</h1>
+
   <aside [formGroup]="filterForm">
     <button mat-flat-button
             class="create-btn"
@@ -16,14 +18,14 @@
       <h3>Search</h3>
       <mat-form-field appearance="outline" class="h-filter-search" subscriptSizing="dynamic">
         <mat-icon matPrefix>search</mat-icon>
-        <input matInput formControlName="search" placeholder="Search by name or desc...">
+        <input matInput formControlName="search" id="searchQuery" name="searchQuery" placeholder="Search by name or desc...">
       </mat-form-field>
     </div>
 
     <div class="filter-section">
       <h3>Lifecycle Stage</h3>
       <mat-form-field appearance="outline" class="w-full" subscriptSizing="dynamic">
-        <mat-select formControlName="status" placeholder="Any Status">
+        <mat-select formControlName="status" id="statusFilter" placeholder="Any Status">
           <mat-option value="">All</mat-option>
           <mat-option [value]="HackathonStatus.REGISTRATION">Registration Open</mat-option>
           <mat-option [value]="HackathonStatus.ACTIVE">Active</mat-option>
@@ -36,8 +38,8 @@
       <h3>Event Dates</h3>
       <mat-form-field appearance="outline" class="w-full h-filter-search" subscriptSizing="dynamic">
         <mat-date-range-input [rangePicker]="picker">
-          <input matStartDate formControlName="startDateFrom" placeholder="Start date">
-          <input matEndDate formControlName="startDateTo" placeholder="End date">
+          <input matStartDate formControlName="startDateFrom" id="startDateFrom" name="startDateFrom" placeholder="Start date">
+          <input matEndDate formControlName="startDateTo" id="startDateTo" name="startDateTo" placeholder="End date">
         </mat-date-range-input>
         <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-date-range-picker #picker></mat-date-range-picker>
@@ -49,12 +51,14 @@
 
       <mat-form-field appearance="outline" class="h-filter-search" subscriptSizing="dynamic">
         <mat-icon matPrefix>search</mat-icon>
-        <input matInput [formControl]="categorySearchCtrl" placeholder="Search tech...">
+        <input matInput [formControl]="categorySearchCtrl" id="categorySearch" name="categorySearch" placeholder="Search tech...">
       </mat-form-field>
 
       <div class="filter-group scrollable-filters">
         @for (cat of allCategories(); track cat) {
           <mat-checkbox color="primary"
+                        [id]="'cat-' + cat"
+                        [name]="'cat-' + cat"
                         [checked]="isCategorySelected(cat)"
                         (change)="toggleCategory(cat, $event.checked)">
             {{ cat }}
@@ -74,11 +78,14 @@
 
     @if (queryState().page === 1 && hackathons()[0]; as hero) {
       <div class="h-card h-featured-hero" [routerLink]="['/events', hero.slug]">
-        <div class="hero-image" [style.background-image]="hero.imageUrl ? 'url(' + hero.imageUrl + ')' : 'none'">
+        <div class="hero-image">
+          @if (hero.imageUrl) {
+            <img [ngSrc]="hero.imageUrl" alt="Featured Hackathon" fill priority class="hero-img-bg">
+          }
           <div class="hero-overlay">
             <span class="h-badge hero-status">{{ hero.status }}</span>
             <div class="hero-content">
-              <h1>{{ hero.title }}</h1>
+              <h2 class="hero-title">{{ hero.title }}</h2>
               <p class="h-text-secondary">{{ hero.startDate | date:'MMM d' }} – {{ hero.endDate | date:'MMM d' }} • {{ hero.prize || 'TBA' }}</p>
               <button mat-flat-button class="hero-btn">View Details <mat-icon>arrow_forward</mat-icon></button>
             </div>
@@ -88,10 +95,10 @@
     }
 
     <div class="h-results-header">
-      <div class="results-count">
+      <h2 class="results-count" style="margin: 0;">
         Available Events
         <span class="count-pill">{{ meta()?.itemCount || 0 }}</span>
-      </div>
+      </h2>
       <div class="results-sort">
         <span class="h-text-secondary">Sort:</span>
         <button mat-button (click)="toggleSort()">
@@ -106,7 +113,11 @@
 
       @for (h of hackathons().slice(startIndex); track h.id) {
         <div class="h-card h-hack-card" [routerLink]="['/events', h.slug]">
-          <div class="card-banner" [style.background-image]="h.imageUrl ? 'url(' + h.imageUrl + ')' : 'none'">
+
+          <div class="card-banner">
+            @if (h.imageUrl) {
+              <img [ngSrc]="h.imageUrl" alt="Hackathon Cover" fill sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" class="card-img-bg">
+            }
             <span class="h-status-tag" [class]="h.status.toLowerCase()">{{ h.status }}</span>
           </div>
 

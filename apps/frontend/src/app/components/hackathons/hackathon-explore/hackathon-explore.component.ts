@@ -1,5 +1,5 @@
-import { Component, inject, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -13,6 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { Meta, Title } from '@angular/platform-browser';
 import { HackathonService } from '../../../services/hackathon.service';
 import { CategoryService } from '../../../services/category.service';
 import { toSignal, toObservable } from '@angular/core/rxjs-interop';
@@ -44,13 +45,17 @@ import {
     MatOption,
     MatDatepickerModule,
     MatNativeDateModule,
+    NgOptimizedImage,
   ],
   templateUrl: './hackathon-explore.component.html',
   styleUrls: ['./hackathon-explore.component.scss'],
 })
-export class HackathonExploreComponent {
+export class HackathonExploreComponent implements OnInit {
   private hackathonService = inject(HackathonService);
   private categoryService = inject(CategoryService);
+
+  private metaService = inject(Meta);
+  private titleService = inject(Title);
 
   filterForm = new FormGroup({
     search: new FormControl(''),
@@ -93,6 +98,15 @@ export class HackathonExploreComponent {
   );
 
   expandedHackathons = signal<Set<string>>(new Set());
+
+  ngOnInit() {
+    this.titleService.setTitle('Explore Hackathons | h.linker');
+    this.metaService.updateTag({
+      name: 'description',
+      content:
+        'Discover, join, and participate in top tech hackathons and coding events. Find teams and build amazing projects.',
+    });
+  }
 
   toggleCategory(category: string, isChecked: boolean) {
     const currentCategories = this.filterForm.value.categories ?? [];
