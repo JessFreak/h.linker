@@ -209,9 +209,15 @@ export class GithubService {
   private calculateContributionTrend(
     weeks: GitHubGraphQLResponse['data']['viewer']['contributionsCollection']['contributionCalendar']['weeks'],
   ): string {
-    const days = weeks
-      .flatMap((w) => w.contributionDays)
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    const days = weeks.flatMap((w) => w.contributionDays);
+
+    if (days.every((d) => d.contributionCount === 0)) return '0 contributions';
+
+    if (days.length < 31) return 'No previous period';
+
+    days.sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+    );
 
     const last30Days = days
       .slice(0, 30)

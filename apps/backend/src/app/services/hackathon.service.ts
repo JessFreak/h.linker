@@ -155,7 +155,6 @@ export class HackathonService {
     userId: string,
   ): Promise<void> {
     const hackathon = await this.hackathonRepository.getById(hackathonId);
-    if (!hackathon) throw new NotFoundException('Hackathon not found');
     if (hackathon.status !== HackathonStatus.REGISTRATION) {
       throw new BadRequestException('Registration is not open for this event');
     }
@@ -189,7 +188,6 @@ export class HackathonService {
     dto: SubmitProjectDto,
   ): Promise<void> {
     const hackathon = await this.hackathonRepository.getById(hackathonId);
-    if (!hackathon) throw new NotFoundException('Hackathon not found');
 
     if (hackathon.status !== HackathonStatus.ACTIVE) {
       throw new BadRequestException(
@@ -236,13 +234,13 @@ export class HackathonService {
       userId,
       hackathonId,
     );
+    if (!jury) throw new NotFoundException('Jury member not found');
 
     await this.evaluationRepository.upsertScores(
       jury.id,
       participationId,
       scores,
     );
-
     await this.evaluationRepository.recalculateProjectFinalScore(
       participationId,
       hackathonId,
@@ -259,6 +257,7 @@ export class HackathonService {
       userId,
       hackathonId,
     );
+    if (!jury) throw new NotFoundException('Jury member not found');
 
     await this.evaluationRepository.upsertComment(
       jury.id,

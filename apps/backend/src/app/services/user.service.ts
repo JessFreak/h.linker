@@ -46,7 +46,6 @@ export class UserService {
   }
 
   async getAll(query: UserQueryDTO, currentUser?: UserResponse) {
-    // Дістаємо новий прапорець excludeSelf
     const {
       search,
       categories,
