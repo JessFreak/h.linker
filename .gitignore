@@ -47,3 +47,4 @@ Thumbs.db
 
 /generated/prisma
 .env
+.clinic
