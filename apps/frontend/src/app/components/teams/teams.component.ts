@@ -118,10 +118,19 @@ export class TeamsComponent {
     const dialogRef = this.dialog.open(CreateTeamDialogComponent, {
       width: '450px',
     });
+
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.notify.success('Successfully created team');
-        this.queryState.update((q) => ({ ...q }));
+        this.teamService.create(result).subscribe({
+          next: () => {
+            this.notify.success('Successfully created team');
+            this.queryState.update((q) => ({ ...q }));
+          },
+          error: (err) => {
+            console.error(err);
+            this.notify.error('Failed to create team');
+          },
+        });
       }
     });
   }
