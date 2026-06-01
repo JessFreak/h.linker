@@ -3,14 +3,8 @@ skinparam classAttributeIconSize 10
 skinparam nodesep 30
 skinparam ranksep 40
 
-class AppController {
-  + getData()
-}
 class AppModule {
   + init(): self
-}
-class AppService {
-  + getData()
 }
 class AuthController {
   + auth()
@@ -30,7 +24,7 @@ class CategoryController {
   + search(query)
 }
 class HackathonController {
-  + getAll()
+  + getAll(query)
   + getById(id)
   + getBySlug(slug)
   + create(user, dto)
@@ -42,13 +36,17 @@ class HackathonController {
   + removeJury(id, userId)
   + remove(id)
   + getRegistrationStatus(id, user)
-  + getMySubmissionReviews(hackathonId, user)
+  + getMySubmissionReviews(id, user)
   + registerTeam(id, teamId, user)
   + submitProject(id, dto, user)
   + getLeaderboard(id)
   + getSubmissions(id, user)
-  + setScore(hackathonId, participationId, dto, user)
-  + addComment(hackathonId, participationId, dto, user)
+  + setScore(id, participationId, dto, user)
+  + addComment(id, participationId, dto, user)
+  + getInsights(id)
+}
+class ProjectController {
+  + getShowcase(query)
 }
 class RoleController {
   + getAll()
@@ -56,7 +54,7 @@ class RoleController {
 }
 class TeamController {
   + create(dto, user)
-  + getAll(leaderId)
+  + getAll(query)
   + getMyInvitations(user)
   + getById(id)
   + update(id, dto)
@@ -69,7 +67,7 @@ class TeamController {
   + leave(teamId, user)
 }
 class UserController {
-  + getAllUsers(query)
+  + getAll(query, currentUser)
   + getByUsername(username)
   + update(user, body)
 }
@@ -123,7 +121,7 @@ class GithubService {
 }
 class HackathonService {
   + create(creatorId, dto)
-  + getAll()
+  + getAll(query)
   + getById(id)
   + getBySlug(slug)
   + update(id, dto)
@@ -139,8 +137,12 @@ class HackathonService {
   + getHackathonSubmissionsForJury(hackathonId)
   + getLeaderboard(id)
   + setTeamScores(userId, hackathonId, participationId, scores)
-  + setTeamComment(userId, hackathonId, participationId, text)
+  + setTeamComment(userId, hackathonId, participationId, dto)
   + findTeamReviews(hackathonId, userId)
+  + getInsights(id)
+}
+class ProjectService {
+  + getShowcaseProjects(query)
 }
 class RoleService {
   + getAll()
@@ -149,7 +151,7 @@ class RoleService {
 class TeamService {
   + create(dto, leaderId)
   + findById(id)
-  + getAll(leaderId)
+  + getAll(query)
   + updateById(id, dto)
   + delete(id)
   + joinRequest(teamId, userId, dto)
@@ -165,7 +167,7 @@ class UserService {
   + findByEmail(email)
   + findByUsername(username, full)
   + findById(id)
-  + getAll(searchQuery)
+  + getAll(query, currentUser)
   + findByGithubId(githubId)
   + updateGithub(userId, githubId, githubUsername)
   + updatePassword(userId, hashedPass)
@@ -186,18 +188,22 @@ class CriteriaRepository {
 }
 class EvaluationRepository {
   + upsertScores(juryId, participationId, scores)
-  + upsertComment(juryId, participationId, text)
+  + upsertComment(juryId, participationId, data)
   + recalculateProjectFinalScore(participationId, hackathonId)
 }
 class HackathonRepository {
   + hackathonFullInclude: Object
   + create(data)
+  + findAllPaged(query, where, orderBy)
   + getAll()
+  + checkExistsById(id)
+  + checkExistsBySlug(slug)
   + getById(id)
   + getBySlug(slug)
   + updateById(id, data)
   + isCreator(hackathonId, userId)
   + deleteById(id)
+  + getInsightsData(hackathonId)
 }
 class JuryRepository {
   + add(hackathonId, userId)
@@ -213,13 +219,16 @@ class MemberRepository {
   + updateMemberStatus(teamId, userId, status)
 }
 class ParticipationRepository {
+  + showcaseInclude: Object
   + findUserParticipation(hackathonId, userId)
+  + checkExistsById(id)
   + create(hackathonId, teamId)
   + findByTeamAndHackathon(hackathonId, teamId)
   + updateSubmission(hackathonId, teamId, data)
   + findAllSubmissionsByHackathonId(hackathonId)
   + getLeaderboardData(hackathonId)
   + findReviewsByMember(hackathonId, userId)
+  + findShowcasePagedByPercentage(query, where)
 }
 class RoleRepository {
   + findMany()
@@ -227,16 +236,23 @@ class RoleRepository {
 }
 class TeamRepository {
   + include: Object
+  + checkExistsById(id)
   + create(data)
   + find(where)
+  + findAllPaged(query, where, orderBy)
   + findById(id)
   + updateById(id, data)
   + deleteById(id)
   + findUserInvitations(userId)
 }
 class UserRepository {
+  + include: Object
   + FULL_USER_INCLUDE: Object
+  + checkExistsByUsername(username)
+  + checkExistsById(id)
   + create(data)
+  + findAllPaged(query, where, orderBy)
+  + findRecommendedPaged(query, where, currentUserSkills)
   + find(where)
   + findById(id)
   + findByEmail(email)
@@ -245,6 +261,18 @@ class UserRepository {
   + findMany(where)
   + updateById(id, data)
   + deleteById(id)
+}
+class HackathonByIdPipe {
+}
+class HackathonBySlugPipe {
+}
+class ParticipationByIdPipe {
+}
+class TeamByIdPipe {
+}
+class UserByIdPipe {
+}
+class UserByUsernamePipe {
 }
 class GithubConnectGuard {
   + getAuthenticateOptions()
@@ -255,6 +283,9 @@ class GithubOauthGuard {
 class GoogleOauthGuard {
 }
 class JwtAuthGuard {
+  + canActivate(context)
+}
+class OptionalJwtAuthGuard {
   + canActivate(context)
 }
 class RolesGuard {
@@ -268,52 +299,74 @@ class GoogleStrategy {
 }
 
 ' ==========================================
-' СТРУКТУРА ПАВУТИНИ (РАДІАЛЬНЕ РОЗМІЩЕННЯ)
+' ЦЕНТР
 ' ==========================================
-
-' 1. ЦЕНТР
 AppModule -up-> AuthModule
 AppModule -down-> PrismaModule
 AppModule -left-> TeamModule
 AppModule -right-> HackathonModule
 AppModule -up-> UserModule
-AppModule -left-> AppService
-AppModule -right-> AppController
 
-' 2. ВГОРУ (Auth та User)
-AuthModule -up-> AuthController
+' ==========================================
+' AuthModule — вгору і вліво
+' ==========================================
+AuthModule -down-> AuthController
 AuthModule -up-> AuthService
+AuthModule -up-> GithubStrategy
+AuthModule -right-> GoogleStrategy
 AuthModule -left-> GoogleOauthGuard
 AuthModule -left-> GithubOauthGuard
-AuthModule -right-> JwtAuthGuard
-AuthModule -right-> GoogleStrategy
-AuthModule -up-> GithubStrategy
 AuthModule -left-> GithubConnectGuard
+AuthModule -right-> JwtAuthGuard
 
-UserModule -up-> UserController
-UserModule -up-> UserService
-
-' Міжмодульні зв'язки спрямовуємо так, щоб не ламати структуру
+' Міжмодульні зв'язки
 AuthModule -right-> CategoryModule
 UserModule -right-> CategoryModule
 
-' Category (справа від User)
-CategoryModule -up-> CategoryController
-CategoryModule -right-> CategoryService
-CategoryModule -right-> GithubService
+' ==========================================
+' UserModule — вгору і вправо
+' ==========================================
+UserModule -up-> UserController
+UserModule -up-> UserService
+UserModule -up-> UserByIdPipe
+UserModule -up-> UserByUsernamePipe
 
-' 3. ВЛІВО (Team)
+' ==========================================
+' CategoryModule — вгору і в сторони
+' ==========================================
+CategoryModule -up-> CategoryController
+CategoryModule -up-> CategoryService
+CategoryModule -up-> GithubService
+
+' ==========================================
+' TeamModule — вліво і вгору/вниз
+' ==========================================
 TeamModule -left-> TeamController
-TeamModule -left-> TeamService
+TeamModule -right-> TeamService
 TeamModule -up-> RoleController
 TeamModule -down-> RoleService
+TeamModule -down-> TeamByIdPipe
 
-' 4. ВПРАВО (Hackathon)
+' ==========================================
+' HackathonModule — рівномірно на всі 4 боки
+' вгору: HackathonService, ProjectService
+' вправо: HackathonController, ProjectController
+' вниз: три Pipes
+' вліво нічого — там AppModule
+' ==========================================
+HackathonModule -left-> HackathonService
+HackathonModule -up-> ProjectService
+HackathonModule -up-> RolesGuard
+HackathonModule -up-> OptionalJwtAuthGuard
 HackathonModule -right-> HackathonController
-HackathonModule -right-> HackathonService
-HackathonModule -down-> RolesGuard
+HackathonModule -left-> ProjectController
+HackathonModule -down-> HackathonByIdPipe
+HackathonModule -down-> HackathonBySlugPipe
+HackathonModule -down-> ParticipationByIdPipe
 
-' 5. ВНИЗ (Prisma - найбільший вузол, тому розкидаємо його в усі боки від себе)
+' ==========================================
+' PrismaModule — вниз і в сторони
+' ==========================================
 PrismaModule -down-> PrismaService
 PrismaModule -down-> UserRepository
 PrismaModule -left-> CategoryRepository
