@@ -2,12 +2,17 @@ import { Injectable, ExecutionContext } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { User } from '@prisma/client';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class GithubConnectGuard extends AuthGuard('github') {
+  constructor(private configService: ConfigService) {
+    super();
+  }
+
   override getAuthenticateOptions() {
     return {
-      callbackURL: 'http://localhost:3000/api/auth/github/connect/callback',
+      callbackURL: this.configService.get<string>('config.github.callbackURL'),
     };
   }
 
@@ -18,6 +23,7 @@ export class GithubConnectGuard extends AuthGuard('github') {
     context: ExecutionContext,
   ): TUser {
     const response: Response = context.switchToHttp().getResponse();
+    const clientUrl = this.configService.get<string>('config.clientUrl');
 
     if (err || !user) {
       const error = err as unknown as {
@@ -28,7 +34,7 @@ export class GithubConnectGuard extends AuthGuard('github') {
         error?.response?.message || error?.message || 'Connection failed';
 
       response.redirect(
-        `http://localhost:4200/profile/settings?error=${encodeURIComponent(errorMessage)}`,
+        `${clientUrl}/profile/settings?error=${encodeURIComponent(errorMessage)}`,
       );
 
       return null;
