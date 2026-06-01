@@ -15,6 +15,10 @@ describe('GoogleStrategy', () => {
     strategy = new GoogleStrategy(mockConfig, mockAuthService);
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should validate and create username from email', async () => {
     const mockProfile = {
       email: 'my.name@gmail.com',
@@ -27,10 +31,45 @@ describe('GoogleStrategy', () => {
 
     await strategy.validate('', '', mockProfile, done);
 
-    // Перевірка, чи правильно спрацював алгоритм генерації username (регекс)
     expect(mockAuthService.validateGoogleUser).toHaveBeenCalledWith(
       expect.objectContaining({ username: 'myname' }),
     );
     expect(done).toHaveBeenCalledWith(null, { id: 'u2' });
+  });
+
+  it('should catch and pass standard Error to done callback', async () => {
+    const mockProfile = {
+      email: 'error@gmail.com',
+      name: { givenName: 'Err', familyName: 'Or' },
+      picture: '',
+    } as any;
+    const done = jest.fn();
+
+    const standardError = new Error('Google Auth failed');
+    mockAuthService.validateGoogleUser.mockRejectedValue(standardError);
+
+    await strategy.validate('', '', mockProfile, done);
+
+    expect(done).toHaveBeenCalledWith(standardError, null);
+  });
+
+  it('should catch non-Error exceptions and wrap them in an Error', async () => {
+    const mockProfile = {
+      email: 'string@gmail.com',
+      name: { givenName: 'Str', familyName: 'Ing' },
+      picture: '',
+    } as any;
+    const done = jest.fn();
+
+    mockAuthService.validateGoogleUser.mockRejectedValue(
+      'Some weird string error',
+    );
+
+    await strategy.validate('', '', mockProfile, done);
+
+    expect(done).toHaveBeenCalledWith(
+      new Error('Some weird string error'),
+      null,
+    );
   });
 });

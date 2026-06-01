@@ -5,7 +5,7 @@ import { HackathonMapper } from './hackathon.mapper';
 import { ParticipationMapper } from './participation.mapper';
 import { HackathonStatus } from '@h.linker/libs';
 
-describe('UserMapper Full Coverage', () => {
+describe('UserMapper', () => {
   beforeEach(() => {
     jest
       .spyOn(TeamMapper, 'getDetailResponse')
@@ -39,6 +39,36 @@ describe('UserMapper Full Coverage', () => {
   });
 
   afterEach(() => jest.restoreAllMocks());
+
+  describe('getUserResponse', () => {
+    it('should return null if user is falsy', () => {
+      // if (!user) return null;
+      expect(UserMapper.getUserResponse(null as any)).toBeNull();
+      expect(UserMapper.getUserResponse(undefined as any)).toBeNull();
+    });
+
+    it('should return empty skills array if user.skills is undefined', () => {
+      const userWithoutSkills = { id: 'u1', username: 'test' } as any;
+      const result = UserMapper.getUserResponse(userWithoutSkills);
+
+      expect(result.skills).toEqual([]);
+    });
+
+    it('should map skills and matchPercentage correctly if they exist', () => {
+      // user.skills?.map((uc) => uc.category)
+      const userWithSkills = {
+        id: 'u1',
+        username: 'test',
+        skills: [{ category: 'React' }, { category: 'NestJS' }],
+        matchPercentage: 95,
+      } as any;
+
+      const result = UserMapper.getUserResponse(userWithSkills);
+
+      expect(result.skills).toEqual(['React', 'NestJS']);
+      expect(result.matchPercentage).toBe(95);
+    });
+  });
 
   it('should map full user response with teams, projects and created hackathons', () => {
     const mockFullUser = {
