@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Meta, Title } from '@angular/platform-browser';
+import { Meta } from '@angular/platform-browser';
 import { FullHackathonResponse, LeaderboardItem } from '@h.linker/libs';
 import { HackathonService } from '../../../../services/hackathon.service';
 import { BreadcrumbComponent } from '../../../breadcrumb/breadcrumb.component';
@@ -30,9 +30,7 @@ import { BreadcrumbComponent } from '../../../breadcrumb/breadcrumb.component';
 export class LeaderboardComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly hackathonService = inject(HackathonService);
-
   private readonly metaService = inject(Meta);
-  private readonly titleService = inject(Title);
 
   hackathon = signal<FullHackathonResponse | null>(null);
   leaderboard = signal<LeaderboardItem[]>([]);
@@ -63,7 +61,7 @@ export class LeaderboardComponent implements OnInit {
     this.hackathonService.getBySlug(slug).subscribe({
       next: (h) => {
         this.hackathon.set(h);
-        this.titleService.setTitle(`${h.title} - Leaderboard | h.linker`);
+
         this.metaService.updateTag({
           name: 'description',
           content: `Live leaderboard and standings for the ${h.title} hackathon. See the top teams, their scores, and competition results.`,
