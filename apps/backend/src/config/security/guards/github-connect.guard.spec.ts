@@ -4,9 +4,23 @@ import { ExecutionContext } from '@nestjs/common';
 
 describe('GithubConnectGuard', () => {
   let guard: GithubConnectGuard;
+  let mockConfigService: any;
 
   beforeEach(() => {
-    guard = new GithubConnectGuard();
+    mockConfigService = {
+      get: jest.fn((key: string) => {
+        if (key === 'config.github.connectCallbackURL') {
+          return 'http://134.112.25.236.nip.io/api/auth/github/connect/callback';
+        }
+        if (key === 'config.clientUrl') {
+          return 'http://134.112.25.236.nip.io';
+        }
+        return null;
+      }),
+    };
+
+    // Передаємо mock у конструктор
+    guard = new GithubConnectGuard(mockConfigService);
   });
 
   it('should redirect to settings with error when authentication fails', () => {
@@ -26,9 +40,7 @@ describe('GithubConnectGuard', () => {
       context as ExecutionContext,
     );
 
-    // аутентифікація не вдалася
     expect(result).toBeNull();
-
     expect(mockRedirect).toHaveBeenCalled();
     const redirectUrl = mockRedirect.mock.calls[0][0];
     expect(redirectUrl).toContain('profile/settings');
@@ -53,7 +65,7 @@ describe('GithubConnectGuard', () => {
   it('should provide correct authenticate options', () => {
     const options = guard.getAuthenticateOptions();
     expect(options.callbackURL).toBe(
-      'http://localhost:3000/api/auth/github/connect/callback',
+      'http://134.112.25.236.nip.io/api/auth/github/connect/callback',
     );
   });
 });

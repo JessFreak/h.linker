@@ -2,7 +2,10 @@
   "name": "@h.linker/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "lint": "nx run-many -t lint --ignore-pattern \"**/*.spec.ts\"",
+    "test": "npx jest --config apps/backend/jest.config.cts --rootDir apps/backend"
+  },
   "private": true,
   "dependencies": {
     "@angular/common": "~21.2.0",
