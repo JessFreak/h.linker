@@ -11,11 +11,10 @@ export class GithubConnectGuard extends AuthGuard('github') {
   }
 
   override getAuthenticateOptions() {
-    const defaultCallback =
-      this.configService.get<string>('config.github.callbackURL');
-
     return {
-      callbackURL: defaultCallback.replace('/callback', '/connect/callback'),
+      callbackURL: this.configService.get<string>(
+        'config.github.connectCallbackURL',
+      ),
     };
   }
 
