@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { Prisma } from '@prisma/client';
+import { HackathonStatus, Prisma } from '@prisma/client';
 import { FullHackathon } from '../entities/hackathon.entity';
 import { BaseQueryDTO, PageResponse } from '@h.linker/libs';
 import { Paginator } from '../../utils/prisma-pagination.util';
-
 
 @Injectable()
 export class HackathonRepository {
@@ -130,6 +129,30 @@ export class HackathonRepository {
             reviews: true,
           },
         },
+      },
+    });
+  }
+
+  async updateToActive(currentTime: Date) {
+    return this.prisma.hackathon.updateMany({
+      where: {
+        status: HackathonStatus.REGISTRATION,
+        startDate: { lte: currentTime },
+      },
+      data: {
+        status: HackathonStatus.ACTIVE,
+      },
+    });
+  }
+
+  async updateToFinished(currentTime: Date) {
+    return this.prisma.hackathon.updateMany({
+      where: {
+        status: HackathonStatus.ACTIVE,
+        endDate: { lte: currentTime },
+      },
+      data: {
+        status: HackathonStatus.FINISHED,
       },
     });
   }

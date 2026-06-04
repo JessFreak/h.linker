@@ -8,6 +8,8 @@ import { join } from 'path';
 import { CacheModule } from '@nestjs/cache-manager';
 import { TeamModule } from './modules/team.module';
 import { HackathonModule } from './modules/hackathon.module';
+import { CategoryModule } from './modules/category.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -17,11 +19,13 @@ import { HackathonModule } from './modules/hackathon.module';
       envFilePath: join(process.cwd(), '.env'),
     }),
     CacheModule.register({ isGlobal: true }),
+    ScheduleModule.forRoot(),
     PrismaModule,
     UserModule,
     AuthModule,
     TeamModule,
     HackathonModule,
+    CategoryModule,
   ],
 })
 export class AppModule {}

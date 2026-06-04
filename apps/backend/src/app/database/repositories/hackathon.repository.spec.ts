@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HackathonRepository } from './hackathon.repository';
 import { PrismaService } from '../prisma.service';
 import { Paginator } from '../../utils/prisma-pagination.util';
+import { HackathonStatus } from '@prisma/client';
 
 jest.mock('../../utils/prisma-pagination.util', () => ({
   Paginator: {
@@ -32,6 +33,7 @@ describe('HackathonRepository', () => {
               findUnique: jest.fn(),
               count: jest.fn(),
               update: jest.fn(),
+              updateMany: jest.fn(),
               delete: jest.fn(),
             },
           },
@@ -205,6 +207,54 @@ describe('HackathonRepository', () => {
         include: repository['hackathonFullInclude'],
       });
       expect(result).toEqual(mockHackathon);
+    });
+  });
+
+  describe('updateToActive', () => {
+    it('should update hackathons to ACTIVE status based on start date', async () => {
+      const currentTime = new Date();
+      const mockUpdateResult = { count: 3 };
+
+      (prismaService.hackathon.updateMany as jest.Mock).mockResolvedValue(
+        mockUpdateResult,
+      );
+
+      const result = await repository.updateToActive(currentTime);
+
+      expect(prismaService.hackathon.updateMany).toHaveBeenCalledWith({
+        where: {
+          status: HackathonStatus.REGISTRATION,
+          startDate: { lte: currentTime },
+        },
+        data: {
+          status: HackathonStatus.ACTIVE,
+        },
+      });
+      expect(result).toEqual(mockUpdateResult);
+    });
+  });
+
+  describe('updateToFinished', () => {
+    it('should update hackathons to FINISHED status based on end date', async () => {
+      const currentTime = new Date();
+      const mockUpdateResult = { count: 2 };
+
+      (prismaService.hackathon.updateMany as jest.Mock).mockResolvedValue(
+        mockUpdateResult,
+      );
+
+      const result = await repository.updateToFinished(currentTime);
+
+      expect(prismaService.hackathon.updateMany).toHaveBeenCalledWith({
+        where: {
+          status: HackathonStatus.ACTIVE,
+          endDate: { lte: currentTime },
+        },
+        data: {
+          status: HackathonStatus.FINISHED,
+        },
+      });
+      expect(result).toEqual(mockUpdateResult);
     });
   });
 
