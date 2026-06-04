@@ -78,7 +78,7 @@ describe('EvaluationRepository', () => {
     it('should upsert the review comment', async () => {
       const juryId = 'jury-1';
       const participationId = 'part-1';
-      const data = { text: 'Great project', isPublished: true } as any;
+      const data = { summary: 'Great project', strengths: 'UI' } as any;
 
       await repository.upsertComment(juryId, participationId, data);
 
@@ -96,57 +96,53 @@ describe('EvaluationRepository', () => {
     });
   });
 
-  describe('recalculateProjectFinalScore', () => {
-    const hackathonId = 'hack-1';
-    const participationId = 'part-1';
+  describe('getCriteriaByHackathon', () => {
+    it('should fetch criteria for a specific hackathon', async () => {
+      const hackathonId = 'hack-1';
+      const mockCriteria = [{ id: 'C1', weight: 40 }];
 
-    it('should exit early if there are no scores', async () => {
-      (prismaService.criterion.findMany as jest.Mock).mockResolvedValue([]);
-      (prismaService.score.findMany as jest.Mock).mockResolvedValue([]);
-
-      await repository.recalculateProjectFinalScore(
-        participationId,
-        hackathonId,
-      );
-
-      // Якщо масив allScores порожній, participation.update не має викликатись
-      expect(prismaService.participation.update).not.toHaveBeenCalled();
-    });
-
-    it('should calculate weighted average correctly for multiple judges', async () => {
-      const criteria = [
-        { id: 'C1', weight: 40 },
-        { id: 'C2', weight: 60 },
-      ];
       (prismaService.criterion.findMany as jest.Mock).mockResolvedValue(
-        criteria,
+        mockCriteria,
       );
 
-      const allScores = [
-        // Суддя 1 поставив 10 та 10 -> (10 * 0.4) + (10 * 0.6) = 10
-        { juryId: 'J1', criterionId: 'C1', value: 10 },
-        { juryId: 'J1', criterionId: 'C2', value: 10 },
+      const result = await repository.getCriteriaByHackathon(hackathonId);
 
-        // Суддя 2 поставив 5 та 5 -> (5 * 0.4) + (5 * 0.6) = 5
-        { juryId: 'J2', criterionId: 'C1', value: 5 },
-        { juryId: 'J2', criterionId: 'C2', value: 5 },
+      expect(prismaService.criterion.findMany).toHaveBeenCalledWith({
+        where: { hackathonId },
+      });
+      expect(result).toEqual(mockCriteria);
+    });
+  });
 
-        // Оцінка для неіснуючого критерію (Branch coverage: if (!criterion) ...)
-        // Суддя 1 має стару оцінку, якої вже немає в критеріях (має бути проігнорована)
-        { juryId: 'J1', criterionId: 'UNKNOWN', value: 10 },
-      ];
-      (prismaService.score.findMany as jest.Mock).mockResolvedValue(allScores);
+  describe('getScoresByParticipation', () => {
+    it('should fetch scores for a specific participation', async () => {
+      const participationId = 'part-1';
+      const mockScores = [{ value: 10, criterionId: 'C1' }];
 
-      await repository.recalculateProjectFinalScore(
+      (prismaService.score.findMany as jest.Mock).mockResolvedValue(mockScores);
+
+      const result = await repository.getScoresByParticipation(participationId);
+
+      expect(prismaService.score.findMany).toHaveBeenCalledWith({
+        where: { participationId },
+      });
+      expect(result).toEqual(mockScores);
+    });
+  });
+
+  describe('updateParticipationFinalScore', () => {
+    it('should update the final score of a participation', async () => {
+      const participationId = 'part-1';
+      const finalScore = 8.5;
+
+      await repository.updateParticipationFinalScore(
         participationId,
-        hackathonId,
+        finalScore,
       );
-
-      // Загальна сума: 15. Суддів: 2. Фінальний бал: 15 / 2 = 7.5
 
       expect(prismaService.participation.update).toHaveBeenCalledWith({
         where: { id: participationId },
-        data: { finalScore: 7.5 },
+        data: { finalScore },
       });
     });
   });

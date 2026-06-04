@@ -45,7 +45,9 @@ describe('HackathonService', () => {
     };
     evalRepo = {
       upsertScores: jest.fn(),
-      recalculateProjectFinalScore: jest.fn(),
+      getCriteriaByHackathon: jest.fn(),
+      getScoresByParticipation: jest.fn(),
+      updateParticipationFinalScore: jest.fn(),
       upsertComment: jest.fn(),
     };
     catRepo = { syncHackathonCategories: jest.fn() };
@@ -63,6 +65,10 @@ describe('HackathonService', () => {
     }).compile();
 
     service = module.get<HackathonService>(HackathonService);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('create: should call repo create', async () => {
@@ -207,14 +213,42 @@ describe('HackathonService', () => {
     ).rejects.toThrow(NotFoundException);
   });
 
-  it('setTeamScores: should upsert and recalc if jury exists', async () => {
+  it('setTeamScores: should upsert and calculate correct final score', async () => {
     juryRepo.getJuryByUserAndHackathon.mockResolvedValue({ id: 'j1' });
-    await service.setTeamScores('u1', 'h1', 'p1', { C1: 10 });
-    expect(evalRepo.upsertScores).toHaveBeenCalledWith('j1', 'p1', { C1: 10 });
-    expect(evalRepo.recalculateProjectFinalScore).toHaveBeenCalledWith(
+
+    evalRepo.getCriteriaByHackathon.mockResolvedValue([
+      { id: 'C1', weight: 40 },
+      { id: 'C2', weight: 60 },
+    ]);
+
+    evalRepo.getScoresByParticipation.mockResolvedValue([
+      { juryId: 'j1', criterionId: 'C1', value: 10 },
+      { juryId: 'j1', criterionId: 'C2', value: 5 },
+    ]);
+
+    await service.setTeamScores('u1', 'h1', 'p1', { C1: 10, C2: 5 });
+
+    expect(evalRepo.upsertScores).toHaveBeenCalledWith('j1', 'p1', {
+      C1: 10,
+      C2: 5,
+    });
+
+    // (10 * 0.4) + (5 * 0.6) = 4 + 3 = 7
+    expect(evalRepo.updateParticipationFinalScore).toHaveBeenCalledWith(
       'p1',
-      'h1',
+      7,
     );
+  });
+
+  it('setTeamScores: should early return and not update finalScore if no scores found', async () => {
+    juryRepo.getJuryByUserAndHackathon.mockResolvedValue({ id: 'j1' });
+    evalRepo.getCriteriaByHackathon.mockResolvedValue([]);
+    evalRepo.getScoresByParticipation.mockResolvedValue([]);
+
+    await service.setTeamScores('u1', 'h1', 'p1', {});
+
+    expect(evalRepo.upsertScores).toHaveBeenCalled();
+    expect(evalRepo.updateParticipationFinalScore).not.toHaveBeenCalled();
   });
 
   it('setTeamComment: should throw if jury not found', async () => {

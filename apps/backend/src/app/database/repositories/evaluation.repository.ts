@@ -46,45 +46,22 @@ export class EvaluationRepository {
     });
   }
 
-  async recalculateProjectFinalScore(
-    participationId: string,
-    hackathonId: string,
-  ): Promise<void> {
-    const criteria = await this.prisma.criterion.findMany({
+  async getCriteriaByHackathon(hackathonId: string) {
+    return this.prisma.criterion.findMany({
       where: { hackathonId },
     });
+  }
 
-    const allScores = await this.prisma.score.findMany({
+  async getScoresByParticipation(participationId: string) {
+    return this.prisma.score.findMany({
       where: { participationId },
     });
+  }
 
-    if (allScores.length === 0) return;
-
-    const scoresByJury: Record<string, typeof allScores> = {};
-    allScores.forEach((s) => {
-      if (!scoresByJury[s.juryId]) scoresByJury[s.juryId] = [];
-      scoresByJury[s.juryId].push(s);
-    });
-
-    let totalHackathonWeightedScore = 0;
-    const totalJudgesWhoScored = Object.keys(scoresByJury).length;
-
-    Object.values(scoresByJury).forEach((juryScores) => {
-      let juryTotal = 0;
-      juryScores.forEach((score) => {
-        const criterion = criteria.find((c) => c.id === score.criterionId);
-        if (criterion) {
-          juryTotal += score.value * (criterion.weight / 100);
-        }
-      });
-      totalHackathonWeightedScore += juryTotal;
-    });
-
-    const finalScore =
-      totalJudgesWhoScored > 0
-        ? totalHackathonWeightedScore / totalJudgesWhoScored
-        : 0;
-
+  async updateParticipationFinalScore(
+    participationId: string,
+    finalScore: number,
+  ): Promise<void> {
     await this.prisma.participation.update({
       where: { id: participationId },
       data: { finalScore },

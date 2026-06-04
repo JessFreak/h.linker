@@ -241,9 +241,49 @@ export class HackathonService {
       participationId,
       scores,
     );
-    await this.evaluationRepository.recalculateProjectFinalScore(
+
+    await this.recalculateProjectFinalScore(participationId, hackathonId);
+  }
+
+  private async recalculateProjectFinalScore(
+    participationId: string,
+    hackathonId: string,
+  ): Promise<void> {
+    const criteria =
+      await this.evaluationRepository.getCriteriaByHackathon(hackathonId);
+    const allScores =
+      await this.evaluationRepository.getScoresByParticipation(participationId);
+
+    if (allScores.length === 0) return;
+
+    const scoresByJury: Record<string, typeof allScores> = {};
+    allScores.forEach((s) => {
+      if (!scoresByJury[s.juryId]) scoresByJury[s.juryId] = [];
+      scoresByJury[s.juryId].push(s);
+    });
+
+    let totalHackathonWeightedScore = 0;
+    const totalJudgesWhoScored = Object.keys(scoresByJury).length;
+
+    Object.values(scoresByJury).forEach((juryScores) => {
+      let juryTotal = 0;
+      juryScores.forEach((score) => {
+        const criterion = criteria.find((c) => c.id === score.criterionId);
+        if (criterion) {
+          juryTotal += score.value * (criterion.weight / 100);
+        }
+      });
+      totalHackathonWeightedScore += juryTotal;
+    });
+
+    const finalScore =
+      totalJudgesWhoScored > 0
+        ? totalHackathonWeightedScore / totalJudgesWhoScored
+        : 0;
+
+    await this.evaluationRepository.updateParticipationFinalScore(
       participationId,
-      hackathonId,
+      finalScore,
     );
   }
 
