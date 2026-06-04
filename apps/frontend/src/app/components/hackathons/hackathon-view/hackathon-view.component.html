@@ -135,8 +135,8 @@
         <aside class="h-sidebar">
           <div class="h-card sidebar-widget sticky-widget">
 
-            @if (!isTimeUp()) {
-              <div class="timer-display tech-data" matTooltip="Time remaining until registration closes">
+            @if (h.status === Status.REGISTRATION || h.status === Status.DRAFT) {
+              <div class="timer-display tech-data" matTooltip="Time remaining until event starts">
                 <div class="time-box"><span class="val">{{ timeLeft().days }}</span><span class="lab">DAYS</span></div>
                 <span class="sep">:</span>
                 <div class="time-box"><span class="val">{{ timeLeft().hrs }}</span><span class="lab">HRS</span></div>
@@ -175,7 +175,7 @@
               <button mat-flat-button
                       color="primary"
                       class="w-full h-12"
-                      [disabled]="h.status !== Status.REGISTRATION || isTimeUp()"
+                      [disabled]="h.status !== Status.REGISTRATION"
                       (click)="onRegister()"
                       [matTooltip]="h.status !== Status.REGISTRATION ? 'Registration is only allowed during the REGISTRATION phase' : 'Join this competition with your active team'">
                 <mat-icon>app_registration</mat-icon>

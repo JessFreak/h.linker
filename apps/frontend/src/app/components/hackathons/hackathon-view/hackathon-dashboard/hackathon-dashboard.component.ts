@@ -70,11 +70,6 @@ export class HackathonDashboardComponent implements OnInit, OnDestroy {
   timeLeft = signal<TimeLeft>({ days: 0, hrs: 0, min: 0, sec: 0 });
   private timerSub?: Subscription;
 
-  isTimeUp = computed(() => {
-    const t = this.timeLeft();
-    return t.days === 0 && t.hrs === 0 && t.min === 0 && t.sec === 0;
-  });
-
   leaderboardItems = signal<LeaderboardItem[]>([]);
 
   teamReviews = signal<TeamReviewResponse[]>([]);
@@ -149,13 +144,14 @@ export class HackathonDashboardComponent implements OnInit, OnDestroy {
   private loadDashboardData(slug: string) {
     this.hackathonService.getBySlug(slug).subscribe((h) => {
       this.hackathon.set(h);
-      const { timeLeft, sub } = this.countdownService.start(
-        new Date(h.submissionDeadline),
-      );
-      this.timeLeft = timeLeft;
-      this.timerSub = sub;
 
-      if (h.status !== 'ACTIVE') {
+      if (h.status === 'ACTIVE') {
+        const { timeLeft, sub } = this.countdownService.start(
+          new Date(h.submissionDeadline),
+        );
+        this.timeLeft = timeLeft;
+        this.timerSub = sub;
+      } else {
         this.notificationService.info(
           `Project submission is locked. Event stage: ${h.status}`,
         );

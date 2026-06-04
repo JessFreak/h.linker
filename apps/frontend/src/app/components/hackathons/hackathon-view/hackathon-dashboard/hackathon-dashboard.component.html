@@ -17,7 +17,7 @@
           <div class="deadline-info">
             <span class="h-text-secondary uppercase tech-data block" style="letter-spacing: 1px; margin-bottom: 16px;">Project Submission Deadline</span>
 
-            @if (!isTimeUp()) {
+            @if (h.status === 'ACTIVE') {
               <div class="h-timer tech-data" matTooltip="Time left until submissions close permanently">
                 <div class="t-unit"><span class="val">{{ timeLeft().days }}</span><span class="lab">DAYS</span></div>
                 <span class="t-sep">:</span>

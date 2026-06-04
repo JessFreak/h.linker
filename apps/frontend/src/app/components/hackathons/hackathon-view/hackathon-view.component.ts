@@ -65,11 +65,6 @@ export class HackathonViewComponent implements OnInit, OnDestroy {
   timeLeft = signal<TimeLeft>({ days: 0, hrs: 0, min: 0, sec: 0 });
   private timerSub?: Subscription;
 
-  isTimeUp = computed(() => {
-    const t = this.timeLeft();
-    return t.days === 0 && t.hrs === 0 && t.min === 0 && t.sec === 0;
-  });
-
   readonly Status = HackathonStatus;
 
   ngOnInit() {
