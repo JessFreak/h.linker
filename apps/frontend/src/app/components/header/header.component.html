@@ -37,8 +37,78 @@
                     class="h-search-field"
                     matTooltip="Quick search for hackathons, teams, or developers"
                     matTooltipPosition="below">
-      <mat-icon matPrefix>search</mat-icon>
-      <input matInput placeholder="Search hackathons, hackers...">
+
+      <mat-icon matPrefix style="cursor: pointer;" (click)="onSearch()">search</mat-icon>
+
+      <input matInput
+             [formControl]="searchCtrl"
+             [matAutocomplete]="globalSearchAuto"
+             (keydown.enter)="onSearch()"
+             placeholder="Search hackathons, teams, hackers...">
+
+      @if (isSearching()) {
+        <mat-spinner matSuffix diameter="20" style="margin-right: 8px;"></mat-spinner>
+      } @else if (searchCtrl.value) {
+        <button mat-icon-button matSuffix (click)="searchCtrl.setValue(''); searchResults.set(null)" aria-label="Clear">
+          <mat-icon style="font-size: 18px; width: 18px; height: 18px;">close</mat-icon>
+        </button>
+      }
+
+      <mat-autocomplete #globalSearchAuto="matAutocomplete"
+                        class="h-global-search-panel"
+                        [displayWith]="displayFn"
+                        (optionSelected)="onResultSelected($event)">
+
+        @if (searchResults(); as res) {
+
+          @if (res.events.length > 0) {
+            <div class="search-group-title">HACKATHONS</div>
+            @for (event of res.events; track event.id) {
+              <mat-option [value]="{ type: 'event', slug: event.slug }" class="search-option">
+                <mat-icon class="opt-icon" style="color: var(--h-safety-orange)">rocket_launch</mat-icon>
+                <div class="opt-content">
+                  <span class="opt-title">{{ event.title }}</span>
+                  <span class="opt-sub">{{ event.status }}</span>
+                </div>
+              </mat-option>
+            }
+          }
+
+          @if (res.teams.length > 0) {
+            <div class="search-group-title">TEAMS</div>
+            @for (team of res.teams; track team.id) {
+              <mat-option [value]="{ type: 'team', id: team.id }" class="search-option">
+                <mat-icon class="opt-icon" style="color: var(--h-primary-blue)">groups</mat-icon>
+                <div class="opt-content">
+                  <span class="opt-title">{{ team.name }}</span>
+                </div>
+              </mat-option>
+            }
+          }
+
+          @if (res.users.length > 0) {
+            <div class="search-group-title">DEVELOPERS</div>
+            @for (dev of res.users; track dev.id) {
+              <mat-option [value]="{ type: 'user', username: dev.username }" class="search-option">
+                <img [src]="dev.avatarUrl || '/default-avatar.png'" class="opt-avatar" alt="Avatar">
+                <div class="opt-content">
+                  <span class="opt-title">{{ dev.firstName }} {{ dev.lastName }}</span>
+                  <span class="opt-sub">&#64;{{ dev.username }}</span>
+                </div>
+              </mat-option>
+            }
+          }
+
+          @if (res.events.length === 0 && res.teams.length === 0 && res.users.length === 0) {
+            <div class="search-no-results">
+              <mat-icon>search_off</mat-icon>
+              <span>No results found for "{{ searchCtrl.value }}"</span>
+            </div>
+          }
+
+        }
+      </mat-autocomplete>
+
     </mat-form-field>
   </div>
 
