@@ -202,7 +202,7 @@
 
 .prize-card {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
   background: rgba(240, 136, 0, 0.05);
   border: 1px solid rgba(240, 136, 0, 0.2);
@@ -214,12 +214,15 @@
     font-size: 36px;
     width: 36px;
     height: 36px;
+    flex-shrink: 0;
   }
 
   p {
     font-size: 20px;
     font-weight: 600;
     margin: 0;
+    white-space: pre-wrap;
+    line-height: 1.5;
   }
 }
 
