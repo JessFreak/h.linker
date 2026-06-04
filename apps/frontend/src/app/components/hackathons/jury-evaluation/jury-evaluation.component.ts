@@ -32,6 +32,7 @@ import { AuthService } from '../../../services/auth.service';
 import { Subscription, debounceTime, forkJoin, of } from 'rxjs';
 import { NotificationService } from '../../../utils/notification.service';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { BreadcrumbComponent } from '../../breadcrumb/breadcrumb.component';
 
 export interface EvaluationFormValues {
   summary: string;
@@ -54,6 +55,7 @@ export interface EvaluationFormValues {
     MatTooltipModule,
     MatProgressBarModule,
     MatProgressSpinner,
+    BreadcrumbComponent,
   ],
   templateUrl: './jury-evaluation.component.html',
   styleUrls: ['./jury-evaluation.component.scss'],
@@ -71,6 +73,8 @@ export class JuryEvaluationComponent implements OnInit, OnDestroy {
   submissions = signal<JurySubmissionItem[]>([]);
   currentIndex = signal<number>(0);
   isLoading = signal(true);
+
+  showCompletionScreen = signal(false);
 
   evalForm!: FormGroup;
   calculatedScore = signal<number>(0);
@@ -150,14 +154,26 @@ export class JuryEvaluationComponent implements OnInit, OnDestroy {
             this.isLoading.set(false);
 
             if (res.submissions.length > 0) {
-              this.selectTeam(0);
+              if (this.scoredCount() === res.submissions.length) {
+                this.showCompletionScreen.set(true);
+                this.selectTeam(0);
+              } else {
+                const firstUnscored = res.submissions.findIndex(
+                  (s) => !this.isTeamEvaluatedByMe(s),
+                );
+                this.selectTeam(firstUnscored !== -1 ? firstUnscored : 0);
+              }
             }
           },
           error: (err) => {
             if (err.status === 403) {
-              this.notificationService.error('Access denied. You are not a jury member for this event.');
+              this.notificationService.error(
+                'Access denied. You are not a jury member for this event.',
+              );
             } else {
-              this.notificationService.error('Failed to load participant submissions.');
+              this.notificationService.error(
+                'Failed to load participant submissions.',
+              );
             }
             this.isLoading.set(false);
             this.router.navigate(['/events', slug]);
@@ -334,7 +350,21 @@ export class JuryEvaluationComponent implements OnInit, OnDestroy {
           );
         }
 
-        this.nextTeam();
+        if (this.scoredCount() === this.submissions().length) {
+          this.showCompletionScreen.set(true);
+        } else {
+          if (this.currentIndex() < this.submissions().length - 1) {
+            this.nextTeam();
+          } else {
+            const firstUnscored = this.submissions().findIndex(
+              (s) => !this.isTeamEvaluatedByMe(s),
+            );
+            if (firstUnscored !== -1) {
+              this.selectTeam(firstUnscored);
+              this.notificationService.info('Redirected to skipped project');
+            }
+          }
+        }
       },
       error: (err) => {
         this.notificationService.error(err.message);
