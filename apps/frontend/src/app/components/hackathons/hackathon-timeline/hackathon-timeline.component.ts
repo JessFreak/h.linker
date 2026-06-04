@@ -36,6 +36,8 @@ export interface TimelineCalculations {
   daysA: number;
   daysB: number;
   daysC: number;
+  pctCurrent: number;
+  showCurrent: boolean;
 }
 
 @Component({
@@ -131,6 +133,18 @@ export class HackathonTimelineComponent {
     const toDays = (ms: number) =>
       Math.max(0, Math.floor(ms / (1000 * 60 * 60 * 24)));
 
+    const now = new Date().getTime();
+    let showCurrent = false;
+    let pctCurrent = 0;
+
+    if (now >= tReg && now <= tEnd) {
+      showCurrent = true;
+      pctCurrent = ((now - tReg) / totalMs) * 100;
+    } else if (now > tEnd) {
+      showCurrent = true;
+      pctCurrent = 100;
+    }
+
     return {
       pctA: ((tStart - tReg) / totalMs) * 100,
       pctB: ((tSub - tStart) / totalMs) * 100,
@@ -138,6 +152,8 @@ export class HackathonTimelineComponent {
       daysA: toDays(tStart - tReg),
       daysB: toDays(tSub - tStart),
       daysC: toDays(tEnd - tSub),
+      pctCurrent,
+      showCurrent,
     };
   });
 }

@@ -84,6 +84,12 @@
         <div class="h-timeline-point h-point-1" [style.left.%]="pct.pctA" matTooltip="Hackathon Starts"></div>
         <div class="h-timeline-point h-point-2" [style.left.%]="pct.pctA + pct.pctB" matTooltip="Submission Deadline"></div>
         <div class="h-timeline-point h-point-3" matTooltip="Hackathon Ends"></div>
+
+        @if (pct.showCurrent) {
+          <div class="h-timeline-now-marker" [style.left.%]="pct.pctCurrent" matTooltip="Current Time (You are here)">
+            <div class="pulse-dot"></div>
+          </div>
+        }
       </div>
 
       <div class="h-timeline-labels h-text-secondary">

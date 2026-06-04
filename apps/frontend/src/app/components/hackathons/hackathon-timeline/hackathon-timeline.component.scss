@@ -147,3 +147,40 @@
   gap: 10px;
   p { font-size: 13px; margin: 0; }
 }
+
+.h-timeline-now-marker {
+  position: absolute;
+  top: -12px;
+  height: 30px;
+  width: 2px;
+  background: rgba(88, 166, 255, 0.4);
+  z-index: 3;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+
+  .pulse-dot {
+    width: 12px;
+    height: 12px;
+    background: #58a6ff;
+    border-radius: 50%;
+    position: absolute;
+    top: 10px;
+    box-shadow: 0 0 0 0 rgba(88, 166, 255, 0.4);
+    animation: h-pulse 2s infinite;
+    pointer-events: auto;
+  }
+}
+
+@keyframes h-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(88, 166, 255, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(88, 166, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(88, 166, 255, 0);
+  }
+}
