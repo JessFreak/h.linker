@@ -133,21 +133,20 @@
           </div>
 
           <div class="content-section mt-8">
-            <div class="section-label">OTHER JURY SCORES <span class="h-text-secondary" style="text-transform: none;">• Read-only</span></div>
+            <div class="section-label">OTHER JURY SCORES <span class="h-text-secondary">•• Read-only</span></div>
             <div class="other-scores-list">
               @for (score of otherJuryScores(); track score.name) {
                 <div class="other-score-item">
 
                   <div class="h-user-redirect-group" [routerLink]="['/users', score.name]"
-                       style="display: flex; align-items: center; gap: 16px; flex: 1;"
                        matTooltip="View judge profile">
                     @if (score.avatarUrl) {
-                      <img [src]="score.avatarUrl" class="juror-avatar" style="object-fit: cover;" alt="Avatar">
+                      <img [src]="score.avatarUrl" class="juror-avatar" alt="Avatar">
                     } @else {
                       <div class="juror-avatar h-text-secondary">{{ score.name.charAt(0).toUpperCase() }}</div>
                     }
 
-                    <div class="juror-info" style="flex: 1; min-width: 0;">
+                    <div class="juror-info">
                       <span class="h-username-link">&#64;{{ score.name }}</span>
                       @if (score.score) {
                         <div class="score-bar">
@@ -161,6 +160,11 @@
                        [matTooltip]="score.score ? 'Final normalized score from this juror' : 'This judge has not voted yet'">
                     {{ score.score ? (score.score | number:'1.1-1') : 'Pending...' }}
                   </div>
+                </div>
+              } @empty {
+                <div class="other-scores-list is-empty h-text-secondary">
+                  <mat-icon>people_outline</mat-icon>
+                  <span>You are the only jury member or no other votes have been cast yet.</span>
                 </div>
               }
             </div>
