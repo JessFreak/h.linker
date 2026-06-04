@@ -6,6 +6,7 @@ import {
   ViewChild,
   OnInit,
   ElementRef,
+  DestroyRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -24,7 +25,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -61,6 +62,7 @@ import {
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { AuthService } from '../../../services/auth.service';
 import { BreadcrumbComponent } from '../../breadcrumb/breadcrumb.component';
+import { generateSlug } from '../../../utils/slug';
 
 @Component({
   selector: 'app-hackathon-constructor',
@@ -90,6 +92,7 @@ export class HackathonConstructorComponent implements OnInit {
   @ViewChild('stepper') stepper!: MatStepper;
   @ViewChild('categoryInput') categoryInput!: ElementRef<HTMLInputElement>;
 
+  private destroyRef = inject(DestroyRef);
   private fb = inject(FormBuilder);
   private hackathonService = inject(HackathonService);
   private categoryService = inject(CategoryService);
@@ -122,8 +125,7 @@ export class HackathonConstructorComponent implements OnInit {
       distinctUntilChanged(),
       switchMap((val) =>
         val && val.length >= 2
-          ?
-            this.userService
+          ? this.userService
               .getAll({ search: val })
               .pipe(map((res) => res.data))
           : of([]),
@@ -301,6 +303,17 @@ export class HackathonConstructorComponent implements OnInit {
     if (step) {
       this.currentStep.set(Number(step));
     }
+
+    this.infoForm
+      .get('title')
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((title) => {
+        const slugControl = this.infoForm.get('slug');
+
+        if (!this.hackathonId() && slugControl && !slugControl.dirty) {
+          slugControl.setValue(generateSlug(title || ''));
+        }
+      });
   }
 
   onStepChange(event: StepperSelectionEvent): void {
