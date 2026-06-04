@@ -13,6 +13,7 @@ import { Access } from '../../config/security/decorators/access';
 import { UserRequest } from '../../config/security/decorators/user-request';
 import {
   FullUserResponse,
+  GitHubReposResponse,
   PageResponse,
   UpdateUserDTO,
   UserQueryDTO,
@@ -80,5 +81,28 @@ export class UserController {
   ): Promise<UserResponse> {
     const updatedUser = await this.userService.updateProfile(user.id, body);
     return UserMapper.getUserResponse(updatedUser);
+  }
+
+  @Get(':username/github-repos')
+  @Access()
+  async getUserGithubRepos(
+    @Param('username', UserByUsernamePipe) username: string,
+  ): Promise<GitHubReposResponse> {
+    const user = (await this.userService.findByUsername(
+      username,
+      false,
+    )) as FullUser;
+
+    if (!user?.githubUsername) {
+      return UserMapper.getUserReposResponse([]);
+    }
+
+    const systemToken = this.configService.github.systemToken;
+    const repos = await this.githubService.getUserRepositories(
+      systemToken,
+      user.githubUsername,
+    );
+
+    return UserMapper.getUserReposResponse(repos);
   }
 }

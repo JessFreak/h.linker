@@ -1,5 +1,6 @@
 import { TeamResponse } from './team.response';
 import { HackathonResponse } from './hackathon.response';
+import { GitHubInsights } from './github.response';
 
 export interface UserResponse {
   id: string;
@@ -28,21 +29,6 @@ export interface UserProjectResponse {
   repoUrl: string | null;
   teamName: string;
   finalScore: number;
-}
-
-export interface GitHubLanguage {
-  name: string;
-  percent: number;
-}
-
-export interface GitHubInsights {
-  totalContributions: number;
-  contributionTrend: string;
-  totalStars: number;
-  starredReposCount: number;
-  publicReposCount: number;
-  activeReposThisMonth: number;
-  topLanguages: GitHubLanguage[];
 }
 
 export interface FullUserResponse extends UserResponse {

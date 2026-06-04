@@ -5,13 +5,17 @@ import {
   UserProjectResponse,
   UserResponse,
   UsersResponse,
+  GitHubRepoItem,
+  GitHubReposResponse,
 } from '@h.linker/libs';
 import { HackathonMapper } from './hackathon.mapper';
 import { TeamMapper } from './team.mapper';
 import { ParticipationMapper } from './participation.mapper';
 
 export class UserMapper {
-  static getUserResponse(user: UserWithSkills & { matchPercentage?: number }): UserResponse {
+  static getUserResponse(
+    user: UserWithSkills & { matchPercentage?: number },
+  ): UserResponse {
     if (!user) return null;
     return {
       id: user.id,
@@ -63,6 +67,12 @@ export class UserMapper {
       createdHackathons,
       teams,
       projects,
+    };
+  }
+
+  static getUserReposResponse(repos: GitHubRepoItem[]): GitHubReposResponse {
+    return {
+      repositories: repos,
     };
   }
 }

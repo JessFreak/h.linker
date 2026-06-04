@@ -6,7 +6,7 @@ import { ProjectController } from '../controllers/project.controller';
 import { ProjectService } from '../services/project.service';
 import { HackathonBySlugPipe } from '../utils/pipes/hackathon-by-slug.pipe';
 import { ParticipationByIdPipe } from '../utils/pipes/participation-by-id.pipe';
-import { HackathonCronService } from '../services/hackathon.cron.service';
+import { HackathonCronService } from '../services/hackathon-cron.service';
 
 @Module({
   controllers: [HackathonController, ProjectController],

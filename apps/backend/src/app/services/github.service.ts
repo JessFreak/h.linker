@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
-import { GitHubInsights, GitHubLanguage } from '@h.linker/libs';
+import { GitHubInsights, GitHubLanguage, GitHubRepoItem } from '@h.linker/libs';
 
 interface GitHubGraphQLResponse {
   data: {
@@ -45,6 +45,22 @@ interface GitHubRepoNode {
     nodes: Array<{
       topic: { name: string };
     }>;
+  };
+}
+
+interface GraphQLRepoResponse {
+  data: {
+    user: {
+      repositories: {
+        nodes: Array<{
+          name: string;
+          url: string;
+          description: string | null;
+          updatedAt: string;
+          primaryLanguage: { name: string; color: string } | null;
+        }>;
+      };
+    };
   };
 }
 
@@ -255,5 +271,62 @@ export class GithubService {
       }))
       .sort((a, b) => b.percent - a.percent)
       .slice(0, 3);
+  }
+
+  async getUserRepositories(
+    systemToken: string,
+    githubUsername: string,
+  ): Promise<GitHubRepoItem[]> {
+    const cacheKey = `gh_repos_list_${githubUsername.toLowerCase()}`;
+    const cachedData = await this.cacheManager.get<GitHubRepoItem[]>(cacheKey);
+    if (cachedData) return cachedData;
+
+    const query = `
+      query($username: String!) {
+        user(login: $username) {
+          repositories(first: 50, ownerAffiliations: [OWNER, COLLABORATOR], orderBy: {field: UPDATED_AT, direction: DESC}, privacy: PUBLIC) {
+            nodes {
+              name
+              url
+              description
+              updatedAt
+              primaryLanguage {
+                name
+                color
+              }
+            }
+          }
+        }
+      }
+    `;
+
+    const response = await fetch(this.GITHUB_GRAPHQL_URL, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${systemToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ query, variables: { username: githubUsername } }),
+    });
+
+    const result = (await response.json()) as GraphQLRepoResponse;
+
+    if (!result.data?.user?.repositories?.nodes) {
+      return [];
+    }
+
+    const formattedRepos: GitHubRepoItem[] = result.data.user.repositories.nodes
+      .filter((repo) => !this.BLACKLIST.has(repo.name.toLowerCase()))
+      .map((repo) => ({
+        name: repo.name,
+        url: repo.url,
+        description: repo.description,
+        updatedAt: repo.updatedAt,
+        language: repo.primaryLanguage?.name ?? 'Unknown',
+        languageColor: repo.primaryLanguage?.color ?? '#8b949e',
+      }));
+
+    await this.cacheManager.set(cacheKey, formattedRepos, 300);
+    return formattedRepos;
   }
 }

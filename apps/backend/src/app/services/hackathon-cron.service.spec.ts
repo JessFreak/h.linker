@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { HackathonCronService } from './hackathon.cron.service';
+import { HackathonCronService } from './hackathon-cron.service';
 import { HackathonRepository } from '../database/repositories/hackathon.repository';
 
 describe('HackathonCronService', () => {

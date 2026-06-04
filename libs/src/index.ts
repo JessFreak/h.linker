@@ -21,3 +21,4 @@ export * from './lib/responses/category.response';
 export * from './lib/responses/registration.response';
 export * from './lib/responses/submission.response';
 export * from './lib/responses/project.response';
+export * from './lib/responses/github.response';
