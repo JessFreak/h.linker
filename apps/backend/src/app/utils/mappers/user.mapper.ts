@@ -50,12 +50,25 @@ export class UserMapper {
     }));
 
     const projects: UserProjectResponse[] = user.memberships.flatMap((m) =>
-      m.team.participations.map((p) => ({
-        hackathonTitle: p.hackathon.title,
-        repoUrl: p.githubRepoUrl,
-        teamName: m.team.name,
-        finalScore: p.finalScore,
-      })),
+      m.team.participations.map((p) => {
+        let place: number | null = null;
+
+        if (p.finalScore && p.finalScore > 0 && p.hackathon.participations) {
+          const allScores = p.hackathon.participations
+            .map((part) => part.finalScore || 0)
+            .sort((a, b) => b - a);
+
+          place = allScores.indexOf(p.finalScore) + 1;
+        }
+
+        return {
+          hackathonTitle: p.hackathon.title,
+          repoUrl: p.githubRepoUrl,
+          teamName: m.team.name,
+          finalScore: p.finalScore,
+          place: place,
+        };
+      }),
     );
 
     const createdHackathons = user.createdHackathons.map((h) =>

@@ -16,7 +16,9 @@ export type FullUser = UserWithSkills & {
   memberships: (UserTeam & {
     team: Team & {
       participations: (Participation & {
-        hackathon: Hackathon;
+        hackathon: Hackathon & {
+          participations: Pick<Participation, 'id' | 'finalScore'>[];
+        };
       })[];
     };
   })[];

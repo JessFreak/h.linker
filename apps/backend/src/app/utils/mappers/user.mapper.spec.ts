@@ -42,7 +42,6 @@ describe('UserMapper', () => {
 
   describe('getUserResponse', () => {
     it('should return null if user is falsy', () => {
-      // if (!user) return null;
       expect(UserMapper.getUserResponse(null as any)).toBeNull();
       expect(UserMapper.getUserResponse(undefined as any)).toBeNull();
     });
@@ -55,7 +54,6 @@ describe('UserMapper', () => {
     });
 
     it('should map skills and matchPercentage correctly if they exist', () => {
-      // user.skills?.map((uc) => uc.category)
       const userWithSkills = {
         id: 'u1',
         username: 'test',
@@ -70,60 +68,190 @@ describe('UserMapper', () => {
     });
   });
 
-  it('should map full user response with teams, projects and created hackathons', () => {
-    const mockFullUser = {
-      id: 'u1',
-      username: 'johndoe',
-      memberships: [
-        {
-          roleName: 'Lead',
-          team: {
-            id: 't1',
-            participations: [
-              { projectTitle: 'App', hackathon: { title: 'H1' } },
-            ],
+  describe('getFullUserResponse', () => {
+    it('should map full user response with teams, projects and created hackathons', () => {
+      const mockFullUser = {
+        id: 'u1',
+        username: 'johndoe',
+        memberships: [
+          {
+            roleName: 'Lead',
+            team: {
+              id: 't1',
+              name: 'Alpha Team',
+              participations: [
+                {
+                  projectTitle: 'App',
+                  finalScore: 10,
+                  hackathon: {
+                    title: 'H1',
+                    participations: [{ finalScore: 10 }],
+                  },
+                },
+              ],
+            },
           },
-        },
-      ],
-      createdHackathons: [{ id: 'h1' }],
-    } as any;
+        ],
+        createdHackathons: [{ id: 'h1' }],
+      } as any;
 
-    const result = UserMapper.getFullUserResponse(mockFullUser);
+      const result = UserMapper.getFullUserResponse(mockFullUser);
 
-    expect(result.teams).toHaveLength(1);
-    expect(result.teams[0].userRole).toBe('Lead');
+      expect(result.teams).toHaveLength(1);
+      expect(result.teams[0].userRole).toBe('Lead');
 
-    expect(result.projects).toHaveLength(1);
-    expect(result.projects[0].hackathonTitle).toBe('H1');
+      expect(result.projects).toHaveLength(1);
+      expect(result.projects[0].hackathonTitle).toBe('H1');
+      expect(result.projects[0].teamName).toBe('Alpha Team');
+      expect(result.projects[0].place).toBe(1);
 
-    expect(result.createdHackathons).toHaveLength(1);
-    expect(result.createdHackathons[0].id).toBe('h1');
+      expect(result.createdHackathons).toHaveLength(1);
+      expect(result.createdHackathons[0].id).toBe('h1');
+    });
+
+    it('should handle empty arrays in memberships and hackathons', () => {
+      const mockEmptyUser = {
+        id: 'u2',
+        memberships: [],
+        createdHackathons: [],
+      } as any;
+
+      const result = UserMapper.getFullUserResponse(mockEmptyUser);
+
+      expect(result.teams).toEqual([]);
+      expect(result.projects).toEqual([]);
+      expect(result.createdHackathons).toEqual([]);
+    });
+
+    it('should calculate project place correctly based on hackathon participations scores', () => {
+      const mockUser = {
+        id: 'u1',
+        memberships: [
+          {
+            team: {
+              participations: [
+                {
+                  finalScore: 8.5,
+                  hackathon: {
+                    title: 'Global Hack',
+                    participations: [
+                      { finalScore: 5.0 },
+                      { finalScore: 10.0 },
+                      { finalScore: 8.5 },
+                      { finalScore: 0 },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+        createdHackathons: [],
+      } as any;
+
+      const result = UserMapper.getFullUserResponse(mockUser);
+
+      expect(result.projects[0].finalScore).toBe(8.5);
+      expect(result.projects[0].place).toBe(2);
+    });
+
+    it('should assign place 1 for tied highest scores', () => {
+      const mockUser = {
+        id: 'u1',
+        memberships: [
+          {
+            team: {
+              participations: [
+                {
+                  finalScore: 10,
+                  hackathon: {
+                    participations: [{ finalScore: 10 }, { finalScore: 10 }],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+        createdHackathons: [],
+      } as any;
+
+      const result = UserMapper.getFullUserResponse(mockUser);
+      expect(result.projects[0].place).toBe(1);
+    });
+
+    it('should return null for place if finalScore is 0 or null', () => {
+      const mockUser = {
+        id: 'u1',
+        memberships: [
+          {
+            team: {
+              participations: [
+                {
+                  finalScore: 0, // Оцінки ще немає
+                  hackathon: {
+                    participations: [{ finalScore: 10 }],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+        createdHackathons: [],
+      } as any;
+
+      const result = UserMapper.getFullUserResponse(mockUser);
+      expect(result.projects[0].place).toBeNull();
+    });
+
+    it('should return null for place if hackathon participations are missing', () => {
+      const mockUser = {
+        id: 'u1',
+        memberships: [
+          {
+            team: {
+              participations: [
+                {
+                  finalScore: 10,
+                  hackathon: { participations: undefined },
+                },
+              ],
+            },
+          },
+        ],
+        createdHackathons: [],
+      } as any;
+
+      const result = UserMapper.getFullUserResponse(mockUser);
+      expect(result.projects[0].place).toBeNull();
+    });
   });
 
-  it('should handle empty arrays in memberships and hackathons', () => {
-    const mockEmptyUser = {
-      id: 'u2',
-      memberships: [],
-      createdHackathons: [],
-    } as any;
+  describe('getUsersResponse', () => {
+    it('should map multiple users array correctly', () => {
+      const users = [
+        { id: '1', username: 'u1' },
+        { id: '2', username: 'u2' },
+      ] as any;
 
-    const result = UserMapper.getFullUserResponse(mockEmptyUser);
+      const result = UserMapper.getUsersResponse(users);
 
-    expect(result.teams).toEqual([]);
-    expect(result.projects).toEqual([]);
-    expect(result.createdHackathons).toEqual([]);
+      expect(result.users).toHaveLength(2);
+      expect(result.users[0].id).toBe('1');
+      expect(result.users[1].id).toBe('2');
+    });
   });
 
-  it('should map multiple users array correctly', () => {
-    const users = [
-      { id: '1', username: 'u1' },
-      { id: '2', username: 'u2' },
-    ] as any;
+  describe('getUserReposResponse', () => {
+    it('should wrap repositories array in response object', () => {
+      const mockRepos = [
+        { name: 'repo-1', url: 'http://gh/repo-1' },
+        { name: 'repo-2', url: 'http://gh/repo-2' },
+      ] as any;
 
-    const result = UserMapper.getUsersResponse(users);
+      const result = UserMapper.getUserReposResponse(mockRepos);
 
-    expect(result.users).toHaveLength(2);
-    expect(result.users[0].id).toBe('1');
-    expect(result.users[1].id).toBe('2');
+      expect(result.repositories).toHaveLength(2);
+      expect(result.repositories[0].name).toBe('repo-1');
+    });
   });
 });

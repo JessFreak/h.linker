@@ -23,7 +23,13 @@ export class UserRepository {
           include: {
             participations: {
               include: {
-                hackathon: true,
+                hackathon: {
+                  include: {
+                    participations: {
+                      select: { id: true, finalScore: true },
+                    },
+                  },
+                },
               },
             },
           },

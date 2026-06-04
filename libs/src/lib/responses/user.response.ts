@@ -29,6 +29,7 @@ export interface UserProjectResponse {
   repoUrl: string | null;
   teamName: string;
   finalScore: number;
+  place?: number | null;
 }
 
 export interface FullUserResponse extends UserResponse {
