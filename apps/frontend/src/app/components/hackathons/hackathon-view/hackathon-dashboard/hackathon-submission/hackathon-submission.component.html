@@ -60,12 +60,63 @@
         <ng-template matStepLabel>Repository</ng-template>
         <div class="h-step-content">
           <form [formGroup]="repoForm" class="h-form-column">
-            <div class="section-label">Code Access</div>
 
-            <div class="h-item-note" style="margin-bottom: 24px;">
-              <mat-icon style="color: var(--h-primary-blue)">public</mat-icon>
-              <p>Ensure your GitHub repository is <strong>public</strong> so judges can review the code and documentation.</p>
+            <div class="section-label">Import from GitHub</div>
+            <div class="github-import-section mb-3">
+              <p class="h-text-secondary h-caption mb-3">Select a team member to browse their public repositories:</p>
+
+              <div class="member-chips">
+                @for (member of teamDetails()?.members; track member.id) {
+                  @let mName = member.username;
+                  @if (mName) {
+                    <button mat-stroked-button type="button"
+                            class="member-chip"
+                            [class.active]="selectedMemberForRepos() === mName"
+                            (click)="loadMemberRepos(mName)">
+                      <mat-icon>person</mat-icon> {{ mName }}
+                    </button>
+                  }
+                }
+              </div>
+
+              <div class="repos-container mt-4">
+                @if (isLoadingRepos()) {
+                  <div class="repo-loading">
+                    <mat-spinner diameter="30"></mat-spinner>
+                    <span class="h-text-secondary ml-3 mt-2">Fetching repositories...</span>
+                  </div>
+                } @else if (selectedMemberForRepos() && memberRepos().length === 0) {
+                  <div class="repo-empty">
+                    <mat-icon>code_off</mat-icon>
+                    <p class="h-text-secondary">No public repositories found for this user.</p>
+                  </div>
+                } @else if (memberRepos().length > 0) {
+                  <div class="repo-grid">
+                    @for (repo of memberRepos(); track repo.url) {
+                      <div class="repo-card"
+                           role="button"
+                           tabindex="0"
+                           [class.selected]="repoForm.value.repoUrl === repo.url"
+                           (click)="selectRepo(repo)"
+                           (keydown.enter)="selectRepo(repo)"
+                           (keydown.space)="$event.preventDefault(); selectRepo(repo)">
+                        <div class="repo-header">
+                          <span class="repo-name">{{ repo.name }}</span>
+                          <span class="repo-lang" [style.color]="repo.languageColor">
+                            <mat-icon style="font-size: 10px; width: 10px; height: 10px;">circle</mat-icon>
+                            {{ repo.language }}
+                          </span>
+                        </div>
+                        <p class="repo-desc h-text-secondary">{{ repo.description || 'No description provided.' }}</p>
+                        <div class="repo-meta tech-data">Updated: {{ repo.updatedAt | date:'mediumDate' }}</div>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
             </div>
+
+            <div class="h-divider-text"><span>OR ENTER MANUALLY</span></div>
 
             <mat-form-field appearance="outline" matTooltip="Paste the full link to your GitHub project web page">
               <mat-label>GitHub Repository URL</mat-label>
@@ -74,9 +125,14 @@
               <mat-error>Please provide a valid GitHub link</mat-error>
             </mat-form-field>
 
-            <div class="step-actions">
-              <button mat-button matStepperPrevious matTooltip="Return to previous screen">Back</button>
-              <button mat-flat-button color="primary" matStepperNext
+            <div class="h-item-note mt-2">
+              <mat-icon style="color: var(--h-primary-blue)">public</mat-icon>
+              <p>Ensure your GitHub repository is <strong>public</strong> so judges can review the code and documentation.</p>
+            </div>
+
+            <div class="step-actions mt-4">
+              <button mat-button matStepperPrevious type="button" matTooltip="Return to previous screen">Back</button>
+              <button mat-flat-button color="primary" matStepperNext type="button"
                       [disabled]="repoForm.invalid"
                       [matTooltip]="repoForm.invalid ? 'Please provide a valid repository URL' : 'Go to final review summary'">
                 Review & Finalize <mat-icon>arrow_forward</mat-icon>

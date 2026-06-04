@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   FullUserResponse,
+  GitHubReposResponse,
   PageResponse,
   UpdateUserDTO,
   UserQueryDTO,
@@ -33,5 +34,11 @@ export class UserService {
     return this.http.get<PageResponse<UserResponse>>(this.baseUrl, {
       params,
     });
+  }
+
+  getGithubRepos(username: string): Observable<GitHubReposResponse> {
+    return this.http.get<GitHubReposResponse>(
+      `${this.baseUrl}/${username}/github-repos`,
+    );
   }
 }

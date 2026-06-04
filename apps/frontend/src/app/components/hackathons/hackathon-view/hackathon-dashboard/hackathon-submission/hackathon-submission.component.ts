@@ -7,12 +7,18 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { FullHackathonResponse, TeamResponse } from '@h.linker/libs';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import {
+  FullHackathonResponse,
+  TeamResponse,
+  GitHubRepoItem,
+} from '@h.linker/libs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TeamMembersListComponent } from '../../../../teams/team-details/team-members-list.component';
 import { HackathonService } from '../../../../../services/hackathon.service';
 import { TeamService } from '../../../../../services/team.service';
 import { AuthService } from '../../../../../services/auth.service';
+import { UserService } from '../../../../../services/user.service';
 import { NotificationService } from '../../../../../utils/notification.service';
 import { BreadcrumbComponent } from '../../../../breadcrumb/breadcrumb.component';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -28,6 +34,7 @@ import { MatTooltip } from '@angular/material/tooltip';
     MatButtonModule,
     MatIconModule,
     MatCheckboxModule,
+    MatProgressSpinnerModule,
     TeamMembersListComponent,
     BreadcrumbComponent,
     MatTooltip,
@@ -42,12 +49,18 @@ export class HackathonSubmissionComponent implements OnInit {
   private hackathonService = inject(HackathonService);
   private teamService = inject(TeamService);
   private authService = inject(AuthService);
+  private userService = inject(UserService);
   private notification = inject(NotificationService);
 
   hackathon = signal<FullHackathonResponse | null>(null);
   teamDetails = signal<TeamResponse | null>(null);
   isSaving = signal(false);
   currentUser = toSignal(this.authService.user$);
+
+  // Стан для GitHub інтеграції
+  selectedMemberForRepos = signal<string | null>(null);
+  memberRepos = signal<GitHubRepoItem[]>([]);
+  isLoadingRepos = signal(false);
 
   infoForm = this.fb.group({
     title: [
@@ -110,6 +123,32 @@ export class HackathonSubmissionComponent implements OnInit {
       });
     });
   }
+
+  // --- НОВІ МЕТОДИ ДЛЯ GITHUB ---
+  loadMemberRepos(username: string) {
+    if (this.selectedMemberForRepos() === username) return; // Не завантажуємо двічі
+
+    this.selectedMemberForRepos.set(username);
+    this.isLoadingRepos.set(true);
+    this.memberRepos.set([]);
+
+    this.userService.getGithubRepos(username).subscribe({
+      next: (res) => {
+        this.memberRepos.set(res.repositories || []);
+        this.isLoadingRepos.set(false);
+      },
+      error: () => {
+        this.notification.error('Failed to load GitHub repositories');
+        this.isLoadingRepos.set(false);
+      },
+    });
+  }
+
+  selectRepo(repo: GitHubRepoItem) {
+    this.repoForm.patchValue({ repoUrl: repo.url });
+    this.notification.success(`Linked to ${repo.name}`);
+  }
+  // ------------------------------
 
   submitProject() {
     const h = this.hackathon();
