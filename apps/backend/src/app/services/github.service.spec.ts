@@ -194,4 +194,106 @@ describe('GithubService', () => {
     expect(result.skills).toContain('javascript');
     expect(result.skills).toContain('react');
   });
+
+  describe('getUserRepositories', () => {
+    const mockToken = 'system-token';
+    const mockUsername = 'testuser';
+
+    it('should return cached data if available', async () => {
+      const cachedRepos = [
+        {
+          name: 'repo1',
+          url: '...',
+          updatedAt: '',
+          language: 'TS',
+          languageColor: '#fff',
+          description: '',
+        },
+      ];
+      cacheManager.get.mockResolvedValue(cachedRepos);
+
+      const result = await service.getUserRepositories(mockToken, mockUsername);
+
+      expect(result).toEqual(cachedRepos);
+      expect(cacheManager.set).not.toHaveBeenCalled();
+    });
+
+    it('should fetch, map, and cache repos', async () => {
+      cacheManager.get.mockResolvedValue(null);
+      const mockGraphQLResponse = {
+        data: {
+          user: {
+            repositories: {
+              nodes: [
+                {
+                  name: 'my-project',
+                  url: '...',
+                  description: 'desc',
+                  updatedAt: '2026-06-04',
+                  primaryLanguage: { name: 'TypeScript', color: '#3178c6' },
+                },
+                {
+                  name: 'lab-work',
+                  url: '...',
+                  description: '...',
+                  updatedAt: '2026-06-04',
+                  primaryLanguage: null,
+                },
+              ],
+            },
+          },
+        },
+      };
+
+      global.fetch = jest.fn().mockResolvedValue({
+        json: jest.fn().mockResolvedValue(mockGraphQLResponse),
+      });
+
+      const result = await service.getUserRepositories(mockToken, mockUsername);
+
+      expect(result).toHaveLength(2);
+      expect(result[0].name).toBe('my-project');
+      expect(result[1].name).toBe('lab-work');
+      expect(cacheManager.set).toHaveBeenCalled();
+    });
+
+    it('should return empty array if user not found or error', async () => {
+      cacheManager.get.mockResolvedValue(null);
+      global.fetch = jest.fn().mockResolvedValue({
+        json: jest.fn().mockResolvedValue({ errors: ['Some error'] }),
+      });
+
+      const result = await service.getUserRepositories(mockToken, mockUsername);
+      expect(result).toEqual([]);
+    });
+
+    it('should handle missing primaryLanguage gracefully', async () => {
+      cacheManager.get.mockResolvedValue(null);
+      global.fetch = jest.fn().mockResolvedValue({
+        json: jest.fn().mockResolvedValue({
+          data: {
+            user: {
+              repositories: {
+                nodes: [
+                  {
+                    name: 'test',
+                    url: '...',
+                    description: '',
+                    updatedAt: '',
+                    primaryLanguage: null,
+                  },
+                ],
+              },
+            },
+          },
+        }),
+      });
+
+      const result = await service.getUserRepositories(mockToken, mockUsername);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].language).toBe('Unknown');
+      expect(result[0].languageColor).toBe('#8b949e');
+    });
+  });
 });

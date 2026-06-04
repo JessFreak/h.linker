@@ -315,16 +315,16 @@ export class GithubService {
       return [];
     }
 
-    const formattedRepos: GitHubRepoItem[] = result.data.user.repositories.nodes
-      .filter((repo) => !this.BLACKLIST.has(repo.name.toLowerCase()))
-      .map((repo) => ({
-        name: repo.name,
-        url: repo.url,
-        description: repo.description,
-        updatedAt: repo.updatedAt,
-        language: repo.primaryLanguage?.name ?? 'Unknown',
-        languageColor: repo.primaryLanguage?.color ?? '#8b949e',
-      }));
+    const repos = result.data.user.repositories.nodes;
+
+    const formattedRepos: GitHubRepoItem[] = repos.map((repo) => ({
+      name: repo.name,
+      url: repo.url,
+      description: repo.description,
+      updatedAt: repo.updatedAt,
+      language: repo.primaryLanguage?.name ?? 'Unknown',
+      languageColor: repo.primaryLanguage?.color ?? '#8b949e',
+    }));
 
     await this.cacheManager.set(cacheKey, formattedRepos, 300);
     return formattedRepos;
