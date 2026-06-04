@@ -78,9 +78,8 @@
               <span class="count">{{ userData.projects.length || 0 }}</span>
               <span class="label h-text-secondary">Projects</span>
             </div>
-            <div class="stat-box" matTooltip="Hackathons where this user's team took a prize place">
-              <span class="count">3</span>
-              <span class="label h-text-secondary">Wins</span>
+            <div class="stat-box" matTooltip="Hackathons where this user's team took a top-3 place">
+              <span class="count">{{ winsCount() }}</span> <span class="label h-text-secondary">Wins</span>
             </div>
           </div>
         </mat-card>
@@ -220,13 +219,24 @@
                       <div class="event-header">
                         <h2 [matTooltip]="'Hackathon: ' + project.hackathonTitle">{{ project.hackathonTitle }}</h2>
 
-                        <div>
+                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+
+                          @if (project.place && project.place <= 3) {
+                            <span class="h-badge" style="background: var(--h-safety-orange); color: white; border-color: var(--h-safety-orange);">
+                              🏆 Place: {{ project.place }}
+                            </span>
+                          } @else if (project.place) {
+                            <span class="h-badge">
+                              Rank: #{{ project.place }}
+                            </span>
+                          }
+
                           @if (project.finalScore) {
                             <span class="h-badge">
-    Score: {{ project.finalScore | number:'1.1-1' }}
-  </span>
+                              Score: {{ project.finalScore | number:'1.1-1' }}
+                            </span>
                           } @else {
-                            <span class="h-text-secondary">Not yet rated</span>
+                            <span class="h-text-secondary" style="font-size: 13px;">Not yet rated</span>
                           }
 
                           @if (project.repoUrl) {

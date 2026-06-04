@@ -1,4 +1,4 @@
-import { Component, inject, Input, signal } from '@angular/core';
+import { Component, inject, Input, signal, computed } from '@angular/core'; // <-- додали computed
 import { RouterModule } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UserService } from '../../services/user.service';
@@ -48,6 +48,16 @@ export class UserProfileComponent {
   public user = signal<FullUserResponse | null>(null);
   public isLoading = signal(true);
   public currentUser = toSignal(this.authService.user$);
+
+  // === НОВИЙ СИГНАЛ ДЛЯ ПІДРАХУНКУ РЕАЛЬНИХ ПЕРЕМОГ ===
+  public winsCount = computed(() => {
+    const u = this.user();
+    if (!u || !u.projects) return 0;
+
+    // Вважаємо перемогою потрапляння в ТОП-3
+    return u.projects.filter((p) => p.place && p.place <= 3).length;
+  });
+  // ====================================================
 
   fetchProfile(username: string) {
     this.isLoading.set(true);
