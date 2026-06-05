@@ -70,6 +70,7 @@ class UserController {
   + getAll(query, currentUser)
   + getByUsername(username)
   + update(user, body)
+  + getUserGithubRepos(username)
 }
 class PrismaService {
   + onModuleInit()
@@ -118,6 +119,11 @@ class GithubService {
   + calculateContributionTrend(weeks)
   + incrementSkill(acc, skill)
   + calculateTopLanguages(sizes)
+  + getUserRepositories(systemToken, githubUsername)
+}
+class HackathonCronService {
+  + logger: Object
+  + handleHackathonStatuses()
 }
 class HackathonService {
   + create(creatorId, dto)
@@ -137,6 +143,7 @@ class HackathonService {
   + getHackathonSubmissionsForJury(hackathonId)
   + getLeaderboard(id)
   + setTeamScores(userId, hackathonId, participationId, scores)
+  + recalculateProjectFinalScore(participationId, hackathonId)
   + setTeamComment(userId, hackathonId, participationId, dto)
   + findTeamReviews(hackathonId, userId)
   + getInsights(id)
@@ -189,7 +196,9 @@ class CriteriaRepository {
 class EvaluationRepository {
   + upsertScores(juryId, participationId, scores)
   + upsertComment(juryId, participationId, data)
-  + recalculateProjectFinalScore(participationId, hackathonId)
+  + getCriteriaByHackathon(hackathonId)
+  + getScoresByParticipation(participationId)
+  + updateParticipationFinalScore(participationId, finalScore)
 }
 class HackathonRepository {
   + hackathonFullInclude: Object
@@ -204,6 +213,8 @@ class HackathonRepository {
   + isCreator(hackathonId, userId)
   + deleteById(id)
   + getInsightsData(hackathonId)
+  + updateToActive(currentTime)
+  + updateToFinished(currentTime)
 }
 class JuryRepository {
   + add(hackathonId, userId)
@@ -363,6 +374,7 @@ HackathonModule -left-> ProjectController
 HackathonModule -down-> HackathonByIdPipe
 HackathonModule -down-> HackathonBySlugPipe
 HackathonModule -down-> ParticipationByIdPipe
+HackathonModule --> HackathonCronService
 
 ' ==========================================
 ' PrismaModule — вниз і в сторони
