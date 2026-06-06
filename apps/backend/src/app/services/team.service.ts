@@ -39,7 +39,7 @@ export class TeamService {
 
     const where: Prisma.TeamWhereInput = {
       ...(leaderId && { leaderId }),
-      ...(memberId && { members: { some: { userId: memberId } } }),
+      ...(memberId && { members: { some: { userId: memberId, status: UserTeamStatus.ACCEPTED } } }),
       ...(hackathonId && { participations: { some: { hackathonId } } }),
       ...(search && {
         OR: [

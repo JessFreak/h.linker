@@ -212,7 +212,7 @@ describe('TeamService', () => {
       query,
       expect.objectContaining({
         leaderId: 'l1',
-        members: { some: { userId: 'm1' } },
+        members: { some: { userId: 'm1', status: 'ACCEPTED' } },
       }),
       expect.anything(),
     );
