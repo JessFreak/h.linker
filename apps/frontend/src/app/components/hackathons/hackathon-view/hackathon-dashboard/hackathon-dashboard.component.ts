@@ -1,13 +1,13 @@
 import {
   Component,
-  inject,
-  signal,
   computed,
-  OnInit,
+  inject,
   OnDestroy,
+  OnInit,
+  signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -19,11 +19,12 @@ import { AuthService } from '../../../../services/auth.service';
 import { NotificationService } from '../../../../utils/notification.service';
 import {
   FullHackathonResponse,
-  TeamResponse,
-  UserRegistrationStatusResponse,
+  HackathonStatus,
   LeaderboardItem,
+  TeamResponse,
   TeamReviewResponse,
   TeamReviewsResponse,
+  UserRegistrationStatusResponse,
 } from '@h.linker/libs';
 import { Subscription } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -145,13 +146,21 @@ export class HackathonDashboardComponent implements OnInit, OnDestroy {
     this.hackathonService.getBySlug(slug).subscribe((h) => {
       this.hackathon.set(h);
 
-      if (h.status === 'ACTIVE') {
+      if (
+        h.status === HackathonStatus.REGISTRATION ||
+        h.status === HackathonStatus.ACTIVE
+      ) {
         const { timeLeft, sub } = this.countdownService.start(
           new Date(h.submissionDeadline),
         );
         this.timeLeft = timeLeft;
         this.timerSub = sub;
-      } else {
+      }
+
+      if (
+        h.status === HackathonStatus.REGISTRATION ||
+        h.status === HackathonStatus.FINISHED
+      ) {
         this.notificationService.info(
           `Project submission is locked. Event stage: ${h.status}`,
         );

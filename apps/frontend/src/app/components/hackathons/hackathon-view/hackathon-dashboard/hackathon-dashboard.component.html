@@ -17,7 +17,7 @@
           <div class="deadline-info">
             <span class="h-text-secondary uppercase tech-data block" style="letter-spacing: 1px; margin-bottom: 16px;">Project Submission Deadline</span>
 
-            @if (h.status === 'ACTIVE') {
+            @if (h.status === 'REGISTRATION' || h.status === 'ACTIVE') {
               <div class="h-timer tech-data" matTooltip="Time left until submissions close permanently">
                 <div class="t-unit"><span class="val">{{ timeLeft().days }}</span><span class="lab">DAYS</span></div>
                 <span class="t-sep">:</span>
@@ -37,13 +37,17 @@
 
             @if (h.status !== 'ACTIVE') {
               <small class="block mt-3 tech-data" style="color: var(--h-safety-orange); font-weight: 600; letter-spacing: 0.5px;">
-                ⚠️ SUBMISSIONS ARE LOCKED BECAUSE THE HACKATHON IS IN {{ h.status }} STAGE
+                @if (h.status === 'REGISTRATION') {
+                  ⏳ SUBMISSIONS WILL OPEN ONCE THE HACKATHON STARTS
+                } @else {
+                  ⚠️ SUBMISSIONS ARE LOCKED BECAUSE THE HACKATHON IS IN {{ h.status }} STAGE
+                }
               </small>
             }
           </div>
 
           <div class="action-zone"
-               [matTooltip]="h.status !== 'ACTIVE' ? 'Submissions are only allowed during the ACTIVE phase. Current stage: ' + h.status : 'Manage your project code and info'"
+               [matTooltip]="h.status === 'REGISTRATION' ? 'Submissions open when the event starts.' : h.status !== 'ACTIVE' ? 'Submissions are closed.' : 'Manage your project code and info'"
                matTooltipPosition="above">
             @if (isLeader()) {
               <button mat-flat-button color="primary" class="h-submit-btn" [disabled]="h.status !== 'ACTIVE'" [routerLink]="['submission']">
