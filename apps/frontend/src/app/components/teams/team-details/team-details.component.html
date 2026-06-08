@@ -96,7 +96,7 @@
                   @if (part.projectTitle) {
                     <span>Project: {{ part.projectTitle }} • </span>
                   }
-                  <span>Score: {{ part.finalScore || 0 }}</span>
+                  <span>Score: {{ (part.finalScore || 0) | number:'1.1-1' }}</span>
                 </div>
               </div>
               <mat-chip class="code-tag" [class.winner]="part.finalScore >= 95">
@@ -113,13 +113,17 @@
     <section class="h-card chat-card">
       <div class="section-label">COMMUNICATION</div>
       <button mat-flat-button color="accent" class="w-100"
-              [disabled]="!team()?.communicationLink"
+              [disabled]="!team()?.communicationLink || !isMember()"
               (click)="openChat()"
-              matTooltip="Go to Discord/Telegram/Slack workspace">
+              [matTooltip]="!isMember() ? 'Chat is restricted to team members only' : 'Go to Discord/Telegram/Slack workspace'">
         Open Team Chat <mat-icon>send</mat-icon>
       </button>
       <div class="chat-caption h-text-secondary">
-        {{ team()?.communicationLink ? 'Link provided by Team Lead' : 'No link provided yet' }}
+        @if (!isMember()) {
+          🔒 Restricted because you are not a member of the group
+        } @else {
+          {{ team()?.communicationLink ? 'Link provided by Team Lead' : 'No link provided yet' }}
+        }
       </div>
     </section>
 
