@@ -288,7 +288,7 @@ export class ProfileSettingsComponent implements OnInit {
 
   onDeleteAccount() {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '400px',
+      width: '430px',
       data: {
         title: 'Delete Account',
         message:
