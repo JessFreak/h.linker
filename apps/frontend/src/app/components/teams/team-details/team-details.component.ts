@@ -58,21 +58,18 @@ class TeamDetailsComponent {
     this.teamService.getById(id).subscribe((res) => this.team.set(res));
   }
 
-  isMember(): boolean {
-    return TeamUtils.isMember(this.team(), this.currentUser()?.id);
-  }
-
-  hasRequest(): boolean {
-    return TeamUtils.hasPendingRequest(this.team(), this.currentUser()?.id);
-  }
-
-  isLeader(): boolean {
-    return TeamUtils.isLeader(this.team(), this.currentUser()?.id);
-  }
-
-  isRejected(): boolean {
-    return TeamUtils.isRejected(this.team(), this.currentUser()?.id);
-  }
+  isMember = computed(() =>
+    TeamUtils.isMember(this.team(), this.currentUser()?.id),
+  );
+  isLeader = computed(() =>
+    TeamUtils.isLeader(this.team(), this.currentUser()?.id),
+  );
+  hasRequest = computed(() =>
+    TeamUtils.hasPendingRequest(this.team(), this.currentUser()?.id),
+  );
+  isRejected = computed(() =>
+    TeamUtils.isRejected(this.team(), this.currentUser()?.id),
+  );
 
   openApplyDialog() {
     const user = this.currentUser();
