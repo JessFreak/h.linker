@@ -7,6 +7,25 @@
     <span class="logo-text">h.linker</span>
   </div>
 
+  <button mat-icon-button class="mobile-menu-btn" [matMenuTriggerFor]="mobileMenu" aria-label="Open menu">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <mat-menu #mobileMenu="matMenu" class="h-mobile-menu">
+    <a mat-menu-item routerLink="/events">
+      <mat-icon style="color: var(--h-primary-blue)">rocket_launch</mat-icon>
+      <span>Events</span>
+    </a>
+    <a mat-menu-item routerLink="/teams">
+      <mat-icon style="color: var(--h-safety-orange)">groups</mat-icon>
+      <span>Teams</span>
+    </a>
+    <a mat-menu-item routerLink="/showcase">
+      <mat-icon style="color: #bc8cff">emoji_events</mat-icon>
+      <span>Showcase</span>
+    </a>
+  </mat-menu>
+
   <nav class="nav-links">
     <a mat-button
        routerLink="/events"
@@ -139,8 +158,8 @@
               (click)="logout()"
               matTooltip="Sign out from your account"
               matTooltipPosition="below">
-        <mat-icon>logout</mat-icon> Logout
-      </button>
+        <mat-icon>logout</mat-icon>
+        <span class="hide-on-mobile">Logout</span> </button>
     } @else {
       <div class="guest-actions">
         <a mat-button

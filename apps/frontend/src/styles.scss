@@ -483,3 +483,10 @@ html, body {
   white-space: nowrap;
   border-width: 0;
 }
+
+@media (max-width: 992px) {
+  .h-page-layout {
+    grid-template-columns: 1fr;
+    padding: 24px 16px;
+  }
+}
