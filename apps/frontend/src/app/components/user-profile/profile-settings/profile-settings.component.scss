@@ -114,11 +114,39 @@
   }
 }
 
+/* === АДАПТИВ ДЛЯ ТЕЛЕФОНІВ === */
 @media (max-width: 768px) {
-  .h-tag-field {
-    ::ng-deep .mat-mdc-chip-grid {
-      flex-direction: column;
-      align-items: flex-start;
+  // Аватар зверху, поля знизу
+  .profile-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+
+    .fields-column {
+      width: 100%;
+
+      // Поля First Name / Last Name стають один під одним
+      .row {
+        grid-template-columns: 1fr;
+      }
     }
+  }
+
+  // Інтеграції: 2 колонки перетворюються на 1
+  .integration-grid {
+    grid-template-columns: 1fr;
+  }
+
+  // Паролі: 2 колонки перетворюються на 1
+  .password-grid {
+    .new-passwords-row {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // Компактний вигляд запрошень у команди
+  .h-info-group {
+    flex-direction: column;
+    gap: 4px !important;
   }
 }

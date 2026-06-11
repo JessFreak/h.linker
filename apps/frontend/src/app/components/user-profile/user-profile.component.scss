@@ -224,17 +224,6 @@
   transition: all 0.2s ease-in-out;
   position: relative;
   overflow: hidden;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border-color: var(--h-primary-blue) !important;
-    transform: translateY(-2px);
-
-    .arrow-icon {
-      transform: translateX(4px);
-      color: var(--h-primary-blue);
-    }
-  }
 }
 
 .team-content {
@@ -371,5 +360,55 @@
     flex-direction: row !important;
     justify-content: space-between;
     align-items: center;
+  }
+}
+
+@media (max-width: 992px) {
+  .profile-layout {
+    grid-template-columns: 1fr;
+    padding: 40px 16px;
+    gap: 32px;
+  }
+
+  .insights-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .profile-layout {
+    padding: 24px 12px;
+    gap: 24px;
+  }
+
+  .insights-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .event-card-row {
+    flex-direction: column !important;
+    height: auto !important;
+
+    .event-banner-mini {
+      width: 100% !important;
+      height: 120px !important;
+      border-right: none !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .event-body {
+      padding: 16px !important;
+    }
+  }
+
+  .discovery-card {
+    height: auto !important;
+    padding: 16px !important;
+  }
+
+  .event-card .event-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 12px;
   }
 }

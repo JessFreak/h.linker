@@ -12,8 +12,14 @@
   background-color: var(--h-surface-gray) !important;
   border: 1px solid #484F58;
   border-radius: 12px;
-  padding: 16px;
+  padding: 32px 24px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 24px 16px;
+  }
 }
 
 .auth-header {

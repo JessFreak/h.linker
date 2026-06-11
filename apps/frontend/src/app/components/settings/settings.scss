@@ -107,3 +107,38 @@
     p { margin: 0; font-size: 13px; line-height: 1.5; color: rgba(255, 255, 255, 0.8); font-style: italic; }
   }
 }
+
+@media (max-width: 992px) {
+  .mini-card {
+    display: none;
+  }
+
+  .settings-nav {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 12px;
+    gap: 8px;
+
+    &::-webkit-scrollbar { display: none; }
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
+    a[mat-button], .delete-btn {
+      flex-shrink: 0 !important;
+      white-space: nowrap !important;
+      border-left: none;
+      border-bottom: 2px solid transparent;
+      border-radius: 4px;
+
+      &.active {
+        background-color: rgba(65, 105, 165, 0.15);
+        border-left: none;
+        border-bottom: 2px solid var(--h-primary-blue);
+      }
+    }
+  }
+
+  .delete-btn {
+    margin-top: 0 !important;
+  }
+}
