@@ -1,59 +1,67 @@
 <div class="h-page-layout">
-  <aside [formGroup]="filterForm">
-    <div class="filter-header">
-      <h2>Discovery Filters</h2>
-      <button mat-button color="primary" class="reset-link" (click)="resetFilters()">Reset</button>
-    </div>
-
-    <div class="filter-section">
-      <h3>Search Teams</h3>
-      <mat-form-field appearance="outline" class="w-full" subscriptSizing="dynamic">
-        <mat-icon matPrefix>search</mat-icon>
-        <input matInput formControlName="search" placeholder="Name or description...">
-      </mat-form-field>
-    </div>
-
-    <div class="filter-section">
-      <h3>Team Type</h3>
-      <div class="filter-group">
-        <mat-checkbox
-          color="primary"
-          formControlName="myTeams"
-          matTooltip="Show only teams where you are already a member"
-          matTooltipPosition="right">
-          My Teams
-        </mat-checkbox>
-
-        <mat-checkbox
-          color="primary"
-          formControlName="iAmLeader"
-          matTooltip="Show only teams owned by you"
-          matTooltipPosition="right">
-          I am Leader
-        </mat-checkbox>
+  @if (isFiltersVisible()) {
+    <aside [formGroup]="filterForm">
+      <div class="filter-header">
+        <h2>Discovery Filters</h2>
+        <button mat-button color="primary" class="reset-link" (click)="resetFilters()">Reset</button>
       </div>
-    </div>
 
-    <button mat-flat-button
+      <div class="filter-section">
+        <h3>Search Teams</h3>
+        <mat-form-field appearance="outline" class="w-full" subscriptSizing="dynamic">
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput formControlName="search" placeholder="Name or description...">
+        </mat-form-field>
+      </div>
+
+      <div class="filter-section">
+        <h3>Team Type</h3>
+        <div class="filter-group">
+          <mat-checkbox
             color="primary"
-            class="apply-btn"
-            (click)="applyFilters()">
-      Apply Filters
-    </button>
-
-    <button mat-flat-button
-            class="create-btn apply-btn"
-            style="margin-top: 16px;"
-            (click)="openCreateDialog()"
-            matTooltip="Start a new team and invite developers"
+            formControlName="myTeams"
+            matTooltip="Show only teams where you are already a member"
             matTooltipPosition="right">
-      <mat-icon>add</mat-icon> Create Team
-    </button>
-  </aside>
+            My Teams
+          </mat-checkbox>
+
+          <mat-checkbox
+            color="primary"
+            formControlName="iAmLeader"
+            matTooltip="Show only teams owned by you"
+            matTooltipPosition="right">
+            I am Leader
+          </mat-checkbox>
+        </div>
+      </div>
+
+      <button mat-flat-button
+              color="primary"
+              class="apply-btn"
+              (click)="applyFilters()">
+        Apply Filters
+      </button>
+
+      <button mat-flat-button
+              class="create-btn apply-btn"
+              style="margin-top: 16px;"
+              (click)="openCreateDialog()"
+              matTooltip="Start a new team and invite developers"
+              matTooltipPosition="right">
+        <mat-icon>add</mat-icon> Create Team
+      </button>
+    </aside>
+  }
 
   <main class="discovery-grid">
     <div class="header" style="display: flex; justify-content: space-between; align-items: center;">
       <div>
+        <button mat-icon-button
+                class="mobile-filter-btn"
+                (click)="toggleFilters()"
+                matTooltip="Toggle filters">
+          <mat-icon>{{ isFiltersVisible() ? 'filter_list_off' : 'filter_list' }}</mat-icon>
+        </button>
         <h1 class="mat-headline-2" style="margin: 0;">Teams</h1>
         <span class="count-label h-text-secondary" [matTooltip]="(meta()?.itemCount ?? 0) + ' teams total'">
           {{ meta()?.itemCount ?? 0 }} teams match criteria

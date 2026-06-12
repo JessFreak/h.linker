@@ -1,66 +1,71 @@
 <div class="h-page-layout">
-  <aside [formGroup]="filterForm">
-    <div class="filter-header">
-      <h2>Find Talent</h2>
-      <button mat-button color="primary" class="reset-link" (click)="resetFilters()">Reset</button>
-    </div>
+  @if (isFiltersVisible()) {
+    <aside [formGroup]="filterForm">
+      <div class="filter-header">
+        <h2>Find Talent</h2>
+        <button mat-button color="primary" class="reset-link" (click)="resetFilters()">Reset</button>
+      </div>
 
-    <div class="filter-section">
-      <h3>Query</h3>
-      <mat-form-field appearance="outline" class="h-filter-search" subscriptSizing="dynamic" matTooltip="Search by full name or @username">
-        <mat-icon matPrefix>search</mat-icon>
-        <input matInput type="text" formControlName="search" placeholder="Search by name...">
-      </mat-form-field>
-    </div>
+      <div class="filter-section">
+        <h3>Query</h3>
+        <mat-form-field appearance="outline" class="h-filter-search" subscriptSizing="dynamic" matTooltip="Search by full name or @username">
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput type="text" formControlName="search" placeholder="Search by name...">
+        </mat-form-field>
+      </div>
 
-    <div class="filter-section">
-      <h3>Categories & Tech</h3>
-      <mat-form-field appearance="outline" class="h-filter-search" subscriptSizing="dynamic">
-        <mat-icon matPrefix>search</mat-icon>
-        <input matInput [formControl]="categorySearchCtrl" placeholder="Search tech...">
-      </mat-form-field>
+      <div class="filter-section">
+        <h3>Categories & Tech</h3>
+        <mat-form-field appearance="outline" class="h-filter-search" subscriptSizing="dynamic">
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput [formControl]="categorySearchCtrl" placeholder="Search tech...">
+        </mat-form-field>
 
-      <div class="filter-group scrollable-filters">
-        @for (cat of allCategories(); track cat) {
-          <mat-checkbox color="primary"
-                        [checked]="isCategorySelected(cat)"
-                        (change)="toggleCategory(cat, $event.checked)">
-            {{ cat }}
+        <div class="filter-group scrollable-filters">
+          @for (cat of allCategories(); track cat) {
+            <mat-checkbox color="primary"
+                          [checked]="isCategorySelected(cat)"
+                          (change)="toggleCategory(cat, $event.checked)">
+              {{ cat }}
+            </mat-checkbox>
+          } @empty {
+            <div class="h-empty-search">
+              <small class="h-text-secondary">No matching categories found.</small>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <h3>Profile Options</h3>
+        <div class="filter-group">
+          <mat-checkbox
+            color="primary"
+            formControlName="isRecommended"
+            matTooltip="Sort developers by how well their skills match yours">
+            Recommended for Me
           </mat-checkbox>
-        } @empty {
-          <div class="h-empty-search">
-            <small class="h-text-secondary">No matching categories found.</small>
-          </div>
-        }
+          <mat-checkbox
+            color="primary"
+            formControlName="connectedGithub"
+            matTooltip="Show only developers who have linked their GitHub profile">
+            Connected GitHub
+          </mat-checkbox>
+        </div>
       </div>
-    </div>
 
-    <div class="filter-section">
-      <h3>Profile Options</h3>
-      <div class="filter-group">
-        <mat-checkbox
-          color="primary"
-          formControlName="isRecommended"
-          matTooltip="Sort developers by how well their skills match yours">
-          Recommended for Me
-        </mat-checkbox>
-        <mat-checkbox
-          color="primary"
-          formControlName="connectedGithub"
-          matTooltip="Show only developers who have linked their GitHub profile">
-          Connected GitHub
-        </mat-checkbox>
-      </div>
-    </div>
-
-    <button mat-flat-button color="primary" class="apply-btn" (click)="applyFilters()">
-      Apply Filters
-    </button>
-  </aside>
+      <button mat-flat-button color="primary" class="apply-btn" (click)="applyFilters()">
+        Apply Filters
+      </button>
+    </aside>
+  }
 
   <main class="discovery-grid">
     <div class="header" style="display: flex; justify-content: space-between; align-items: center;">
       <div>
+        <button mat-icon-button class="mobile-filter-btn" (click)="toggleFilters()" matTooltip="Toggle filters">
+          <mat-icon>{{ isFiltersVisible() ? 'filter_list_off' : 'filter_list' }}</mat-icon>
+        </button>
         <h1 class="mat-headline-2" style="margin: 0;">Developers</h1>
         <span class="count-label h-text-secondary" [matTooltip]="(meta()?.itemCount ?? 0) + ' developers currently match your filters'">
           {{ meta()?.itemCount ?? 0 }} specialists found

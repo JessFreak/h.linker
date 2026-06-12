@@ -19,7 +19,6 @@ import {
   switchMap,
 } from 'rxjs/operators';
 import { UserResponse, UserQueryDTO, Order } from '@h.linker/libs';
-
 import { UserService } from '../../../services/user.service';
 import { AuthService } from '../../../services/auth.service';
 import { CategoryService } from '../../../services/category.service';
@@ -55,6 +54,12 @@ export class UsersComponent {
   private dialog = inject(MatDialog);
 
   currentUser = toSignal(this.authService.user$);
+
+  isFiltersVisible = signal(true);
+
+  toggleFilters() {
+    this.isFiltersVisible.update((v) => !v);
+  }
 
   filterForm = new FormGroup({
     search: new FormControl(''),

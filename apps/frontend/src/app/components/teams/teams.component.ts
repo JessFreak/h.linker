@@ -47,6 +47,12 @@ export class TeamsComponent {
 
   currentUser = toSignal(this.authService.user$);
 
+  isFiltersVisible = signal(true);
+
+  toggleFilters() {
+    this.isFiltersVisible.update((v) => !v);
+  }
+
   filterForm = new FormGroup({
     search: new FormControl(''),
     myTeams: new FormControl(false),

@@ -347,6 +347,35 @@ html, body {
   }
 }
 
+.mobile-filter-btn {
+  display: none !important;
+}
+
+@media (max-width: 992px) {
+  .mobile-filter-btn {
+    display: inline-flex !important;
+    margin-right: 16px;
+    color: var(--h-primary-blue);
+  }
+}
+
+.h-page-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 32px;
+
+  &.no-filters {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 992px) {
+  .h-page-layout {
+    grid-template-columns: 1fr;
+    padding: 24px 16px;
+  }
+}
+
 .h-empty-search {
   padding: 12px 0;
   text-align: center;
