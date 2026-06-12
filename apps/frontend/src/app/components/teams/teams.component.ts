@@ -123,6 +123,7 @@ export class TeamsComponent {
 
     const dialogRef = this.dialog.open(CreateTeamDialogComponent, {
       width: '450px',
+      maxWidth: '95vw',
     });
 
     dialogRef.afterClosed().subscribe((result) => {

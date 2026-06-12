@@ -14,6 +14,7 @@ export class TeamActionsService {
   openApplyDialog(team: TeamResponse, callback?: () => void) {
     const dialogRef = this.dialog.open(ApplyTeamDialogComponent, {
       width: '500px',
+      maxWidth: '95vw',
       data: { teamName: team.name },
     });
 

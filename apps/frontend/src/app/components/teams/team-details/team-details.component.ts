@@ -90,7 +90,8 @@ class TeamDetailsComponent {
     if (!currentTeam) return;
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '500px',
+      width: '450px',
+      maxWidth: '95vw',
       data: {
         title: 'Leave Team',
         message: `Are you sure you want to leave "${currentTeam.name}"? You will need an invite or a new request to join again.`,

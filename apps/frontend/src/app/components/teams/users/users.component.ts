@@ -186,6 +186,7 @@ export class UsersComponent {
 
     const dialogRef = this.dialog.open(InviteUserDialogComponent, {
       width: '550px',
+      maxWidth: '95vw',
       data: {
         username: user.username,
         userId: user.id,
