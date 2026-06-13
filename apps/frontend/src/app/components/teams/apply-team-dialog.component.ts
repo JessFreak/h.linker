@@ -97,6 +97,7 @@ export class ApplyTeamDialogComponent implements OnInit {
   onCancel() {
     this.dialogRef.close();
   }
+
   onSubmit() {
     this.dialogRef.close(this.form.value);
   }

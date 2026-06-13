@@ -6,7 +6,7 @@
   box-sizing: border-box;
 }
 
-[matTooltip], .clickable-card {
+[matTooltip], .clickable-card, span {
   touch-action: pan-y pan-x !important;
 }
 

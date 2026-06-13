@@ -137,3 +137,35 @@ app-breadcrumb {
 .winner {
   background: var(--h-safety-orange) !important;
 }
+
+@media (max-width: 992px) {
+  .team-details-container {
+    grid-template-columns: 1fr !important;
+    grid-template-areas:
+      "breadcrumb"
+      "header"
+      "main"
+      "sidebar" !important;
+    padding: 24px 16px;
+    gap: 16px;
+  }
+
+  .team-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+
+    .header-actions {
+      width: 100%;
+      flex-direction: column;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+
+  .sidebar-column {
+    order: 2;
+  }
+}
