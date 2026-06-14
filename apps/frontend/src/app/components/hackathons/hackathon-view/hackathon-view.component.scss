@@ -381,3 +381,109 @@
     p { margin: 0; font-size: 13px; color: #f0f6fc; line-height: 1.4; }
   }
 }
+
+@media (max-width: 960px) {
+  .h-content-grid {
+    display: flex;
+    flex-direction: column;
+    margin-top: -30px;
+    gap: 24px;
+
+    min-width: 0;
+  }
+
+  .h-sidebar {
+    order: -1;
+
+    .sidebar-widget {
+      padding: 20px 16px;
+    }
+  }
+
+  .h-banner {
+    height: auto;
+    min-height: 380px;
+  }
+
+  .h-banner-overlay {
+    padding-top: 60px;
+  }
+
+  .h-title {
+    font-size: 32px !important;
+    margin-bottom: 20px !important;
+    word-break: break-word;
+  }
+
+  .h-top-actions {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+
+    .h-nav-and-badges-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .h-action-buttons-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+
+      button {
+        width: 100%;
+        margin: 0;
+        justify-content: center;
+      }
+    }
+  }
+
+  .h-quick-stats {
+    flex-direction: column;
+    gap: 12px !important;
+
+    .stat-item {
+      font-size: 14px;
+    }
+  }
+
+  .h-main-content {
+    .tab-padding {
+      padding: 24px 16px;
+    }
+  }
+
+  .prize-card {
+    padding: 16px;
+    flex-direction: column;
+    gap: 12px;
+
+    mat-icon { margin-bottom: 4px; }
+  }
+
+  .h-jury-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .timer-display {
+    .time-box .val { font-size: 28px; }
+    .sep { font-size: 20px; padding-bottom: 14px; }
+  }
+}
+
+::ng-deep .h-tabs {
+  .mat-mdc-tab-header {
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  .mat-mdc-tab-body-wrapper {
+    min-width: 0 !important;
+  }
+}
