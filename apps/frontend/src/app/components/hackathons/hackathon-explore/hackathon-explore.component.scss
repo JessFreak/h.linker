@@ -131,3 +131,36 @@
     }
   }
 }
+
+@media (max-width: 992px) {
+  .h-page-layout {
+    grid-template-columns: 1fr !important;
+    padding: 16px;
+  }
+
+  .h-featured-hero {
+    height: 240px;
+    margin-bottom: 24px;
+
+    .hero-title { font-size: 20px !important; }
+    .hero-btn { height: 36px; font-size: 13px; }
+  }
+
+  .mobile-filter-btn {
+    display: inline-flex !important;
+    color: var(--h-primary-blue);
+  }
+}
+
+.h-hack-grid {
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.h-hack-card {
+  .card-banner { height: 130px !important; }
+  .card-body { padding: 16px !important; }
+  h3 { font-size: 16px !important; }
+}
+
+.mobile-filter-btn { display: none; }

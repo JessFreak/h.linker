@@ -1,78 +1,84 @@
 <div class="h-page-layout">
   <h1 class="sr-only">Hackathons Explorer Platform</h1>
 
-  <aside [formGroup]="filterForm">
-    <button mat-flat-button
-            class="create-btn"
-            style="width: 100%; height: 44px; font-weight: 700; margin-bottom: 24px;"
-            [routerLink]="['/events/constructor']">
-      <mat-icon>add</mat-icon> Create Hackathon
-    </button>
+  @if (isFiltersVisible()) {
+    <aside [formGroup]="filterForm">
+      <button mat-flat-button
+              class="create-btn"
+              style="width: 100%; height: 44px; font-weight: 700; margin-bottom: 24px;"
+              [routerLink]="['/events/constructor']">
+        <mat-icon>add</mat-icon> Create Hackathon
+      </button>
 
-    <div class="filter-header">
-      <h2>Filters</h2>
-      <button mat-button color="primary" class="reset-link" (click)="resetFilters()">Reset</button>
-    </div>
-
-    <div class="filter-section">
-      <h3>Search</h3>
-      <mat-form-field appearance="outline" class="h-filter-search" subscriptSizing="dynamic">
-        <mat-icon matPrefix>search</mat-icon>
-        <input matInput formControlName="search" id="searchQuery" name="searchQuery" placeholder="Search by name or desc...">
-      </mat-form-field>
-    </div>
-
-    <div class="filter-section">
-      <h3>Lifecycle Stage</h3>
-      <mat-form-field appearance="outline" class="w-full" subscriptSizing="dynamic">
-        <mat-select formControlName="status" id="statusFilter" placeholder="Any Status">
-          <mat-option value="">All</mat-option>
-          <mat-option [value]="HackathonStatus.REGISTRATION">Registration Open</mat-option>
-          <mat-option [value]="HackathonStatus.ACTIVE">Active</mat-option>
-          <mat-option [value]="HackathonStatus.FINISHED">Finished</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-
-    <div class="filter-section">
-      <h3>Event Dates</h3>
-      <mat-form-field appearance="outline" class="w-full h-filter-search" subscriptSizing="dynamic">
-        <mat-date-range-input [rangePicker]="picker">
-          <input matStartDate formControlName="startDateFrom" id="startDateFrom" name="startDateFrom" placeholder="Start date">
-          <input matEndDate formControlName="startDateTo" id="startDateTo" name="startDateTo" placeholder="End date">
-        </mat-date-range-input>
-        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-date-range-picker #picker></mat-date-range-picker>
-      </mat-form-field>
-    </div>
-
-    <div class="filter-section">
-      <h3>Categories & Tech</h3>
-
-      <mat-form-field appearance="outline" class="h-filter-search" subscriptSizing="dynamic">
-        <mat-icon matPrefix>search</mat-icon>
-        <input matInput [formControl]="categorySearchCtrl" id="categorySearch" name="categorySearch" placeholder="Search tech...">
-      </mat-form-field>
-
-      <div class="filter-group scrollable-filters">
-        @for (cat of allCategories(); track cat) {
-          <mat-checkbox color="primary"
-                        [id]="'cat-' + cat"
-                        [name]="'cat-' + cat"
-                        [checked]="isCategorySelected(cat)"
-                        (change)="toggleCategory(cat, $event.checked)">
-            {{ cat }}
-          </mat-checkbox>
-        } @empty {
-          <div class="h-empty-search">
-            <small class="h-text-secondary">No matching categories found.</small>
-          </div>
-        }
+      <div class="filter-header">
+        <h2>Filters</h2>
+        <button mat-button color="primary" class="reset-link" (click)="resetFilters()">Reset</button>
       </div>
-    </div>
 
-    <button mat-flat-button color="primary" class="apply-btn" (click)="applyFilters()">Apply Filters</button>
-  </aside>
+      <div class="filter-section">
+        <h3>Search</h3>
+        <mat-form-field appearance="outline" class="h-filter-search" subscriptSizing="dynamic">
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput formControlName="search" id="searchQuery" name="searchQuery" placeholder="Search by name or desc...">
+        </mat-form-field>
+      </div>
+
+      <div class="filter-section">
+        <h3>Lifecycle Stage</h3>
+        <mat-form-field appearance="outline" class="w-full" subscriptSizing="dynamic">
+          <mat-select formControlName="status" id="statusFilter" placeholder="Any Status">
+            <mat-option value="">All</mat-option>
+            <mat-option [value]="HackathonStatus.REGISTRATION">Registration Open</mat-option>
+            <mat-option [value]="HackathonStatus.ACTIVE">Active</mat-option>
+            <mat-option [value]="HackathonStatus.FINISHED">Finished</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="filter-section">
+        <h3>Event Dates</h3>
+        <mat-form-field appearance="outline" class="w-full h-filter-search" subscriptSizing="dynamic">
+          <mat-date-range-input [rangePicker]="picker">
+            <input matStartDate formControlName="startDateFrom" id="startDateFrom" name="startDateFrom" placeholder="Start date">
+            <input matEndDate formControlName="startDateTo" id="startDateTo" name="startDateTo" placeholder="End date">
+          </mat-date-range-input>
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+      </div>
+
+      <div class="filter-section">
+        <h3>Categories & Tech</h3>
+
+        <mat-form-field appearance="outline" class="h-filter-search" subscriptSizing="dynamic">
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput [formControl]="categorySearchCtrl" id="categorySearch" name="categorySearch" placeholder="Search tech...">
+        </mat-form-field>
+
+        <div class="filter-group scrollable-filters">
+          @for (cat of allCategories(); track cat) {
+            <mat-checkbox color="primary"
+                          [id]="'cat-' + cat"
+                          [name]="'cat-' + cat"
+                          [checked]="isCategorySelected(cat)"
+                          (change)="toggleCategory(cat, $event.checked)">
+              {{ cat }}
+            </mat-checkbox>
+          } @empty {
+            <div class="h-empty-search">
+              <small class="h-text-secondary">No matching categories found.</small>
+            </div>
+          }
+        </div>
+      </div>
+
+      <button mat-flat-button color="primary" class="apply-btn" (click)="applyFilters()">Apply Filters</button>
+    </aside>
+  }
+
+  <button mat-icon-button class="mobile-filter-btn" (click)="toggleFilters()">
+    <mat-icon>{{ isFiltersVisible() ? 'filter_list_off' : 'filter_list' }}</mat-icon>
+  </button>
 
   <main class="h-main">
 

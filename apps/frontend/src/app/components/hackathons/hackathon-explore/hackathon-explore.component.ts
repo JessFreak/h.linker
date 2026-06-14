@@ -53,6 +53,12 @@ export class HackathonExploreComponent {
   private hackathonService = inject(HackathonService);
   private categoryService = inject(CategoryService);
 
+  isFiltersVisible = signal(true);
+
+  toggleFilters() {
+    this.isFiltersVisible.update((v) => !v);
+  }
+
   filterForm = new FormGroup({
     search: new FormControl(''),
     status: new FormControl<HackathonStatus | ''>(''),
