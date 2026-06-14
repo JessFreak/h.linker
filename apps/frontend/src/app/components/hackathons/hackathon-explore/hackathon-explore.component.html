@@ -1,10 +1,10 @@
-<div class="h-page-layout">
+<div class="h-page-layout" [class.no-filters]="!isFiltersVisible()">
   <h1 class="sr-only">Hackathons Explorer Platform</h1>
 
   @if (isFiltersVisible()) {
     <aside [formGroup]="filterForm">
       <button mat-flat-button
-              class="create-btn"
+              class="create-btn hide-on-mobile"
               style="width: 100%; height: 44px; font-weight: 700; margin-bottom: 24px;"
               [routerLink]="['/events/constructor']">
         <mat-icon>add</mat-icon> Create Hackathon
@@ -49,7 +49,6 @@
 
       <div class="filter-section">
         <h3>Categories & Tech</h3>
-
         <mat-form-field appearance="outline" class="h-filter-search" subscriptSizing="dynamic">
           <mat-icon matPrefix>search</mat-icon>
           <input matInput [formControl]="categorySearchCtrl" id="categorySearch" name="categorySearch" placeholder="Search tech...">
@@ -76,14 +75,35 @@
     </aside>
   }
 
-  <button mat-icon-button class="mobile-filter-btn" (click)="toggleFilters()">
-    <mat-icon>{{ isFiltersVisible() ? 'filter_list_off' : 'filter_list' }}</mat-icon>
-  </button>
-
   <main class="h-main">
+    <div class="h-results-header">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <button mat-icon-button class="mobile-filter-btn" (click)="toggleFilters()">
+          <mat-icon>{{ isFiltersVisible() ? 'filter_list_off' : 'filter_list' }}</mat-icon>
+        </button>
+        <h2 class="results-count" style="margin: 0;">
+          Available Events
+          <span class="count-pill">{{ meta()?.itemCount || 0 }}</span>
+        </h2>
+      </div>
+
+      <div class="results-actions" style="display: flex; gap: 8px; align-items: center;">
+        <button mat-flat-button color="primary" class="mobile-only-btn" [routerLink]="['/events/constructor']">
+          <mat-icon>add</mat-icon>
+        </button>
+
+        <div class="results-sort">
+          <span class="h-text-secondary hide-on-mobile">Sort:</span>
+          <button mat-button (click)="toggleSort()">
+            {{ queryState().order === Order.DESC ? 'Newest' : 'Oldest' }}
+            <mat-icon>{{ queryState().order === Order.DESC ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
 
     @if (queryState().page === 1 && hackathons()[0]; as hero) {
-      <div class="h-card h-featured-hero" [routerLink]="['/events', hero.slug]">
+      <div class="h-card h-featured-hero hide-on-mobile" [routerLink]="['/events', hero.slug]">
         <div class="hero-image">
           @if (hero.imageUrl) {
             <img [ngSrc]="hero.imageUrl" alt="Featured Hackathon" fill priority class="hero-img-bg">
@@ -100,25 +120,11 @@
       </div>
     }
 
-    <div class="h-results-header">
-      <h2 class="results-count" style="margin: 0;">
-        Available Events
-        <span class="count-pill">{{ meta()?.itemCount || 0 }}</span>
-      </h2>
-      <div class="results-sort">
-        <span class="h-text-secondary">Sort:</span>
-        <button mat-button (click)="toggleSort()">
-          {{ queryState().order === Order.DESC ? 'Newest' : 'Oldest' }}
-          <mat-icon>{{ queryState().order === Order.DESC ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
-        </button>
-      </div>
-    </div>
-
     <div class="h-hack-grid">
-      @let startIndex = (queryState().page === 1 && hackathons().length > 0) ? 1 : 0;
-
-      @for (h of hackathons().slice(startIndex); track h.id) {
-        <div class="h-card h-hack-card" [routerLink]="['/events', h.slug]">
+      @for (h of hackathons(); track h.id; let i = $index) {
+        <div class="h-card h-hack-card"
+             [class.skip-first-on-desktop]="i === 0 && queryState().page === 1"
+             [routerLink]="['/events', h.slug]">
 
           <div class="card-banner">
             @if (h.imageUrl) {
