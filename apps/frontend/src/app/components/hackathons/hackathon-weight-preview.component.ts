@@ -12,7 +12,7 @@ export interface WeightItem {
   imports: [CommonModule],
   template: `
     <div class="h-weight-container">
-      <div class="h-weight-track h-card">
+      <div class="h-weight-track">
         @for (item of items(); track $index) {
           <div
             class="h-weight-segment"
