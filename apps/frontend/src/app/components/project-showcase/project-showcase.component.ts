@@ -45,6 +45,12 @@ export class ProjectShowcaseComponent {
   private projectService = inject(ProjectService);
   private categoryService = inject(CategoryService);
 
+  isFiltersVisible = signal(true);
+
+  toggleFilters() {
+    this.isFiltersVisible.update((v) => !v);
+  }
+
   filterForm = new FormGroup({
     search: new FormControl(''),
     categories: new FormControl<string[]>([]),

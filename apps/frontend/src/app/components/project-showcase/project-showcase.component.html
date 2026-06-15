@@ -1,49 +1,57 @@
-<div class="h-page-layout">
-  <aside [formGroup]="filterForm">
-    <div class="filter-header">
-      <h2>Project Filters</h2>
-      <button mat-button color="primary" class="reset-link" (click)="resetFilters()">Reset</button>
-    </div>
-
-    <div class="filter-section">
-      <h3>Query</h3>
-      <mat-form-field appearance="outline" class="h-filter-search" subscriptSizing="dynamic" matTooltip="Search by project or team name">
-        <mat-icon matPrefix>search</mat-icon>
-        <input matInput type="text" formControlName="search" placeholder="Search projects...">
-      </mat-form-field>
-    </div>
-
-    <div class="filter-section">
-      <h3>Categories & Tech</h3>
-      <mat-form-field appearance="outline" class="h-filter-search" subscriptSizing="dynamic">
-        <mat-icon matPrefix>search</mat-icon>
-        <input matInput [formControl]="categorySearchCtrl" placeholder="Search tech...">
-      </mat-form-field>
-
-      <div class="filter-group scrollable-filters">
-        @for (cat of allCategories(); track cat) {
-          <mat-checkbox color="primary"
-                        [checked]="isCategorySelected(cat)"
-                        (change)="toggleCategory(cat, $event.checked)">
-            {{ cat }}
-          </mat-checkbox>
-        } @empty {
-          <div class="h-empty-search">
-            <small class="h-text-secondary">No matching categories found.</small>
-          </div>
-        }
+<div class="h-page-layout" [class.no-filters]="!isFiltersVisible()">
+  @if (isFiltersVisible()) {
+    <aside [formGroup]="filterForm">
+      <div class="filter-header">
+        <h2>Project Filters</h2>
+        <button mat-button color="primary" class="reset-link" (click)="resetFilters()">Reset</button>
       </div>
-    </div>
 
-    <button mat-flat-button color="primary" class="apply-btn" (click)="applyFilters()">
-      Apply Filters
-    </button>
-  </aside>
+      <div class="filter-section">
+        <h3>Query</h3>
+        <mat-form-field appearance="outline" class="h-filter-search" subscriptSizing="dynamic" matTooltip="Search by project or team name">
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput type="text" formControlName="search" placeholder="Search projects...">
+        </mat-form-field>
+      </div>
+
+      <div class="filter-section">
+        <h3>Categories & Tech</h3>
+        <mat-form-field appearance="outline" class="h-filter-search" subscriptSizing="dynamic">
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput [formControl]="categorySearchCtrl" placeholder="Search tech...">
+        </mat-form-field>
+
+        <div class="filter-group scrollable-filters">
+          @for (cat of allCategories(); track cat) {
+            <mat-checkbox color="primary"
+                          [checked]="isCategorySelected(cat)"
+                          (change)="toggleCategory(cat, $event.checked)">
+              {{ cat }}
+            </mat-checkbox>
+          } @empty {
+            <div class="h-empty-search">
+              <small class="h-text-secondary">No matching categories found.</small>
+            </div>
+          }
+        </div>
+      </div>
+
+      <button mat-flat-button color="primary" class="apply-btn" (click)="applyFilters()">
+        Apply Filters
+      </button>
+    </aside>
+  }
 
   <main class="h-main showcase-layout">
     <header class="showcase-header">
-      <h1 class="mat-headline-1">Project Showcase</h1>
-      <p class="h-text-secondary">Discover top-tier solutions from past hackathons</p>
+      <div class="header-title-row" style="display: flex; align-items: center; justify-content: center; gap: 12px;">
+        <!-- Мобільна кнопка фільтрів -->
+        <button mat-icon-button class="mobile-filter-btn" (click)="toggleFilters()" matTooltip="Toggle filters">
+          <mat-icon>{{ isFiltersVisible() ? 'filter_list_off' : 'filter_list' }}</mat-icon>
+        </button>
+        <h1 class="mat-headline-1" style="margin: 0;">Project Showcase</h1>
+      </div>
+      <p class="h-text-secondary" style="margin-top: 8px;">Discover top-tier solutions from past hackathons</p>
 
       <div class="stats-row tech-data mt-4">
         <span [matTooltip]="'Total projects matched: ' + (meta()?.itemCount ?? 0)">
