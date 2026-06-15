@@ -57,7 +57,6 @@ export class HackathonSubmissionComponent implements OnInit {
   isSaving = signal(false);
   currentUser = toSignal(this.authService.user$);
 
-  // Стан для GitHub інтеграції
   selectedMemberForRepos = signal<string | null>(null);
   memberRepos = signal<GitHubRepoItem[]>([]);
   isLoadingRepos = signal(false);
@@ -124,9 +123,8 @@ export class HackathonSubmissionComponent implements OnInit {
     });
   }
 
-  // --- НОВІ МЕТОДИ ДЛЯ GITHUB ---
   loadMemberRepos(username: string) {
-    if (this.selectedMemberForRepos() === username) return; // Не завантажуємо двічі
+    if (this.selectedMemberForRepos() === username) return;
 
     this.selectedMemberForRepos.set(username);
     this.isLoadingRepos.set(true);
@@ -148,7 +146,6 @@ export class HackathonSubmissionComponent implements OnInit {
     this.repoForm.patchValue({ repoUrl: repo.url });
     this.notification.success(`Linked to ${repo.name}`);
   }
-  // ------------------------------
 
   submitProject() {
     const h = this.hackathon();

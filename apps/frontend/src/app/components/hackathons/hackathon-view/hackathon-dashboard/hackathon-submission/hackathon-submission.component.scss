@@ -274,3 +274,59 @@
 }
 
 .ml-3 { margin-left: 12px; }
+
+@media (max-width: 768px) {
+  .h-submission-layout {
+    padding: 24px 16px 80px;
+  }
+
+  .submission-header {
+    margin-bottom: 24px;
+
+    .header-left .titles h1 {
+      font-size: 28px;
+    }
+  }
+
+  ::ng-deep .mat-horizontal-stepper-header-container {
+    overflow-x: auto;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  ::ng-deep .mat-step-header .mat-step-label {
+    font-size: 13px !important;
+  }
+
+  .h-step-content {
+    padding: 24px 16px;
+  }
+
+  .github-import-section {
+    padding: 16px;
+  }
+
+  .review-summary .review-item .code-link {
+    word-break: break-all;
+    padding: 8px 12px;
+    font-size: 13px;
+    width: 100%;
+  }
+
+  .step-actions {
+    flex-direction: column-reverse;
+    gap: 12px;
+    padding-top: 16px;
+    margin-top: 16px;
+
+    button {
+      width: 100%;
+      margin: 0;
+    }
+  }
+
+  .repos-container .repo-grid {
+    grid-template-columns: 1fr;
+    max-height: 400px;
+  }
+}
