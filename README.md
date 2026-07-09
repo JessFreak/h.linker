@@ -1,101 +1,152 @@
-# HLinker
+# h.linker
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+A comprehensive web-based platform designed to automate the lifecycle of IT hackathons. The system streamlines event management, facilitates seamless team formation through GitHub insights integration, and provides a dynamic evaluation module for jury members to calculate weighted scores in real-time.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+*Note: The comprehensive academic diploma thesis document is available in Ukrainian.*
+\
+[📄 Read the Full Document (PDF)](docs/Дипломна%20робота.pdf)
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+## Tech Stack
 
-## Run tasks
+This project is built as a monorepo using **Nx** and leverages the following technologies:
 
-To run the dev server for your app, use:
+*   **Frontend:** Angular 21, PrimeNG, ECharts
+*   **Backend:** NestJS 11, Prisma ORM, Passport.js (OAuth2 Google/GitHub)
+*   **Database:** PostgreSQL
+*   **Infrastructure & Tooling:** Docker, GitHub Actions, Jest, ESLint
 
-```sh
-npx nx serve frontend
+## Architecture & Diagrams
+
+<details>
+<summary><b>1. System Context & Component Architecture (C4 Model)</b></summary>
+<br>
+
+The system architecture follows the C4 model specification to describe context, containers, and component relations:
+
+#### Level 1: System Context
+![System Context Diagram](docs/C4Diagram1.png)
+
+#### Level 2: Containers
+![Containers Diagram](docs/C4Diagram2.png)
+
+#### Level 3: Components
+![Components Diagram](docs/C4Diagram3.png)
+</details>
+
+<details>
+<summary><b>2. Database & Data Models</b></summary>
+<br>
+
+The relational database layer is optimized for integrity and analytical aggregation using composite unique constraints and strict reference keys:
+
+* **Entity-Relationship Diagram (ERD):**
+  ![ER Diagram](docs/ERDiagram.png)
+* **Database Schema Design:**
+  ![Database Diagram](docs/DBDiagram.png)
+</details>
+
+<details>
+<summary><b>3. Business Logic & Access Control</b></summary>
+<br>
+
+Detailed behavior modeling for system interactions and UI-driven role restrictions:
+
+* **System Use Cases:**
+  ![Use Case Diagram](docs/UseCaseDiagram.png)
+* **Frontend Access Control Flow:**
+  ![Frontend Access Diagram](docs/FrontendAccessDiagram.png)
+* **Backend Class Structure:**
+  ![Backend Class Diagram](docs/BackendClassDiagram.png)
+</details>
+
+## Getting Started
+
+Follow these instructions to set up the project locally for development and testing.
+
+### Prerequisites
+
+*   Node.js (v24 or higher recommended)
+*   Docker and Docker Compose
+*   Git
+
+### 1. Clone the repository
+
+```bash
+git clone [https://github.com/JessFreak/h.linker.git](https://github.com/JessFreak/h.linker.git)
+cd h.linker
 ```
 
-To create a production bundle:
+### 2. Install dependencies
 
-```sh
-npx nx build frontend
+```bash
+npm install
+
 ```
 
-To see all available targets to run for a project, run:
+### 3. Environment Variables
 
-```sh
-npx nx show project frontend
+Create a `.env` file in the root directory of the project and populate it with your specific configuration credentials. Use the following template:
+
+```env
+# OAuth Google
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_CALLBACK_URL=http://localhost:3000/api/auth/google/callback
+
+# OAuth GitHub
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+GITHUB_CALLBACK_URL=http://localhost:3000/api/auth/github/callback
+GITHUB_CONNECT_CALLBACK_URL=http://localhost:3000/api/auth/github/connect/callback
+GITHUB_SYSTEM_TOKEN=your_github_personal_access_token
+
+# Database
+DATABASE_URL="postgresql://user:password@localhost:5432/h_linker_db?schema=public"
+
+# Authentication
+JWT_SECRET=your_jwt_secret_key
+JWT_EXPIRE=1d
+
+# Client Application
+CLIENT_URL=http://localhost:8080
+
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+### 4. Running the Application
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+The project is containerized. You can start the database, backend, and frontend services simultaneously using Docker Compose:
 
-## Add new projects
+```bash
+docker compose up -d --build
 
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-Use the plugin's generator to create new projects.
-
-To generate a new application, use:
-
-```sh
-npx nx g @nx/angular:app demo
 ```
 
-To generate a new library, use:
+The backend container is configured to automatically run database migrations (`npx prisma migrate deploy`) and seed the database (`npx prisma db seed`) upon startup.
 
-```sh
-npx nx g @nx/angular:lib mylib
+* **Frontend:** accessible at `http://localhost:8080`
+* **Backend API:** accessible at `http://localhost:3000`
+* **Database:** accessible on port `5432`
+
+## Testing and Linting
+
+The repository includes scripts to ensure code quality and functionality.
+
+To run the linter across the Nx workspace (ignoring spec files):
+
+```bash
+npm run lint
 ```
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
+To execute the unit test suite (Jest):
 
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Set up CI!
-
-### Step 1
-
-To connect to Nx Cloud, run the following command:
-
-```sh
-npx nx connect
+```bash
+npm run test
 ```
 
-Connecting to Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
+## CI/CD Pipeline
 
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+The project utilizes a fully automated CI/CD pipeline configured via GitHub Actions. The workflow triggers on every push to the `master` branch and consists of three main jobs:
 
-### Step 2
-
-Use the following command to configure a CI workflow for your workspace:
-
-```sh
-npx nx g ci-workflow
-```
-
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+1. **Lint:** Sets up Node.js v24, installs dependencies, and runs the workspace linter to ensure code style consistency.
+2. **Test:** Generates the Prisma client and executes the Jest test suite to verify application logic.
+3. **Deploy:** Upon successful completion of the lint and test jobs, this step connects to an Azure server via SSH. It pulls the latest changes from the repository, rebuilds the Docker containers without cache, and deploys the updated services while pruning old unused images to optimize server space.
