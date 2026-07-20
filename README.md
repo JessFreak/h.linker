@@ -72,7 +72,7 @@ Follow these instructions to set up the project locally for development and test
 ### 1. Clone the repository
 
 ```bash
-git clone [https://github.com/JessFreak/h.linker.git](https://github.com/JessFreak/h.linker.git)
+git clone https://github.com/JessFreak/h.linker.git
 cd h.linker
 ```
 
